@@ -1,0 +1,21 @@
+apply plugin: 'pmd'
+
+/*************PMD(Project Manager Design)***************/
+tasks.withType(Pmd) {
+    //exclude the package you do not want to check
+    exclude '**/Application*'
+//    exclude '**/util/**'
+}
+
+/*************PMD(Project Manager Design)***************/
+pmd {
+    toolVersion = '6.16.0'
+
+    ignoreFailures = false
+
+    sourceSets = [sourceSets.main]
+
+    ruleSets = []
+
+    ruleSetFiles = files("./build_scripts/quality_assurance/config/pmd/ruleset.xml")
+}

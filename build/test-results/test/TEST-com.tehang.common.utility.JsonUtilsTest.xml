@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.tehang.common.utility.JsonUtilsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2019-10-24T13:38:26" hostname="umasuo15.local" time="0.201">
+  <properties/>
+  <testcase name="test1: Object to string " classname="com.tehang.common.utility.JsonUtilsTest" time="0.189"/>
+  <testcase name="test2: String to object" classname="com.tehang.common.utility.JsonUtilsTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

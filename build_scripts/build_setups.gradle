@@ -1,0 +1,43 @@
+
+//apply plugin: 'java-library'
+apply plugin: 'java'
+//apply plugin: 'application'
+apply plugin: 'groovy'
+//apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+
+compileJava {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+//jar {
+//  from {
+//    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//  }
+//}
+
+
+// Specify the gradle wrapper version
+wrapper {
+  gradleVersion = '5.4'
+}
+
+publishing {
+  publications {
+    myPublication(MavenPublication) {
+      groupId = 'com.cntehang'
+      artifactId = 'common-lib'
+      version = '1.1.0'
+
+      // telling gradle to publish project's jar archive (2)
+      from components.java
+    }
+  }
+  // telling gradle to publish artifact to local directory (3)
+  repositories {
+    maven {
+      url "file:/${project.projectDir}/lib"
+    }
+  }
+}

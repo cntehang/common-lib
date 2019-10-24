@@ -1,0 +1,57 @@
+// Declare application repositories and dependencies
+
+repositories {
+  maven {
+    url 'http://maven.aliyun.com/nexus/content/groups/public'
+  }
+  jcenter()
+  mavenCentral()
+  maven {
+    url "https://plugins.gradle.org/m2/"
+  }
+}
+
+dependencies {
+
+  // https://mvnrepository.com/artifact/com.google.code.gson/gson
+  compile('com.google.code.gson:gson:2.8.5')
+
+  compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.5')
+  compile('joda-time:joda-time:2.3')
+
+  // xml 序列化
+  compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8')
+
+  // Common tool like: StringUtils
+  compile('org.apache.commons:commons-lang3:3.4')
+
+  // Collection tool like: CollectionUtils
+  compile('org.apache.commons:commons-collections4:4.1')
+
+  // 添加Httpclient utils
+  compile('org.apache.httpcomponents:httpclient:4.5.6')
+
+  // 添加log基本包
+  compile('org.slf4j:slf4j-api:1.7.25')
+
+  // google工具类
+  compile('com.google.guava:guava:23.0')
+  // jwt工具
+  compile('com.auth0:java-jwt:3.3.0')
+
+  // For google collect lib
+  compile('com.google.guava:guava:21.0')
+  
+  // lombok
+  annotationProcessor('org.projectlombok:lombok:1.18.2')
+  compileOnly('org.projectlombok:lombok:1.18.2')
+
+  // for mock non interface
+  testCompile('cglib:cglib-nodep:3.2.5')
+  // Use the latest Groovy version for Spock testing
+  testImplementation('org.codehaus.groovy:groovy-all:2.4.15')
+  testImplementation('org.spockframework:spock-core:1.0-groovy-2.4')
+  testImplementation('junit:junit:4.12')
+  testImplementation('org.skyscreamer:jsonassert:1.5.0')
+
+}
