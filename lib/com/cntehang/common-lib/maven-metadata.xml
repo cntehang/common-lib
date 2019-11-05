@@ -3,12 +3,13 @@
   <groupId>com.cntehang</groupId>
   <artifactId>common-lib</artifactId>
   <versioning>
-    <release>1.1.0</release>
+    <release>1.1.1</release>
     <versions>
       <version>1.0.7</version>
       <version>1.0.8</version>
       <version>1.1.0</version>
+      <version>1.1.1</version>
     </versions>
-    <lastUpdated>20191024132906</lastUpdated>
+    <lastUpdated>20191105105343</lastUpdated>
   </versioning>
 </metadata>
