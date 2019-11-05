@@ -1,4 +1,3 @@
-
 //apply plugin: 'java-library'
 apply plugin: 'java'
 //apply plugin: 'application'
@@ -11,11 +10,6 @@ compileJava {
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
 }
-//jar {
-//  from {
-//    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//  }
-//}
 
 
 // Specify the gradle wrapper version
@@ -28,7 +22,7 @@ publishing {
     myPublication(MavenPublication) {
       groupId = 'com.cntehang'
       artifactId = 'common-lib'
-      version = '1.1.0'
+      version = '1.1.1'
 
       // telling gradle to publish project's jar archive (2)
       from components.java

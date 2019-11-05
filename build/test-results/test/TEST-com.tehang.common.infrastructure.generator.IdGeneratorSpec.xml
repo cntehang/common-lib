@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.tehang.common.infrastructure.generator.IdGeneratorSpec" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-10-24T13:38:26" hostname="umasuo15.local" time="0.069">
-  <properties/>
-  <testcase name="测试1： 生成正确的ID" classname="com.tehang.common.infrastructure.generator.IdGeneratorSpec" time="0.069"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

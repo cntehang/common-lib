@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Date;
+
 /**
  * 日期工具类.
  * 采用joda工具包实现.
@@ -27,6 +29,15 @@ public final class DateUtils {
    */
   public static String now() {
     return DateTime.now().toInstant().toString(DATE_TIME_FORMATTER);
+  }
+
+  /**
+   * get current date time in date
+   *
+   * @return
+   */
+  public static Date nowInDate() {
+    return DateTime.now().toInstant().toDate();
   }
 
   /**
