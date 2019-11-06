@@ -20,6 +20,16 @@ public class ApplicationException extends BaseException {
   }
 
   /**
+   * constructor with code.
+   *
+   * @param code
+   */
+  public ApplicationException(int code) {
+    super();
+    this.code = code;
+  }
+
+  /**
    * public constructor with message.
    *
    * @param message the message
