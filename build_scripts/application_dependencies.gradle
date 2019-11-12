@@ -1,20 +1,22 @@
 // Declare application repositories and dependencies
 
-repositories {
-  maven {
-    url 'http://maven.aliyun.com/nexus/content/groups/public'
-  }
-  jcenter()
-  mavenCentral()
-  maven {
-    url "https://plugins.gradle.org/m2/"
+
+// Auto manage all spring boot dependencies
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-sleuth:2.1.0.RELEASE"
   }
 }
-
 dependencies {
 
-  // Spring
+  // springboot核心包
   compile('org.springframework.boot:spring-boot')
+  // spring web相关功能
+  compile('org.springframework:spring-web:5.1.4.RELEASE')
+  // loadbalance 相关功能
+  compile('org.springframework.cloud:spring-cloud-starter-consul-discovery:2.1.2.RELEASE')
 
   // https://mvnrepository.com/artifact/com.google.code.gson/gson
   compile('com.google.code.gson:gson:2.8.5')
