@@ -11,6 +11,7 @@ import java.time.Duration;
 
 /**
  * rest模板
+ * // TODO: 2019-11-12 请求时间应该可以配置
  */
 @Profile("!integration_test")
 @Configuration
@@ -31,7 +32,7 @@ public class RestTemplateFactory {
    *
    * @param restTemplateBuilder
    */
-  RestTemplateFactory(RestTemplateBuilder restTemplateBuilder) {
+  public RestTemplateFactory(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplateBuilder = restTemplateBuilder;
   }
 
@@ -44,10 +45,12 @@ public class RestTemplateFactory {
   @Bean
   @LoadBalanced
   public RestTemplate getRestTemplate() {
-    return restTemplateBuilder
+    RestTemplate lbTemplate = restTemplateBuilder
         .setConnectTimeout(Duration.ofSeconds(10))// 连接超时设为10s
         .setReadTimeout(Duration.ofSeconds(60))// 请求超时设为60s
+        .interceptors(new RequestContextInterceptor()) // 添加相关的context
         .build();
+    return lbTemplate;
   }
 
   /**
