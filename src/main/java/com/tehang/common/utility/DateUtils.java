@@ -1,6 +1,7 @@
 package com.tehang.common.utility;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -18,6 +19,7 @@ public final class DateUtils {
   private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(PATTERN);
 
+
   private DateUtils() {
     // do nothing
   }
@@ -29,6 +31,24 @@ public final class DateUtils {
    */
   public static String now() {
     return DateTime.now().toInstant().toString(DATE_TIME_FORMATTER);
+  }
+
+  public static String now(String pattern) {
+    DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
+    return DateTime.now().toInstant().toString(formatter);
+  }
+
+  /**
+   * 获取相应格式以及相应时差的时间值
+   *
+   * @param pattern 格式
+   * @param seconds 时差，单位秒
+   * @param zone    时区
+   * @return
+   */
+  public static String time(String pattern, long seconds, DateTimeZone zone) {
+    DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
+    return DateTime.now(zone).toInstant().plus(seconds * 1000).toString(formatter);
   }
 
   /**
@@ -70,4 +90,5 @@ public final class DateUtils {
   public static boolean isBeforeNow(String value) {
     return value.compareTo(now()) == -1;
   }
+
 }
