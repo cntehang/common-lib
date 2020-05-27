@@ -1,5 +1,6 @@
 package com.tehang.common.utility.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tehang.common.utility.JsonUtils;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * 内部系统中，传递的jwt的payload
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InnerJwtPayload implements Serializable {
 
   private static final long serialVersionUID = -877837145679953510L;
@@ -19,6 +21,12 @@ public class InnerJwtPayload implements Serializable {
   private boolean admin;
   private Long staffId;
   private String staffName;
+
+  /**
+   * 外部链接登录时携带的出差申请单号，可以为null
+   */
+  private String approvalNo;
+
   private List<String> roles;
 
   /**
