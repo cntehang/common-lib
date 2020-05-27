@@ -3,5 +3,7 @@
   "clientType": "ios",
   "staffId": 100001,
   "staffName": "bruce",
-  "admin": false
+  "admin": false,
+  "approvalNo": "10001",
+  "extra": "这是个多余的字段，实体类上没有对应的属性，用来测试反序列化时可以正常处理"
 }
