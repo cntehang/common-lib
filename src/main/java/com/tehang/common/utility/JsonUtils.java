@@ -1,8 +1,11 @@
 package com.tehang.common.utility;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 
 import java.io.IOException;
@@ -90,4 +93,18 @@ public final class JsonUtils {
     }
   }
 
+  /**
+   * 将 Long 字段以 String 类型序列化，以规避 JavaScript 的 Long 精度不足问题。
+   */
+  public static class LongSerializer extends JsonSerializer<Long> {
+    @Override
+    public void serialize(Long value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        gen.writeString(value.toString());
+      }
+    }
+  }
 }

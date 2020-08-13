@@ -6,7 +6,20 @@ import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
 
 
-class JsonUtilsTest extends TestSpecification {
+class JsonUtilsSpec extends TestSpecification {
+  class JsonObject {
+
+    String stringValue
+    int intValue
+    boolean boolValue
+
+    boolean equals(JsonObject valueToCompare) {
+      return stringValue == valueToCompare.stringValue &&
+              intValue == valueToCompare.intValue &&
+              boolValue == valueToCompare.boolValue
+    }
+  }
+
 
   JsonObject expectedObject = new JsonObject()
   String expectedJsonStr // = "{\"stringValue\":\"this is string value\",\"intValue\":100,\"boolValue\":false}"

@@ -2,7 +2,7 @@ package com.tehang.common.utility.token
 
 import com.tehang.common.TestSpecification
 
-class JwtUtilsTest extends TestSpecification {
+class JwtUtilsSpec extends TestSpecification {
 
   InnerJwtPayload payload
   def secret = "my-secret"

@@ -1,6 +1,7 @@
-package com.tehang.common.utility.api;
+package com.tehang.common.utility.api.front;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tehang.common.utility.api.CommonCode;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,20 +10,18 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * 通用型数据返回
+ * 通用型数据返回，只用于封装数据返回给前端
  */
 @Data
 @JsonInclude(NON_NULL)
+@SuppressWarnings({"PMD.BeanMembersShouldSerialize", "PMD.SingularField"})
 public class DataContainer implements Serializable {
 
   private static final long serialVersionUID = -8318026859383395475L;
 
-  /**
-   * 返回的消息内容
-   */
-  private String message;
-
   private int code;
+
+  private String message;
 
   private String debugMsg;
 
@@ -56,19 +55,6 @@ public class DataContainer implements Serializable {
   public DataContainer(int code, String message) {
     this.code = code;
     this.message = message;
-  }
-
-
-  /**
-   * 拥有code、message 的构造函数.
-   *
-   * @param code    int code
-   * @param message string message
-   */
-  public DataContainer(int code, String message, String debugMsg) {
-    this.code = code;
-    this.message = message;
-    this.debugMsg = debugMsg;
   }
 
   /**

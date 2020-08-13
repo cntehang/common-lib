@@ -5,6 +5,9 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -18,6 +21,9 @@ public final class DateUtils {
    */
   private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(PATTERN);
+  private static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
+  private static final ZoneId TIMEZONE_BEIJING = ZoneId.of("+08:00");
+  private static final java.time.format.DateTimeFormatter JAVA_DATE_TIME_FORMATTER = java.time.format.DateTimeFormatter.ofPattern(PATTERN).withZone(TIMEZONE_UTC);;
 
 
   private DateUtils() {
@@ -91,4 +97,32 @@ public final class DateUtils {
     return value.compareTo(now()) == -1;
   }
 
+
+  /**
+   * LocalDateTime 格式化为 String
+   */
+  public static String localDateTimeToString(LocalDateTime dateTime) {
+    return JAVA_DATE_TIME_FORMATTER.format(dateTime.atZone(TIMEZONE_BEIJING).withZoneSameInstant(TIMEZONE_UTC));
+  }
+
+  /**
+   * String 格式化为 LocalDateTime
+   */
+  public static LocalDateTime localDateTimeFromString(String dateTimeString) {
+    return LocalDateTime.parse(dateTimeString, JAVA_DATE_TIME_FORMATTER).atZone(TIMEZONE_UTC).withZoneSameInstant(TIMEZONE_BEIJING).toLocalDateTime();
+  }
+
+  /**
+   * Instant 格式化为 String
+   */
+  public static String instantToString(Instant instant) {
+    return JAVA_DATE_TIME_FORMATTER.format(instant);
+  }
+
+  /**
+   * String 格式化为 Instant
+   */
+  public static Instant instantFromString(String dateTimeString) {
+    return JAVA_DATE_TIME_FORMATTER.parse(dateTimeString, Instant::from);
+  }
 }
