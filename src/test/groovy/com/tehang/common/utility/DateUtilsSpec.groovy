@@ -25,7 +25,7 @@ class DateUtilsSpec extends TestSpecification {
 
     then:
     noExceptionThrown()
-    StringUtils.equals(timeString, formattedTimeString)
+    timeString == formattedTimeString
   }
 
   def "测试2： String -> Instant"() {
