@@ -23,7 +23,7 @@ public final class DateUtils {
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(PATTERN);
   private static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
   private static final ZoneId TIMEZONE_BEIJING = ZoneId.of("+08:00");
-  private static final java.time.format.DateTimeFormatter JAVA_DATE_TIME_FORMATTER = java.time.format.DateTimeFormatter.ofPattern(PATTERN).withZone(TIMEZONE_UTC);;
+  private static final java.time.format.DateTimeFormatter JAVA_DATE_TIME_FORMATTER = java.time.format.DateTimeFormatter.ofPattern(PATTERN).withZone(TIMEZONE_UTC);
 
 
   private DateUtils() {
