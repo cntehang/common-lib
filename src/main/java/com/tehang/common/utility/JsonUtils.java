@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.tehang.common.infrastructure.exceptions.ParameterException;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,7 +39,7 @@ public final class JsonUtils {
       return object == null ? null : MAPPER.writeValueAsString(object);
 
     } catch (IOException ex) {
-      throw new ParameterException("to Json error: " + ex.getMessage(), ex);
+      throw new SystemErrorException("to Json error: " + ex.getMessage(), ex);
     }
   }
 
@@ -52,7 +51,7 @@ public final class JsonUtils {
       return StringUtils.isBlank(json) ? null : MAPPER.readValue(json, clazz);
 
     } catch (IOException ex) {
-      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
+      throw new SystemErrorException("toClass error: " + ex.getMessage(), ex);
     }
   }
 
@@ -64,7 +63,7 @@ public final class JsonUtils {
       return reader == null ? null : MAPPER.readValue(reader, clazz);
 
     } catch (IOException ex) {
-      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
+      throw new SystemErrorException("toClass error: " + ex.getMessage(), ex);
     }
   }
 
@@ -77,7 +76,7 @@ public final class JsonUtils {
       return StringUtils.isBlank(json) ? null : MAPPER.readValue(json, valueTypeRef);
 
     } catch (IOException ex) {
-      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
+      throw new SystemErrorException("toClass error: " + ex.getMessage(), ex);
     }
   }
 
@@ -90,7 +89,7 @@ public final class JsonUtils {
           MAPPER.readValue(json, MAPPER.getTypeFactory().constructCollectionType(List.class, clazz));
 
     } catch (IOException ex) {
-      throw new ParameterException("toList error: " + ex.getMessage(), ex);
+      throw new SystemErrorException("toList error: " + ex.getMessage(), ex);
     }
   }
 
