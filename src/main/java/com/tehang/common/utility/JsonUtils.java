@@ -3,12 +3,17 @@ package com.tehang.common.utility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.tehang.common.infrastructure.exceptions.ParameterException;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,78 +24,82 @@ public final class JsonUtils {
   /**
    * mapper
    */
-  private static ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectMapper MAPPER = new ObjectMapper()
+      .setSerializationInclusion(JsonInclude.Include.NON_NULL)// 序列化时，只包含不为空的字段
+      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);// 反序列化时，忽略json中多余的字段
+
 
   private JsonUtils() {
   }
 
   /**
-   * final
    * convert bo to json string
-   *
-   * @param object
-   * @param <T>
-   * @return
-   * @throws IOException
    */
   public static <T> String toJson(T object) {
     try {
-      mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-      return mapper.writeValueAsString(object);
+      return object == null ? null : MAPPER.writeValueAsString(object);
+
     } catch (IOException ex) {
-      throw new SystemErrorException("to Json error: " + ex.getMessage(), ex);
+      throw new ParameterException("to Json error: " + ex.getMessage(), ex);
     }
   }
 
   /**
    * convert json string to bo
-   *
-   * @param json
-   * @param clazz
-   * @param <T>
-   * @return
-   * @throws IOException
    */
   public static <T> T toClass(String json, Class<T> clazz) {
     try {
-      return mapper.readValue(json, clazz);
+      return StringUtils.isBlank(json) ? null : MAPPER.readValue(json, clazz);
+
     } catch (IOException ex) {
-      throw new SystemErrorException("toClass error: " + ex.getMessage(), ex);
+      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
+    }
+  }
+
+  /**
+   * convert json reader to bo
+   */
+  public static <T> T toClassFromReader(Reader reader, Class<T> clazz) {
+    try {
+      return reader == null ? null : MAPPER.readValue(reader, clazz);
+
+    } catch (IOException ex) {
+      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
     }
   }
 
   /**
    * convert json string to generic type
-   *
-   * @param json
-   * @param valueTypeRef
-   * @param <T>
-   * @return
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static <T> T toClass(String json, TypeReference<T> valueTypeRef) {
     try {
-      return mapper.readValue(json, valueTypeRef);
+      return StringUtils.isBlank(json) ? null : MAPPER.readValue(json, valueTypeRef);
+
     } catch (IOException ex) {
-      throw new SystemErrorException("toClass error: " + ex.getMessage(), ex);
+      throw new ParameterException("toClass error: " + ex.getMessage(), ex);
     }
   }
 
   /**
    * convert json string to list
-   *
-   * @param json
-   * @param clazz
-   * @param <T>
-   * @return
-   * @throws IOException
    */
   public static <T> List<T> toList(String json, Class<T> clazz) {
     try {
-      return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, clazz));
+      return StringUtils.isBlank(json) ? new ArrayList<>() :
+          MAPPER.readValue(json, MAPPER.getTypeFactory().constructCollectionType(List.class, clazz));
+
     } catch (IOException ex) {
-      throw new SystemErrorException("toList error: " + ex.getMessage(), ex);
+      throw new ParameterException("toList error: " + ex.getMessage(), ex);
     }
+  }
+
+
+  /**
+   * convert object to class
+   */
+  public static <T> T convertValue(Object object, Class<T> clazz) {
+    return object == null ? null : MAPPER.convertValue(object, clazz);
   }
 
   /**
