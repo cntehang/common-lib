@@ -171,7 +171,7 @@ public final class ThStringUtils {
    * @param items 要分割的元素
    * @return 转换后的字符串
    */
-  public static String joinWithLine(List<String> items) {
+  public static String joinWithLine(Collection<String> items) {
     return joinWith(items, LINE);
 
   }
