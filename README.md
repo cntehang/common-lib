@@ -1,27 +1,37 @@
 # common-lib
 
-一些通用的工具库。为了避免二次开发、以及多端维护，这里将一些公共的库抽离出来，进行统一维护。
+## 简介
 
-## 如何发布
-先用gradlew打包生成jar，然后上传至lib目录。
+- 后端服务通用类库。
 
-说明点：
-- 项目编译采用的`./gradlew clean build publish`发布即可
+- 除了 tmc-services，其他服务强烈推荐使用，我们也会定期将 tmc-services 和这里面的方法进行同步。
 
-## 如何引用
+- 好处：为了避免二次开发、以及多端维护。
 
-第一步， 在你的项目中添加`github repository`到你的项目中
+## 当前服务如何发布
 
-将其添加至`repositories`内:
+1. 在 application_version.gradle 文件中，增加版本号；
+
+2. 在 build_setups.gradle 文件中，增阿基版本号，号码和上一步的一致；
+
+3. 编译 + 发布：运行命令`./gradlew clean build publish`；
+
+## 消费者服务如何引用
+
+### 1. 添加 maven 仓库
+
+在目标服务中添加 common-lib 的仓库地址：
 ```gradle
 repositories {
   maven {
     url 'https://github.com/cntehang/common-lib/raw/master/lib'
   }
 }
-
 ```
-第二步：添加引用
+
+### 2. 添加依赖包
+
+在目标服务中依赖 common-lib 包：
 ```gradle
 dependencies {
   // 引入特航公共包
