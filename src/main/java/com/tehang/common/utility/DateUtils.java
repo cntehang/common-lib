@@ -21,73 +21,57 @@ import java.time.ZoneId;
  * 采用joda工具包实现.
  */
 @Validated
-@SuppressWarnings("PMD.GodClass")
 public final class DateUtils {
 
-  public static final String SHORT_DATE_TIME_SPLITTER = " ";
-  private static final int ONE = 1;
   private static final String INVALID_DATE_TIME_PATTERN = "%s时间格式非法";
   private static final String WRONG_DATA_FORMAT_PATTERN = "日期参数: %s 格式不正确";
   private static final String WRONG_TIME_FORMAT_PATTERN = "时间参数: %s 格式不正确";
 
   private static final int SECOND_IN_ONE_MINUTE = 60;
-
   private static final long MILLISECOND_IN_ONE_SECOND = 1000L;
 
   /**
-   * 一天的小时数
+   * 日期
    */
-  public static final int HOURS_OF_DAY = 24;
-
-  /**
-   * 所有服务的统一格式
-   */
-  public static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-  public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(PATTERN);
   private static final DateTimeFormatter SHORT_SHAPE_PATTERN = DateTimeFormat.forPattern("yyyyMMdd");
   private static final DateTimeFormatter SIMPLE_DATE_PATTERN = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+  /**
+   * DateTime
+   */
+  public static final String ISO_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+  public static final DateTimeFormatter ISO_FORMATTER = DateTimeFormat.forPattern(ISO_PATTERN);
   public static final DateTimeFormatter DATE_TIME_PATTERN = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
   public static final DateTimeFormatter DATE_TIME_PATTERN_WITH_SECOND = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
+  /**
+   * 不带日期的时间
+   */
   private static final DateTimeFormatter SHORT_TIME_FORMATTER = DateTimeFormat.forPattern("HH:mm");
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormat.forPattern("HH:mm:ss");
-  private static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
+
+  /**
+   * 时区相关
+   */
+  private static final String ZONE_SHANGHAI = "+08:00";
   private static final ZoneId TIMEZONE_BEIJING = ZoneId.of("+08:00");
-  private static final java.time.format.DateTimeFormatter JAVA_DATE_TIME_FORMATTER = java.time.format.DateTimeFormatter.ofPattern(PATTERN).withZone(TIMEZONE_UTC);
-  ;
+  private static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
+  private static final java.time.format.DateTimeFormatter JAVA_DATE_TIME_FORMATTER = java.time.format.DateTimeFormatter.ofPattern(ISO_PATTERN).withZone(TIMEZONE_UTC);
 
   /**
    * 验证简单日期格式（yyyy-MM-dd）的正则表达式
    */
-  public static final String SIMPLE_DATE_REGEX = "(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-"
+  private static final String SIMPLE_DATE_REGEX = "(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-"
       + "(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}"
       + "(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)";
 
   /**
-   * 验证简单日期格式（yyyy-MM-dd）的正则表达式
-   */
-  public static final String SIMPLE_DATE_OR_NULL_REGEX = "(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-"
-      + "(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}"
-      + "(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)|";
-
-  /**
    * 验证UTC时间格式的正则表达式
    */
-  public static final String ISO_DATE_REGEX = "^((((19|20)\\d{2})-(0?[13-9]|1[012])-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-(0?[13578]|1[02])-31)"
+  private static final String ISO_DATE_REGEX = "^((((19|20)\\d{2})-(0?[13-9]|1[012])-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-(0?[13578]|1[02])-31)"
       + "|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-29))T"
       + "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]{3})Z";
 
-  /**
-   * 验证日期和时间格式(yyyy-MM-dd HH:mm:ss)的正则表达式
-   */
-  public static final String DATE_TIME_REGEX = "^((((19|20)\\d{2})-(0?[13-9]|1[012])-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-(0?[13578]|1[02])-31)"
-      + "|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-29)) "
-      + "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])";
-
-  /**
-   * 北京/上海时间
-   */
-  public static final String ZONE_SHANGHAI = "+08:00";
 
   private DateUtils() {
     // do nothing
@@ -95,11 +79,9 @@ public final class DateUtils {
 
   /**
    * get current date time in string.
-   *
-   * @return
    */
   public static String now() {
-    return DateTime.now().toInstant().toString(DATE_TIME_FORMATTER);
+    return DateTime.now().toInstant().toString(ISO_FORMATTER);
   }
 
   /**
@@ -112,7 +94,7 @@ public final class DateUtils {
     org.joda.time.Instant instant = DateTime.now().toInstant();
 
     org.joda.time.Instant newInstance = instant.minus(offsetMinutes * SECOND_IN_ONE_MINUTE * MILLISECOND_IN_ONE_SECOND);
-    return newInstance.toString(DATE_TIME_FORMATTER);
+    return newInstance.toString(ISO_FORMATTER);
   }
 
   /**
@@ -127,7 +109,7 @@ public final class DateUtils {
     org.joda.time.Instant instant = DateTime.now().toInstant();
 
     org.joda.time.Instant newInstance = instant.plus(offsetMinutes * SECOND_IN_ONE_MINUTE * MILLISECOND_IN_ONE_SECOND);
-    return newInstance.toString(DATE_TIME_FORMATTER);
+    return newInstance.toString(ISO_FORMATTER);
   }
 
   /**
@@ -140,7 +122,7 @@ public final class DateUtils {
     org.joda.time.Instant instant = DateTime.now().toInstant();
 
     org.joda.time.Instant newInstance = instant.minus(offsetSecond * MILLISECOND_IN_ONE_SECOND);
-    return newInstance.toString(DATE_TIME_FORMATTER);
+    return newInstance.toString(ISO_FORMATTER);
   }
 
   /**
@@ -153,7 +135,7 @@ public final class DateUtils {
     org.joda.time.Instant instant = DateTime.now().toInstant();
 
     org.joda.time.Instant newInstance = instant.plus(offsetSecond * MILLISECOND_IN_ONE_SECOND);
-    return newInstance.toString(DATE_TIME_FORMATTER);
+    return newInstance.toString(ISO_FORMATTER);
   }
 
   /**
@@ -197,7 +179,7 @@ public final class DateUtils {
    * @return 当前日期时间（北京）
    */
   public static String nowOfBeijing() {
-    return DateTime.now().toDateTime(DateTimeZone.forID(ZONE_SHANGHAI)).toString(PATTERN);
+    return DateTime.now().toDateTime(DateTimeZone.forID(ZONE_SHANGHAI)).toString(ISO_PATTERN);
   }
 
   /**
@@ -262,7 +244,7 @@ public final class DateUtils {
    * @return
    */
   public static DateTime from(String value) {
-    return DateTime.parse(value, DATE_TIME_FORMATTER);
+    return DateTime.parse(value, ISO_FORMATTER);
   }
 
   /**
@@ -449,24 +431,43 @@ public final class DateUtils {
   }
 
   /**
-   * 对utc时间做减法，获得的utc时间
+   * 获取从现在起减去 minusDays 天的北京时间
    *
-   * @param utcTime     源时间
-   * @param minusMonths 需要减少的月份
-   * @return 减法计算后的utc时间
+   * @param minusDays 要减去的天数
+   * @return 从现在起减去 minusDays 天的北京时间 yyyy-MM-dd HH:mm
    */
-  public static String minusMonthsForUtcTime(String utcTime, int minusMonths) {
-    return DateTime.parse(utcTime, DATE_TIME_FORMATTER).minusMonths(minusMonths).toString(DATE_TIME_FORMATTER);
+  public static String getDateTimeAfterMinusDaysFromNowOfBeijing(int minusDays) {
+    return DateTime.now(DateTimeZone.forID(ZONE_SHANGHAI)).minusDays(minusDays).toString(DATE_TIME_PATTERN);
   }
 
   /**
-   * 基于当前时间做减法后，获得的utc时间
+   * 获取从现在起减去 minusMonths 月的utc时间
    *
    * @param minusMonths 需要减少的月份
    * @return 减法计算后的utc时间
    */
-  public static String getUtcTimeAfterMinusMonthsFromNow(int minusMonths) {
-    return minusMonthsForUtcTime(DateUtils.now(), minusMonths);
+  public static String getDateTimeAfterMinusMonthsFromNowOfUtc(int minusMonths) {
+    return DateTime.now(DateTimeZone.UTC).minusMonths(minusMonths).toString(ISO_FORMATTER);
+  }
+
+  /**
+   * 获取从现在起减去 minusHours 小时的utc时间
+   *
+   * @param minusHours 需要减少的小时
+   * @return 减法计算后的utc时间
+   */
+  public static String getDateTimeAfterMinusHoursFromNowOfUtc(int minusHours) {
+    return DateTime.now(DateTimeZone.UTC).minusHours(minusHours).toString(ISO_FORMATTER);
+  }
+
+  /**
+   * 获取从现在起减去 minusMinutes 分钟的utc时间
+   *
+   * @param minusMinutes 需要减少的分钟
+   * @return 减法计算后的utc时间
+   */
+  public static String getDateTimeAfterMinusMinutesFromNowOfUtc(int minusMinutes) {
+    return DateTime.now(DateTimeZone.UTC).minusMinutes(minusMinutes).toString(ISO_FORMATTER);
   }
 
   /**
@@ -487,7 +488,7 @@ public final class DateUtils {
    * @return 减法计算后的utc时间
    */
   public static String minusHoursForUtcTime(String utcTime, int hours) {
-    return DateTime.parse(utcTime, DATE_TIME_FORMATTER).minusHours(hours).toString(DATE_TIME_FORMATTER);
+    return DateTime.parse(utcTime, ISO_FORMATTER).minusHours(hours).toString(ISO_FORMATTER);
   }
 
   /**
@@ -544,7 +545,7 @@ public final class DateUtils {
 
     DateTime beginDateTime = DateTime.parse(beginDate, SIMPLE_DATE_PATTERN);
     DateTime endDateTime = DateTime.parse(endDate, SIMPLE_DATE_PATTERN);
-    return Days.daysBetween(beginDateTime, endDateTime).getDays() + ONE;
+    return Days.daysBetween(beginDateTime, endDateTime).getDays() + 1;
   }
 
   /**
@@ -555,8 +556,8 @@ public final class DateUtils {
    * @return
    */
   public static int countMinutesBetweenTwoUtc(String beginTime, String endTime) {
-    DateTime beginDateTime = DateTime.parse(beginTime, DATE_TIME_FORMATTER);
-    DateTime endDateTime = DateTime.parse(endTime, DATE_TIME_FORMATTER);
+    DateTime beginDateTime = DateTime.parse(beginTime, ISO_FORMATTER);
+    DateTime endDateTime = DateTime.parse(endTime, ISO_FORMATTER);
     return Minutes.minutesBetween(beginDateTime, endDateTime).getMinutes();
   }
 
@@ -796,16 +797,6 @@ public final class DateUtils {
     boolean isAfter = endTime.isAfter(dateTime);
 
     return isBefore && isAfter;
-  }
-
-  /**
-   * utc 时间转为北京时间
-   *
-   * @param utc 时间格式:yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
-   * @return 北京/上海时间,格式:yyyy-MM-dd
-   */
-  public static String fromUtcToBeijingInSimplePattern(String utc) {
-    return DateTime.parse(utc).toDateTime(DateTimeZone.forID(ZONE_SHANGHAI)).toString(SIMPLE_DATE_PATTERN);
   }
 
   public static int toMinutes(int hours) {
