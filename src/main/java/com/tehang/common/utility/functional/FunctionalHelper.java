@@ -1,4 +1,4 @@
-package com.tehang.common.utility.consts;
+package com.tehang.common.utility.functional;
 
 import com.tehang.common.infrastructure.exceptions.ParameterException;
 
