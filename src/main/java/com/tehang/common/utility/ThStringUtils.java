@@ -145,6 +145,16 @@ public final class ThStringUtils {
   }
 
   /**
+   * 把数组转为字符串，逗号隔开
+   *
+   * @param items 要分割的元素
+   * @return 转换后的字符串
+   */
+  public static String joinWithComma(String... items) {
+    return joinWith(Lists.newArrayList(ArrayUtils.nullToEmpty(items)), COMMA_STRING);
+  }
+
+  /**
    * 把List转为字符串，逗号隔开
    *
    * @param items 要分割的元素
@@ -162,7 +172,6 @@ public final class ThStringUtils {
    */
   public static String joinWithLine(String... items) {
     return joinWith(Lists.newArrayList(ArrayUtils.nullToEmpty(items)), LINE);
-
   }
 
   /**
@@ -173,7 +182,16 @@ public final class ThStringUtils {
    */
   public static String joinWithLine(Collection<String> items) {
     return joinWith(items, LINE);
+  }
 
+  /**
+   * 把数组转为字符串，斜杠隔开
+   *
+   * @param items 要分割的元素
+   * @return 转换后的字符串
+   */
+  public static String joinWithSlash(String... items) {
+    return joinWith(Lists.newArrayList(ArrayUtils.nullToEmpty(items)), SPLITTER);
   }
 
   /**
