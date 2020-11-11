@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.time.Instant;
-import java.util.Date;
 
 /**
  * JWT 工具类
@@ -31,15 +29,9 @@ public final class JwtUtils {
    * 故对 issueAt 取当前时间的三分钟前，避免这种由于服务器间时钟的微小差距带来的 Token 无法正常使用问题
    */
   public static String createToken(InnerJwtPayload payload, String secret, String issuer, String aud) throws UnsupportedEncodingException {
-    Date issueAt = Date.from(Instant.now().minusSeconds(180));
-    return doCreateToken(payload, secret, issuer, aud, issueAt);
-  }
-
-  private static String doCreateToken(InnerJwtPayload payload, String secret, String issuer, String aud, Date issueAt) throws UnsupportedEncodingException {
     try {
 
       return JWT.create()
-          .withIssuedAt(issueAt)
           .withIssuer(issuer)
           .withAudience(aud)
           .withClaim(CUSTOMER_PAYLOAD, payload.toString())
