@@ -1,5 +1,6 @@
 package com.tehang.common.utility.token
 
+import com.auth0.jwt.exceptions.InvalidClaimException
 import com.tehang.common.TestSpecification
 
 class JwtUtilsSpec extends TestSpecification {
@@ -9,9 +10,7 @@ class JwtUtilsSpec extends TestSpecification {
 
   def setup() {
     payload = InnerJwtPayload.create(10001L, "IOS", true, 20002L, "tester")
-
   }
-
 
   def "test1: create token"() {
     when:
@@ -31,5 +30,25 @@ class JwtUtilsSpec extends TestSpecification {
     then:
     noExceptionThrown()
     payload1 == payload
+  }
+
+  def "test3: issue at future and cannot be used"() {
+    when:
+    Date issueAt = Date.from(new Date().toInstant().plusSeconds(180));
+    def token = JwtUtils.doCreateToken(this.payload, secret, "tester", "testcase", issueAt)
+
+    def payload = JwtUtils.getPayload(token, secret)
+    then:
+    thrown(InvalidClaimException.class)
+  }
+
+  def "test4: issue at past and cannot be used"() {
+    when:
+    Date issueAt = Date.from(new Date().toInstant().minusSeconds(180));
+    def token = JwtUtils.doCreateToken(this.payload, secret, "tester", "testcase", issueAt)
+
+    def payload = JwtUtils.getPayload(token, secret)
+    then:
+    noExceptionThrown()
   }
 }
