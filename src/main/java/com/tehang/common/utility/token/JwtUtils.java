@@ -25,23 +25,27 @@ public final class JwtUtils {
   }
 
   /**
-   * 生成一个新的token
-   *
-   * @return
+   * 生成一个新的 JWT Token
+   * 该 Token 被使用的时间需要在其 issueAt 时间之后，若服务器之间存在时钟差，有概率出现 The token can't be used before 问题
+   * 故对 issueAt 取当前时间的三分钟前，避免这种由于服务器间时钟的微小差距带来的 Token 无法正常使用问题
    */
   public static String createToken(InnerJwtPayload payload, String secret, String issuer, String aud) throws UnsupportedEncodingException {
+    Date issueAt = Date.from(new Date().toInstant().minusSeconds(180));
+    return doCreateToken(payload, secret, issuer, aud, issueAt);
+  }
 
+  private static String doCreateToken(InnerJwtPayload payload, String secret, String issuer, String aud, Date issueAt) throws UnsupportedEncodingException {
     try {
 
       return JWT.create()
-          .withIssuedAt(new Date())
+          .withIssuedAt(issueAt)
           .withIssuer(issuer)
           .withAudience(aud)
           .withClaim(CUSTOMER_PAYLOAD, payload.toString())
           .sign(Algorithm.HMAC256(secret));
-    } catch (UnsupportedEncodingException e) {
-      LOG.debug("create token failed.", e.getMessage());
-      throw e;
+    } catch (UnsupportedEncodingException exception) {
+      LOG.debug("create token failed: {}", exception.getMessage(), exception);
+      throw exception;
     }
   }
 
@@ -56,10 +60,10 @@ public final class JwtUtils {
       tokenDecoded.getPayload();
       InnerJwtPayload payload = InnerJwtPayload.fromJson(tokenDecoded.getClaim(CUSTOMER_PAYLOAD).asString());
       return payload;
-    } catch (UnsupportedEncodingException e) {
+    } catch (UnsupportedEncodingException exception) {
       // ignore
-      LOG.debug("decode token failed.", e.getMessage());
-      throw e;
+      LOG.debug("decode token failed: {}", exception.getMessage(), exception);
+      throw exception;
     }
   }
 
