@@ -30,9 +30,12 @@ public class EmptyResponseContainer {
   private String message;
 
   /**
+   * 返回结果消息
+   */
+  private String debugMsg;
+
+  /**
    * 是否成功
-   *
-   * @return
    */
   @JsonIgnore
   public boolean isSuccess() {

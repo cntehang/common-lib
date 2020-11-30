@@ -26,9 +26,6 @@ buildscript {
 }
 
 apply from: 'build_scripts/build_setups.gradle'
-
-apply from: 'build_scripts/application_version.gradle'
-
 apply from: 'build_scripts/application_dependencies.gradle'
 
 
