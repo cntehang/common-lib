@@ -1,4 +1,0 @@
-version = '1.1.14-beta1'
-jar {
-  archivesBaseName = 'common-lib'
-}

@@ -10,11 +10,9 @@
 
 ## 当前服务如何发布
 
-1. 在 application_version.gradle 文件中，增加版本号；
+1. 在 build_setups.gradle 文件中，增加版本号；
 
-2. 在 build_setups.gradle 文件中，增阿基版本号，号码和上一步的一致；
-
-3. 编译 + 发布：运行命令`./gradlew clean build publish`；
+2. 编译 + 发布：运行命令`./gradlew clean build publish`；
 
 ## 消费者服务如何引用
 
