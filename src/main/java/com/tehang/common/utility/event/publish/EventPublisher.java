@@ -1,7 +1,8 @@
-package com.tehang.common.utility.event;
+package com.tehang.common.utility.event.publish;
 
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
+import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.mq.MqProducer;
 import lombok.AllArgsConstructor;
