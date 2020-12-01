@@ -164,7 +164,7 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
 
     // 将订阅者按EventType进行分组
     this.allSubscribers = subscribersMap.values().stream()
-        .collect(Collectors.groupingByConcurrent(EventSubscriber::getEventType));
+        .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
   }
 
   private Properties getProperties() {

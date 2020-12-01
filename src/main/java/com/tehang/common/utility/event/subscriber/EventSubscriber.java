@@ -10,7 +10,7 @@ public interface EventSubscriber {
   /**
    * 获取订阅的事件类型
    */
-  String getEventType();
+  String subscribedEventType();
 
   /**
    * 获取订阅事件的参数类型
