@@ -191,7 +191,7 @@ public interface BroadcastingEventSubscriber extends EventSubscriber {
 ```java
 @Service
 @AllArgsConstructor
-public final class BudgetUnitDeletedEventSubscriber extends ClusteringEventSubscriber {
+public final class BudgetUnitDeletedEventSubscriber implements ClusteringEventSubscriber {
 
   /**
    * 获取订阅的事件类型
