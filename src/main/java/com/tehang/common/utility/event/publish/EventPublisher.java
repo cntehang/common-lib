@@ -1,7 +1,8 @@
-package com.tehang.common.utility.event;
+package com.tehang.common.utility.event.publish;
 
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
+import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.mq.MqProducer;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -19,6 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Profile("!integration_test")
 public class EventPublisher {
 
   // 北京/上海时间
