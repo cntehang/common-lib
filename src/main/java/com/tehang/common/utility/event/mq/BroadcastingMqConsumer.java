@@ -191,7 +191,9 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
 
   @Override
   public void destroy() {
-    consumer.shutdown();
-    log.debug("MqConsumer shutdown");
+    if (consumer != null) {
+      consumer.shutdown();
+      log.debug("MqConsumer shutdown");
+    }
   }
 }
