@@ -10,6 +10,7 @@ import com.aliyun.openservices.ons.api.PropertyValueConst;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
+import com.tehang.common.utility.event.cache.RefreshableCache;
 import com.tehang.common.utility.event.subscriber.BroadcastingEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -159,11 +161,20 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
   }
 
   private void initEventSubscribers() {
-    // 获取上下文中所有的订阅者
+    // 获取上下文中所有的广播订阅者
     Map<String, BroadcastingEventSubscriber> subscribersMap = applicationContext.getBeansOfType(BroadcastingEventSubscriber.class);
 
+    // 获取所有的缓存实例
+    Map<String, RefreshableCache> refreshableCaches = applicationContext.getBeansOfType(RefreshableCache.class);
+
+    // 合并广播订阅者和所有的缓存实例
+    var subscribers = Stream.concat(
+        subscribersMap.values().stream(),
+        refreshableCaches.values().stream().map(RefreshableCacheAdapter::new) // 将缓存对象转换为RefreshableCacheAdapter
+    );
+
     // 将订阅者按EventType进行分组
-    this.allSubscribers = subscribersMap.values().stream()
+    this.allSubscribers = subscribers
         .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
   }
 
