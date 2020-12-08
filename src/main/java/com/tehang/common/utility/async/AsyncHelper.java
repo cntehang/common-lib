@@ -1,5 +1,6 @@
 package com.tehang.common.utility.async;
 
+import brave.Tracing;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -7,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public final class AsyncHelper {
+
+  private static final String DEFAULT_SPAN_NAME = "async";
 
   private AsyncHelper() {
     // do nothing
@@ -19,6 +22,25 @@ public final class AsyncHelper {
 
       } catch (Exception ex) {
         log.error("async task occurred error, msg: {}", ex.getMessage(), ex);
+      }
+    }).start();
+  }
+
+  public static void async(Tracing tracing, Runnable runnable) {
+    var tracer = tracing.tracer();
+    var parent = tracing.currentTraceContext().get();
+
+    new Thread(() -> {
+      var span = tracer.startScopedSpanWithParent(DEFAULT_SPAN_NAME, parent);
+
+      try {
+        runnable.run();
+
+      } catch (Exception ex) {
+        log.error("async task occurred error, msg: {}", ex.getMessage(), ex);
+
+      } finally {
+        span.finish();
       }
     }).start();
   }
