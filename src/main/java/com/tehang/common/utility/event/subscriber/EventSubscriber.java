@@ -8,9 +8,9 @@ import com.tehang.common.utility.event.DomainEvent;
 public interface EventSubscriber {
 
   /**
-   * 获取订阅的事件类型
+   * 获取订阅的事件类型数组，支持一个订阅者订阅多个事件类型，但需要保证事件参数相同
    */
-  String subscribedEventType();
+  String[] subscribedEventTypes();
 
   /**
    * 获取订阅事件的参数类型

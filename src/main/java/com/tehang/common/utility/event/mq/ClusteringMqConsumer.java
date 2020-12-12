@@ -10,7 +10,6 @@ import com.aliyun.openservices.ons.api.PropertyValueConst;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
-import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
@@ -20,9 +19,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
@@ -161,8 +164,28 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     Map<String, ClusteringEventSubscriber> subscribersMap = applicationContext.getBeansOfType(ClusteringEventSubscriber.class);
 
     // 将订阅者按EventType进行分组
-    this.allSubscribers = subscribersMap.values().stream()
-        .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
+    this.allSubscribers = createSubscribersMap(subscribersMap.values());
+  }
+
+  /**
+   * 创建subscribers的map结构，key为eventType
+   */
+  private static ConcurrentMap<String, List<ClusteringEventSubscriber>> createSubscribersMap(Collection<ClusteringEventSubscriber> subscribers) {
+    var result = new ConcurrentHashMap<String, List<ClusteringEventSubscriber>>();
+    for (var subscriber : subscribers) {
+      if (subscriber.subscribedEventTypes() != null) {
+        for (var eventType : subscriber.subscribedEventTypes()) {
+          // 对订阅者订阅的每一种eventType依次处理
+          var subscriberList = result.get(eventType);
+          if (subscriberList != null) {
+            subscriberList.add(subscriber);
+          } else {
+            result.put(eventType, Collections.singletonList(subscriber));
+          }
+        }
+      }
+    }
+    return result;
   }
 
   private Properties getProperties() {

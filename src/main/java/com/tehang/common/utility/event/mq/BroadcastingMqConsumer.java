@@ -12,7 +12,6 @@ import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.cache.RefreshableCache;
 import com.tehang.common.utility.event.subscriber.BroadcastingEventSubscriber;
-import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
@@ -22,9 +21,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -174,8 +175,28 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
     );
 
     // 将订阅者按EventType进行分组
-    this.allSubscribers = subscribers
-        .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
+    this.allSubscribers = createSubscribersMap(subscribers.collect(Collectors.toList()));
+  }
+
+  /**
+   * 创建subscribers的map结构，key为eventType
+   */
+  private static ConcurrentMap<String, List<BroadcastingEventSubscriber>> createSubscribersMap(List<BroadcastingEventSubscriber> subscribers) {
+    var result = new ConcurrentHashMap<String, List<BroadcastingEventSubscriber>>();
+    for (var subscriber : subscribers) {
+      if (subscriber.subscribedEventTypes() != null) {
+        for (var eventType : subscriber.subscribedEventTypes()) {
+          // 对订阅者订阅的每一种eventType依次处理
+          var subscriberList = result.get(eventType);
+          if (subscriberList != null) {
+            subscriberList.add(subscriber);
+          } else {
+            result.put(eventType, Collections.singletonList(subscriber));
+          }
+        }
+      }
+    }
+    return result;
   }
 
   private Properties getProperties() {

@@ -16,7 +16,7 @@ public interface RefreshableCache {
   /**
    * 获取订阅的事件类型
    */
-  String subscribedEventType();
+  String[] subscribedEventTypes();
 
   /**
    * 获取订阅事件的参数类型, 默认为DefaultEvent, 子类可以重写，以实现特定的刷新机制

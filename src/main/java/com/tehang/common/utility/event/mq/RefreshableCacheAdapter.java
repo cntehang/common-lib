@@ -16,8 +16,8 @@ class RefreshableCacheAdapter implements BroadcastingEventSubscriber {
   }
 
   @Override
-  public String subscribedEventType() {
-    return refreshableCache.subscribedEventType();
+  public String[] subscribedEventTypes() {
+    return refreshableCache.subscribedEventTypes();
   }
 
   @Override
