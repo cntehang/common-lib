@@ -70,4 +70,7 @@ dependencies {
 
   // jpa
   compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+  // ModelMapper
+  compile('org.modelmapper:modelmapper:2.3.9')
 }
