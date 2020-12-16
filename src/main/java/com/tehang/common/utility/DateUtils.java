@@ -545,7 +545,7 @@ public final class DateUtils {
 
     DateTime beginDateTime = DateTime.parse(beginDate, SIMPLE_DATE_PATTERN);
     DateTime endDateTime = DateTime.parse(endDate, SIMPLE_DATE_PATTERN);
-    return Days.daysBetween(beginDateTime, endDateTime).getDays() + 1;
+    return Days.daysBetween(beginDateTime, endDateTime).getDays();
   }
 
   /**
