@@ -93,6 +93,17 @@ public final class JsonUtils {
     }
   }
 
+  /**
+   * convert json string to list
+   */
+  public static <T> List<T> toList(Reader reader, Class<T> clazz) {
+    try {
+      return reader == null ? null : MAPPER.readValue(reader, MAPPER.getTypeFactory().constructCollectionType(List.class, clazz));
+
+    } catch (IOException ex) {
+      throw new SystemErrorException("toList error: " + ex.getMessage(), ex);
+    }
+  }
 
   /**
    * convert object to class
@@ -109,8 +120,7 @@ public final class JsonUtils {
     public void serialize(Long value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
       if (value == null) {
         gen.writeNull();
-      }
-      else {
+      } else {
         gen.writeString(value.toString());
       }
     }
