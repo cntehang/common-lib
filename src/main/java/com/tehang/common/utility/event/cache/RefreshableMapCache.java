@@ -67,13 +67,6 @@ public abstract class RefreshableMapCache<T> implements RefreshableCache {
   protected abstract List<T> getDataItemsActually();
 
   /**
-   * 缓存数据的加载方式：延迟加载 or 提前加载, 默认为延迟加载
-   */
-  protected CacheDataFetchType fetchType() {
-    return CacheDataFetchType.LAZY;
-  }
-
-  /**
    * 刷新缓存
    */
   @Override
