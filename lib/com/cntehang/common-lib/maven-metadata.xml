@@ -3,7 +3,7 @@
   <groupId>com.cntehang</groupId>
   <artifactId>common-lib</artifactId>
   <versioning>
-    <release>1.1.18</release>
+    <release>1.1.19</release>
     <versions>
       <version>1.1.2</version>
       <version>1.1.3</version>
@@ -26,7 +26,8 @@
       <version>1.1.16</version>
       <version>1.1.17</version>
       <version>1.1.18</version>
+      <version>1.1.19</version>
     </versions>
-    <lastUpdated>20201217101150</lastUpdated>
+    <lastUpdated>20201221094249</lastUpdated>
   </versioning>
 </metadata>
