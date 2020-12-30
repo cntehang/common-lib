@@ -1,12 +1,6 @@
-/*
- * Copyright (c) 2020 MAMCHARGE 深圳智链物联科技有限公司. <http://www.mamcharge.com>
- *
- */
-
 package com.tehang.common.utility
 
 import com.tehang.common.TestSpecification
-import org.apache.commons.lang3.StringUtils
 import spock.lang.Shared
 
 import java.time.Instant
