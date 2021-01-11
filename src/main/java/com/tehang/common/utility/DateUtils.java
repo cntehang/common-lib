@@ -1,5 +1,6 @@
 package com.tehang.common.utility;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -21,6 +22,7 @@ import java.time.ZoneId;
  * 采用joda工具包实现.
  */
 @Validated
+@Slf4j
 public final class DateUtils {
 
   private static final String INVALID_DATE_TIME_PATTERN = "%s时间格式非法";
@@ -839,6 +841,17 @@ public final class DateUtils {
     if (StringUtils.isBlank(dateTimeString)) {
       return null;
     }
-    return JAVA_DATE_TIME_FORMATTER.parse(dateTimeString, Instant::from);
+
+    Instant result = null;
+
+    try {
+      result = JAVA_DATE_TIME_FORMATTER.parse(dateTimeString, Instant::from);
+
+    } catch (Exception ex) {
+      log.error("instantFromString occurred error, dateTimeString: {}, ex: {}", dateTimeString, ex.getMessage(), ex);
+    }
+
+    return result;
   }
+
 }
