@@ -836,6 +836,9 @@ public final class DateUtils {
    * String 格式化为 Instant
    */
   public static Instant instantFromString(String dateTimeString) {
+    if (StringUtils.isBlank(dateTimeString)) {
+      return null;
+    }
     return JAVA_DATE_TIME_FORMATTER.parse(dateTimeString, Instant::from);
   }
 }
