@@ -19,15 +19,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class TmcJdbcTemplate {
+public class CustomizeJdbcTemplate {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TmcJdbcTemplate.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CustomizeJdbcTemplate.class);
 
   private NamedParameterJdbcTemplate jdbcTemplate;
   private JdbcTemplate plainJdbcTemplate;
 
-  public TmcJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                         JdbcTemplate plainJdbcTemplate) {
+  public CustomizeJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                               JdbcTemplate plainJdbcTemplate) {
     this.jdbcTemplate = namedParameterJdbcTemplate;
     this.plainJdbcTemplate = plainJdbcTemplate;
   }
