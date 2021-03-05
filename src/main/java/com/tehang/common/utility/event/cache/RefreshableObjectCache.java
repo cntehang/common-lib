@@ -20,16 +20,8 @@ public abstract class RefreshableObjectCache<T> implements RefreshableCache {
    */
   protected final T getCachedData() {
     synchronized (lock) {
-      assertDataLoaded();
+      ensureDataItemsLoaded();
       return data;
-    }
-  }
-
-  private void assertDataLoaded() {
-    if (data == null) {
-      log.debug("starting load cache data");
-      data = getDataActually();
-      log.debug("cache data loaded");
     }
   }
 
@@ -47,9 +39,18 @@ public abstract class RefreshableObjectCache<T> implements RefreshableCache {
       data = null;
 
       if (fetchType() == CacheDataFetchType.EAGER) {
-        assertDataLoaded();
+        ensureDataItemsLoaded();
       }
       log.debug("cache refreshed, cache class: {}", getClass().getSimpleName());
     }
   }
+
+  private void ensureDataItemsLoaded() {
+    if (data == null) {
+      log.debug("starting load cache data");
+      data = getDataActually();
+      log.debug("cache data loaded");
+    }
+  }
+
 }
