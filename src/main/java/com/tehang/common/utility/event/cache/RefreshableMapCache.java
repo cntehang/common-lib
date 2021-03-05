@@ -26,10 +26,10 @@ public abstract class RefreshableMapCache<T> implements RefreshableCache {
    */
   public final T getDataItem(String key) {
     synchronized (lock) {
-      assertDataItemsLoaded();
+      ensureDataItemsLoaded();
 
       var result = cacheItemsMap.get(key);
-      log.debug("Exit getItem, item: {}", result);
+      log.trace("Exit getItem, item: {}", result);
       return result;
     }
   }
@@ -39,20 +39,8 @@ public abstract class RefreshableMapCache<T> implements RefreshableCache {
    */
   public final List<T> getAllDataItems() {
     synchronized (lock) {
-      assertDataItemsLoaded();
+      ensureDataItemsLoaded();
       return new ArrayList<>(cacheItemsMap.values());
-    }
-  }
-
-  private void assertDataItemsLoaded() {
-    if (cacheItemsMap == null) {
-      log.debug("starting load cache data");
-
-      List<T> dataItems = getDataItemsActually();
-      cacheItemsMap = dataItems.stream()
-          .collect(Collectors.toMap(this::getCacheKey, Function.identity(), (v1, v2) -> v1));
-
-      log.debug("cache data loaded, size: {}", dataItems.size());
     }
   }
 
@@ -75,9 +63,22 @@ public abstract class RefreshableMapCache<T> implements RefreshableCache {
       cacheItemsMap = null;
 
       if (fetchType() == CacheDataFetchType.EAGER) {
-        assertDataItemsLoaded();
+        ensureDataItemsLoaded();
       }
-      log.debug("cache refreshed, cache class: {}", this.getClass().getSimpleName());
+      log.trace("cache refreshed, cache class: {}", this.getClass().getSimpleName());
     }
   }
+
+  private void ensureDataItemsLoaded() {
+    if (cacheItemsMap == null) {
+      log.debug("starting load cache data");
+
+      List<T> dataItems = getDataItemsActually();
+      cacheItemsMap = dataItems.stream()
+          .collect(Collectors.toMap(this::getCacheKey, Function.identity(), (v1, v2) -> v1));
+
+      log.debug("cache data loaded, size: {}", dataItems.size());
+    }
+  }
+
 }
