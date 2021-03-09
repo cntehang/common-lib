@@ -1,6 +1,6 @@
-package com.tehang.tmc.services.utility.jpa.converter;
+package com.tehang.common.utility.converter;
 
-import com.tehang.tmc.services.utility.JsonUtils;
+import com.tehang.common.utility.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.AttributeConverter;
