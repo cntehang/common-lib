@@ -1,5 +1,6 @@
 package com.tehang.common.utility.event;
 
+import com.tehang.common.utility.ApplicationContextProvider;
 import com.tehang.common.utility.event.mq.BroadcastingMqConsumer;
 import com.tehang.common.utility.event.mq.ClusteringMqConsumer;
 import com.tehang.common.utility.event.mq.MqConfig;
@@ -21,7 +22,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({MqConfig.class, MqProducer.class, EventPublisher.class, ClusteringMqConsumer.class, BroadcastingMqConsumer.class})
+@Import({MqConfig.class,
+    MqProducer.class,
+    EventPublisher.class,
+    ClusteringMqConsumer.class,
+    BroadcastingMqConsumer.class,
+    ApplicationContextProvider.class})
 public @interface EnableDomainEvent {
 
 }

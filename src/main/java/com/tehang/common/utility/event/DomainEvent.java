@@ -1,11 +1,11 @@
 package com.tehang.common.utility.event;
 
 import brave.Tracer;
+import com.tehang.common.utility.ApplicationContextProvider;
 import com.tehang.common.utility.JsonUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.web.context.ContextLoader;
 
 import java.util.UUID;
 
@@ -63,7 +63,7 @@ public abstract class DomainEvent {
    */
   private static String getCurrentTraceId() {
     // 获取当前的springContext
-    var context = ContextLoader.getCurrentWebApplicationContext();
+    var context = ApplicationContextProvider.getApplicationContext();
     if (context != null) {
       try {
         // 获取当前上下文的traceId, 一个Long型数字
