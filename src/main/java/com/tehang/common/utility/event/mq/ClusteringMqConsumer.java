@@ -2,6 +2,7 @@ package com.tehang.common.utility.event.mq;
 
 import brave.ScopedSpan;
 import brave.Tracer;
+import brave.propagation.TraceContext;
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.Consumer;
 import com.aliyun.openservices.ons.api.ONSFactory;
@@ -89,17 +90,15 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
       String body = new String(message.getBody(), Charset.forName("UTF-8"));
       log.debug("ClusteringMqConsumer start, tag:{}, key:{}, body:{}", tag, key, body);
 
-      ScopedSpan span = tracer.startScopedSpan("mqConsumer");// start a new tracer for each message
       try {
         // 处理收到的mq消息
         processMessage(tag, body);
         return Action.CommitMessage;
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         String errorMsg = "ClusteringMqConsumer error:" + ex.getMessage();
         log.error(errorMsg, ex);
         return Action.ReconsumeLater;
-      } finally {
-        span.finish(); //end span
       }
     });
 
@@ -118,22 +117,49 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
     if (isNotEmpty(subscribers)) {
       // 根据第一个订阅者的EventClass反序列化得到DomainEvent参数
-      // 约定：所有相同EventType的订阅者需要使用相当的事件参数
+      // 约定：所有相同EventType的订阅者需要使用相同的事件参数
       var firstSubscriber = subscribers.get(0);
       DomainEvent event = JsonUtils.toClass(body, firstSubscriber.getEventClass());
-      log.debug("DomainEvent created: {}", event);
 
-      for (var subscriber : subscribers) {
-        // 依次调用每个订阅者的处理逻辑
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
-        subscriber.handleEvent(event);
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
+      // 开启新的span记录日志, traceId取自event.traceId
+      ScopedSpan span = tracer.startScopedSpanWithParent("mqConsumer", createTraceContext(event));
+      try {
+        log.debug("DomainEvent created: {}", event);
+
+        for (var subscriber : subscribers) {
+          // 依次调用每个订阅者的处理逻辑
+          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
+          subscriber.handleEvent(event);
+          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
+        }
+        log.debug("ClusteringMqConsumer completed, tag:{}", tag);
       }
-      log.debug("ClusteringMqConsumer completed, tag:{}", tag);
-
-    } else {
+      catch (Exception ex) {
+        log.error("ClusteringMqConsumer error, msg: {}, event: {}", ex.getMessage(), event, ex);
+        throw ex;
+      }
+      finally {
+        span.finish(); //end span
+      }
+    }
+    else {
       log.error("ClusteringMqConsumer error, unknown tag:{}", tag);
     }
+  }
+
+  /**
+   * 根据event.traceId创建traceContext
+   */
+  private static TraceContext createTraceContext(DomainEvent event) {
+    TraceContext traceContext = null;
+    if (event != null && StringUtils.isNotBlank(event.getTraceId())) {
+      long traceId = Long.parseLong(event.getTraceId());
+      traceContext = TraceContext.newBuilder()
+          .traceId(traceId)
+          .spanId(traceId)
+          .build();
+    }
+    return traceContext;
   }
 
   private String getClusteringConsumerTags() {
