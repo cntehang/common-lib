@@ -1,8 +1,11 @@
 package com.tehang.common.utility.event;
 
+import brave.Tracer;
 import com.tehang.common.utility.JsonUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.web.context.ContextLoader;
 
 import java.util.UUID;
 
@@ -33,6 +36,11 @@ public abstract class DomainEvent {
    */
   private String publisher;
 
+  /**
+   * 发布事件所在的TraceId
+   */
+  private String traceId;
+
   //-------------- 构造函数 --------------
   /**
    * 默认构造函数
@@ -47,6 +55,27 @@ public abstract class DomainEvent {
   public DomainEvent(String eventType) {
     this.key = UUID.randomUUID().toString();
     this.eventType = eventType;
+    this.traceId = getCurrentTraceId();
+  }
+
+  /**
+   * 获取当前上下文中的traceId
+   */
+  private static String getCurrentTraceId() {
+    // 获取当前的springContext
+    var context = ContextLoader.getCurrentWebApplicationContext();
+    if (context != null) {
+      try {
+        // 获取当前上下文的traceId, 一个Long型数字
+        Tracer tracer = context.getBean(Tracer.class);
+        return String.valueOf(tracer.currentSpan().context().traceId());
+      }
+      catch (NoSuchBeanDefinitionException ex) {
+        // 未启用Tracer时，直接返回null
+        return null;
+      }
+    }
+    return null;
   }
 
   //-------------- 其他 --------------
