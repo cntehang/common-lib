@@ -5,6 +5,7 @@ import com.tehang.common.utility.ApplicationContextProvider;
 import com.tehang.common.utility.JsonUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@Slf4j
 public abstract class DomainEvent {
 
   /**
@@ -63,16 +65,28 @@ public abstract class DomainEvent {
    */
   private static String getCurrentTraceId() {
     // 获取当前的springContext
-    var context = ApplicationContextProvider.getApplicationContext();
-    if (context != null) {
-      try {
-        // 获取当前上下文的traceId, 一个Long型数字
-        Tracer tracer = context.getBean(Tracer.class);
-        return String.valueOf(tracer.currentSpan().context().traceId());
-      }
-      catch (NoSuchBeanDefinitionException ex) {
-        // 未启用Tracer时，直接返回null
-        return null;
+    var applicationContext = ApplicationContextProvider.getApplicationContext();
+    if (applicationContext == null) {
+      return null;
+    }
+
+    Tracer tracer;
+    try {
+      // 获取当前上下文的tracer
+      tracer = applicationContext.getBean(Tracer.class);
+    }
+    catch (NoSuchBeanDefinitionException ex) {
+      // 未启用Tracer时，直接返回null
+      log.debug("cannot found Tracer bean");
+      return null;
+    }
+
+    if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
+      var traceContext = tracer.currentSpan().context();
+      var traceId = traceContext.traceId();
+      if (traceId != 0) {
+        log.debug("Exit getCurrentTraceId: {}", traceId);
+        return String.valueOf(traceId);
       }
     }
     return null;
