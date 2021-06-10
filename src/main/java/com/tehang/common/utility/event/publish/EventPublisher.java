@@ -1,8 +1,10 @@
 package com.tehang.common.utility.event.publish;
 
+import com.google.common.collect.Lists;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
+import com.tehang.common.utility.event.mq.MessageProducerException;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.mq.MqProducer;
 import lombok.AllArgsConstructor;
@@ -11,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -25,8 +29,11 @@ public class EventPublisher {
   // 北京/上海时间
   private static final String ZONE_SHANGHAI = "+08:00";
 
-  private MqProducer mqProducer;
-  private MqConfig mqConfig;
+  // 发送消息时每次重试的延迟秒数, 依次延迟1秒，3秒，10秒
+  private static final List<Integer> RE_TRY_SEND_MESSAGE_DELAYS_SECONDS = Lists.newArrayList(1, 3, 10);
+
+  private final MqProducer mqProducer;
+  private final MqConfig mqConfig;
 
   /**
    * 发布领域事件
@@ -42,9 +49,44 @@ public class EventPublisher {
     //发送事件到消息队列
     String tag = getTag(event);
     String body = JsonUtils.toJson(event);
-    mqProducer.sendToQueue(tag, event.getKey(), body);
 
-    log.debug("publish event successful, tag: {}, body: {}", tag, body);
+    sendEventMessage(event, tag, body);
+  }
+
+  private void sendEventMessage(DomainEvent event, String tag, String body) {
+    int retryTimes = 0;
+    while (true) {
+      try {
+        // 发送消息，发送成功后直接返回
+        mqProducer.sendToQueue(tag, event.getKey(), body);
+        log.debug("publish event successful, tag: {}, body: {}", tag, body);
+        return;
+      }
+      catch (MessageProducerException ex) {
+        // 发布事件失败，需要进行3次重试
+        log.debug("publish event failed, tag: {}, body: {}, msg: {}", tag, body, ex.getMessage(), ex);
+        if (retryTimes < RE_TRY_SEND_MESSAGE_DELAYS_SECONDS.size()) {
+          long sleepMillis = RE_TRY_SEND_MESSAGE_DELAYS_SECONDS.get(retryTimes) * 1000;
+          sleepForMillis(sleepMillis);
+          retryTimes++;
+        }
+        else {
+          // 重试次数达到最大值，抛出异常，发布事件失败！
+          log.error("publish event finally failed, tag: {}, body: {}, msg: {}", tag, body, ex.getMessage(), ex);
+          throw ex;
+        }
+      }
+    }
+  }
+
+  private void sleepForMillis(long sleepMillis) {
+    try {
+      Thread.sleep(sleepMillis);
+    }
+    catch (InterruptedException ex) {
+      log.warn(ex.getMessage(), ex);
+      throw new SystemErrorException(ex.getMessage(), ex);
+    }
   }
 
   /**
