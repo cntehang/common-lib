@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -39,6 +40,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @Component
 @Slf4j
 public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
+
+  // 用来防重处理的redisKey的过期时间：24小时
+  private static final int REDIS_KEY_TIMEOUT_HOURS = 24;
 
   @Autowired
   private MqConfig mqConfig;
@@ -165,10 +169,11 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
     // 设置为【消费中】状态，并返回上次的消费状态
     var oldStatusStr = redisOps.getAndSet(EventConsumeStatus.Consuming.toString());
-    var oldStatus = EnumUtils.getEnum(EventConsumeStatus.class, oldStatusStr);
+    redisOps.expire(REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
 
+    var oldStatus = EnumUtils.getEnum(EventConsumeStatus.class, oldStatusStr);
     if (oldStatus == null) {
-      // 老状态不存在，说明是第一次处理
+      // 老状态不存在，说明是第一次进来，直接进行消息处理
       handleEventActually(subscriber, event, redisOps);
       return;
     }
@@ -180,7 +185,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
       case ConsumeSucceeded:
         // 老状态为【消费成功】，表示此次为多余的重复调用，直接返回阿里云消费成功，下次不再重试
-        redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString());
+        redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
         break;
 
       case ConsumeFailed:
@@ -199,11 +204,11 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
       subscriber.handleEvent(event);
 
       // 处理成功后设置状态为【消费成功】
-      redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString());
+      redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
     }
     catch (Exception ex) {
       // 设置失败后设置状态为【消费失败】，并抛出异常，下次重试
-      redisOps.set(EventConsumeStatus.ConsumeFailed.toString());
+      redisOps.set(EventConsumeStatus.ConsumeFailed.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
       throw ex;
     }
   }
