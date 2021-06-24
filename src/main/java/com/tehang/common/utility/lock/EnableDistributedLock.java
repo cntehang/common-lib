@@ -1,5 +1,6 @@
 package com.tehang.common.utility.lock;
 
+import com.tehang.common.utility.redis.CommonRedisOperator;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -17,7 +18,8 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @Import({
-    DistributedLockFactory.class
+    DistributedLockFactory.class,
+    CommonRedisOperator.class
 })
 public @interface EnableDistributedLock {
 
