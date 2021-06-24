@@ -42,7 +42,7 @@ public class OpenJpaSessionAspect implements ApplicationContextAware {
    * @return
    * @throws Throwable
    */
-  @Around("@annotation(com.tehang.tmc.staff.utility.jpa.OpenJpaSession)")
+  @Around("@annotation(com.tehang.common.utility.db.jpa.OpenJpaSession)")
   public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
     boolean wasOpened;

@@ -1,6 +1,6 @@
 package com.tehang.common.utility.lock;
 
-import com.tehang.common.utility.redis.TmcRedisOperator;
+import com.tehang.common.utility.redis.CommonRedisOperator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class DistributedLockFactory {
   private static final long LOCK_EXPIRED_MILLI_SECONDS = 30000;  //锁的过期时间
   private static final long LOCK_TIME_OUT_MILLI_SECONDS = 30000; //获取锁的超时时间，对于阻塞型锁有用
 
-  private final TmcRedisOperator redisOperator;
+  private final CommonRedisOperator redisOperator;
 
   /**
    * 获取锁, 非阻塞的，当获取不到锁时，将直接抛出LockNotAcquiredException异常

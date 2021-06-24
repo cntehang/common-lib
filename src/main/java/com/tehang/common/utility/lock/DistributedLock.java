@@ -1,6 +1,6 @@
 package com.tehang.common.utility.lock;
 
-import com.tehang.common.utility.redis.TmcRedisOperator;
+import com.tehang.common.utility.redis.CommonRedisOperator;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 public class DistributedLock implements AutoCloseable {
 
   private final String lockKey;
-  private final TmcRedisOperator redisOperator;
+  private final CommonRedisOperator redisOperator;
 
-  public DistributedLock(String lockKey, TmcRedisOperator redisOperator) {
+  public DistributedLock(String lockKey, CommonRedisOperator redisOperator) {
     this.lockKey = lockKey;
     this.redisOperator = redisOperator;
   }

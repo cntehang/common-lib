@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @AllArgsConstructor
-public class TmcRedisOperator {
+public class CommonRedisOperator {
 
   private final StringRedisTemplate stringRedisTemplate;
 

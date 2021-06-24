@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @Import({
-    TmcRedisOperator.class
+    CommonRedisOperator.class
 })
 public @interface EnableRedisOperator {
 
