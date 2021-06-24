@@ -1,7 +1,5 @@
-package com.tehang.common.utility.db;
+package com.tehang.common.utility.lock;
 
-import com.tehang.common.utility.db.jpa.OpenJpaSessionAspect;
-import com.tehang.common.utility.db.jpa.TransactionHelper;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -12,17 +10,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用特航数据访问相关的辅助类，包括jdbcTemplate, OpenJpaSession, TransactionHelper等。
+ * 启用分布式锁: DistributedLockFactory
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 @Import({
-    CommonJdbcTemplate.class,
-    OpenJpaSessionAspect.class,
-    TransactionHelper.class
+    DistributedLockFactory.class
 })
-public @interface EnableTeHangDbUtils {
+public @interface EnableDistributedLock {
 
 }

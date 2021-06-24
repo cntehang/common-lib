@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class TmcJdbcTemplate {
+public class CommonJdbcTemplate {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
   private final JdbcTemplate plainJdbcTemplate;
