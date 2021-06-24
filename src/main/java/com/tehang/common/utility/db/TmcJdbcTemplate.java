@@ -1,9 +1,9 @@
 package com.tehang.common.utility.db;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -19,18 +19,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
+@AllArgsConstructor
 public class TmcJdbcTemplate {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TmcJdbcTemplate.class);
-
-  private NamedParameterJdbcTemplate jdbcTemplate;
-  private JdbcTemplate plainJdbcTemplate;
-
-  public TmcJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                         JdbcTemplate plainJdbcTemplate) {
-    this.jdbcTemplate = namedParameterJdbcTemplate;
-    this.plainJdbcTemplate = plainJdbcTemplate;
-  }
+  private final NamedParameterJdbcTemplate jdbcTemplate;
+  private final JdbcTemplate plainJdbcTemplate;
 
   /**
    * 列表查询
@@ -256,7 +250,7 @@ public class TmcJdbcTemplate {
     String total = jdbcTemplate.queryForObject(countSql, parameter, String.class);
 
     if (StringUtils.isBlank(total)) {
-      LOG.warn("执行count语句返回: 【{}】，sql: {}", total, sql);
+      log.warn("执行count语句返回: 【{}】，sql: {}", total, sql);
       total = "0";
     }
     return Long.parseLong(total);
@@ -267,7 +261,7 @@ public class TmcJdbcTemplate {
     String total = jdbcTemplate.queryForObject(countSql, parameter, String.class);
 
     if (StringUtils.isBlank(total)) {
-      LOG.warn("执行count语句返回: 【{}】，sql: {}", total, sql);
+      log.warn("执行count语句返回: 【{}】，sql: {}", total, sql);
       total = "0";
     }
     return Long.parseLong(total);
