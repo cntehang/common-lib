@@ -33,7 +33,7 @@ apply from: 'build_scripts/application_dependencies.gradle'
 apply from: 'build_scripts/quality_assurance/checkstyle.gradle'
 apply from: 'build_scripts/quality_assurance/pmd.gradle'
 
-version = '1.2.18'
+version = this.publishVersion
 group = 'com.tehang.common'
 sourceCompatibility = '11'
 
