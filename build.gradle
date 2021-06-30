@@ -32,3 +32,26 @@ apply from: 'build_scripts/application_dependencies.gradle'
 // 相关代码检查
 apply from: 'build_scripts/quality_assurance/checkstyle.gradle'
 apply from: 'build_scripts/quality_assurance/pmd.gradle'
+
+version = this.publishVersion
+group = 'com.tehang.common'
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      artifact("build/libs/common-lib-$version" + ".jar") {
+        extension 'jar'
+      }
+    }
+  }
+  repositories {
+    maven {
+      name 'nexus'
+      url "http://nexus.itehang.cn/repository/maven-releases/"
+      credentials {
+        username project.repoUser
+        password project.repoPassword
+      }
+    }
+  }
+}
