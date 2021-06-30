@@ -35,7 +35,6 @@ apply from: 'build_scripts/quality_assurance/pmd.gradle'
 
 version = this.publishVersion
 group = 'com.tehang.common'
-sourceCompatibility = '11'
 
 publishing {
   publications {
