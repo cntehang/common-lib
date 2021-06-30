@@ -28,12 +28,6 @@ compileJava {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
-
-// Specify the gradle wrapper version
-wrapper {
-  gradleVersion = '5.4'
-}
-
 // 已作废，改用发布到私有nexus
 //publishing {
 //  publications {
