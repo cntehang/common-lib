@@ -35,7 +35,7 @@ apply from: 'build_scripts/quality_assurance/pmd.gradle'
 
 version = '1.2.18'
 group = 'com.tehang.common'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 apply plugin: 'maven-publish'
 publishing {
