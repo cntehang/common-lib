@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
- * 集群消息消费者
+ * 集群消息消费者.
  */
 @Component
 @Slf4j
@@ -57,17 +57,17 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
   private StringRedisTemplate redisTemplate;
 
   /**
-   * 阿里云底层的消息消费者, 在程序启动时创建并初始化
+   * 阿里云底层的消息消费者, 在程序启动时创建并初始化.
    */
   private Consumer consumer;
 
   /**
-   * 当前服务中集群事件的订阅者集合, key为EventType
+   * 当前服务中集群事件的订阅者集合, key为EventType.
    */
   private ConcurrentMap<String, List<ClusteringEventSubscriber>> allSubscribers;
 
   /**
-   * 在SpringBoot应用程序启动后, 开启消费者订阅
+   * 在SpringBoot应用程序启动后, 开启消费者订阅.
    */
   @Override
   @SuppressWarnings("all")
@@ -160,8 +160,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
   }
 
   /**
-   * 调用订阅者的处理逻辑，考虑并发情况下处理逻辑的幂等性，避免重复处理
-   * 参考: https://www.yuque.com/wanguoyou/mzkmxr/rsdefp
+   * 调用订阅者的处理逻辑，考虑并发情况下处理逻辑的幂等性，避免重复处理 参考: https://www.yuque.com/wanguoyou/mzkmxr/rsdefp
    */
   private void handleEventForSubscriber(ClusteringEventSubscriber subscriber, DomainEvent event) {
     var redisKey = getRedisKey(subscriber, event);
@@ -214,9 +213,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
   }
 
   private static String getRedisKey(ClusteringEventSubscriber subscriber, DomainEvent event) {
-    return String.format("MQ_Consumer_%s_%s",
-        event.getKey(),
-        subscriber.getClass().getSimpleName());
+    return String.format("MQ_Consumer_%s_%s", event.getKey(), subscriber.getClass().getSimpleName());
   }
 
   /**
@@ -226,29 +223,24 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     TraceContext traceContext = null;
     if (event != null && StringUtils.isNotBlank(event.getTraceId())) {
       long traceId = Long.parseLong(event.getTraceId());
-      traceContext = TraceContext.newBuilder()
-          .traceId(traceId)
-          .spanId(traceId)
-          .build();
+      traceContext = TraceContext.newBuilder().traceId(traceId).spanId(traceId).build();
     }
     return traceContext;
   }
 
   private String getClusteringConsumerTags() {
-    return this.allSubscribers.keySet().stream()
-        .map(this::getTagFromEventType)
-        .collect(Collectors.joining("||"));
+    return this.allSubscribers.keySet().stream().map(this::getTagFromEventType).collect(Collectors.joining("||"));
   }
 
   /**
-   * 根据EventType获取对应的tag: TagPrefix + EventType
+   * 根据EventType获取对应的tag: TagPrefix + EventType.
    */
-  private String getTagFromEventType( String eventType) {
+  private String getTagFromEventType(String eventType) {
     return trimToEmpty(mqConfig.getEventTagPrefix()) + eventType;
   }
 
   /**
-   * 根据tag获取对应的EventType: 将Tag移除tagPrefix
+   * 根据tag获取对应的EventType: 将Tag移除tagPrefix.
    */
   private String getEventTypeFromTag(String tag) {
     return StringUtils.removeStart(tag, trimToEmpty(mqConfig.getEventTagPrefix()));
@@ -259,8 +251,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     Map<String, ClusteringEventSubscriber> subscribersMap = applicationContext.getBeansOfType(ClusteringEventSubscriber.class);
 
     // 将订阅者按EventType进行分组
-    this.allSubscribers = subscribersMap.values().stream()
-        .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
+    this.allSubscribers = subscribersMap.values().stream().collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
   }
 
   private Properties getProperties() {

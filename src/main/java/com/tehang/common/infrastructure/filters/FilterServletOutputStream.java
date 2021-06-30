@@ -14,9 +14,7 @@ class FilterServletOutputStream extends ServletOutputStream {
   private transient DataOutputStream output;
 
   /**
-   * 构造函数
-   *
-   * @param output
+   * 构造函数.
    */
   public FilterServletOutputStream(OutputStream output) {
     super();
@@ -24,8 +22,7 @@ class FilterServletOutputStream extends ServletOutputStream {
   }
 
   /**
-   * @param value
-   * @throws IOException
+   * write.
    */
   @Override
   public void write(int value) throws IOException {
@@ -34,11 +31,6 @@ class FilterServletOutputStream extends ServletOutputStream {
 
   /**
    * write.
-   *
-   * @param bytes
-   * @param off
-   * @param len
-   * @throws IOException
    */
   @Override
   public void write(byte[] bytes, int off, int len) throws IOException {
@@ -47,9 +39,6 @@ class FilterServletOutputStream extends ServletOutputStream {
 
   /**
    * write.
-   *
-   * @param bytes
-   * @throws IOException
    */
   @Override
   public void write(byte[] bytes) throws IOException {
@@ -58,8 +47,6 @@ class FilterServletOutputStream extends ServletOutputStream {
 
   /**
    * is ready.
-   *
-   * @return
    */
   @Override
   public boolean isReady() {
@@ -68,8 +55,6 @@ class FilterServletOutputStream extends ServletOutputStream {
 
   /**
    * set listener.
-   *
-   * @param writeListener
    */
   @Override
   public void setWriteListener(WriteListener writeListener) {

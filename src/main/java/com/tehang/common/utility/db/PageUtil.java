@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 分页相关工具类
+ * 分页相关工具类.
  */
 public final class PageUtil {
 
@@ -23,21 +23,21 @@ public final class PageUtil {
   }
 
   /**
-   * 构建分页和排序的请求
+   * 构建分页和排序的请求.
    */
   public static PageRequest buildPageRequest(int pageNum, int pageSize) {
     return PageRequest.of(pageNum - 1, pageSize);
   }
 
   /**
-   * 构建分页和排序的请求
+   * 构建分页和排序的请求.
    */
   public static PageRequest buildPageRequest(int pageNum, int pageSize, Sort sort) {
     return PageRequest.of(pageNum - 1, pageSize, sort);
   }
 
   /**
-   * 构建分页查询结果
+   * 构建分页查询结果.
    *
    * @param content     数据内容
    * @param pageRequest 分页请求参数
@@ -45,9 +45,7 @@ public final class PageUtil {
    * @return 分页查询结果
    */
   public static <T> PageDto<T> buildPageResponse(List<T> content, PageRequest pageRequest, Long total) {
-    Page<T> page = new PageImpl<>(content, pageRequest,
-        Optional.ofNullable(total)
-            .orElseThrow(() -> new SystemErrorException("没有查询到总条数")));
+    Page<T> page = new PageImpl<>(content, pageRequest, Optional.ofNullable(total).orElseThrow(() -> new SystemErrorException("没有查询到总条数")));
 
     return PageDto.build(page.getContent(), page);
   }

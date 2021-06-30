@@ -10,7 +10,7 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * 通用型数据返回，只用于封装数据返回给前端
+ * 通用型数据返回，只用于封装数据返回给前端.
  */
 @Data
 @JsonInclude(NON_NULL)
@@ -30,8 +30,7 @@ public class DataContainer implements Serializable {
   private Object data;
 
   /**
-   * 默认构造函数.
-   * 默认成功.
+   * 默认构造函数. 默认成功.
    */
   public DataContainer() {
     this.code = CommonCode.SUCCESS_CODE;
@@ -39,7 +38,7 @@ public class DataContainer implements Serializable {
   }
 
   /**
-   * 只有code的构造函数
+   * 只有code的构造函数.
    */
   public DataContainer(int code) {
     this.code = code;
@@ -58,9 +57,7 @@ public class DataContainer implements Serializable {
   }
 
   /**
-   * @param code
-   * @param message
-   * @param data
+   * DataContainer.
    */
   public DataContainer(int code, String message, Object data) {
     this.code = code;
@@ -69,9 +66,7 @@ public class DataContainer implements Serializable {
   }
 
   /**
-   * 构造成功的结果
-   *
-   * @param data
+   * 构造成功的结果.
    */
   public DataContainer(Object data) {
     this();

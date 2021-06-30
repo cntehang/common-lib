@@ -1,7 +1,7 @@
 package com.tehang.common.infrastructure.exceptions;
 
 /**
- * 已经关闭的异常
+ * 已经关闭的异常.
  */
 public class ClosedException extends BaseException {
 

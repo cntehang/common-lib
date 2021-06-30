@@ -24,27 +24,23 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommonJdbcTemplate {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
+
   private final JdbcTemplate plainJdbcTemplate;
 
   /**
-   * 列表查询
-   *
-   * @param sql
-   * @param mappedClass
-   * @param <T>
-   * @return
+   * 列表查询.
    */
   public <T> List<T> query(String sql, Class<T> mappedClass) {
     return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(mappedClass));
   }
 
   /**
-   * 列表查询，动态参数
+   * 列表查询，动态参数.
    *
-   * @param sql         sql语句
-   * @param argObj      参数
-   * @param mappedClass 结果映射类
-   * @param <T>         结果映射类型
+   * @param sql         sql语句.
+   * @param argObj      参数.
+   * @param mappedClass 结果映射类.
+   * @param <T>         结果映射类型.
    * @return 查询结果
    */
   public <T> List<T> query(String sql, Object argObj, Class<T> mappedClass) {
@@ -54,7 +50,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 列表查询，动态参数
+   * 列表查询，动态参数.
    *
    * @param sql         sql语句
    * @param paramMap    参数map
@@ -67,7 +63,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 列表查询，供结果是基础类型或者String使用
+   * 列表查询，供结果是基础类型或者String使用.
    *
    * @param sql         sql语句
    * @param paramMap    参数map
@@ -80,7 +76,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 执行查询，返回字符串结果列表
+   * 执行查询，返回字符串结果列表.
    *
    * @param sql      需要执行的 SQL
    * @param paramMap 参数
@@ -91,7 +87,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段
+   * 查询一个字段.
    *
    * @param sql 查询 sql
    * @return 查询字段结果
@@ -101,7 +97,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段
+   * 查询一个字段.
    *
    * @param sql      查询 sql
    * @param paramMap 查询参数
@@ -120,7 +116,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段
+   * 查询一个字段.
    *
    * @param sql       查询 sql
    * @param paramMap  查询参数
@@ -132,7 +128,18 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段，布尔类型
+   * 查询一个字段.
+   *
+   * @param sql      查询 sql
+   * @param paramMap 查询参数
+   * @return 查询字段结果
+   */
+  public <T> T queryForObject(String sql, Map<String, ?> paramMap, Class<T> mappedClass) {
+    return jdbcTemplate.queryForObject(sql, paramMap, mappedClass);
+  }
+
+  /**
+   * 查询一个字段，布尔类型.
    *
    * @param sql 查询 sql
    * @return 查询字段结果
@@ -143,7 +150,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段，布尔类型
+   * 查询一个字段，布尔类型.
    *
    * @param sql      查询 sql
    * @param paramMap 查询参数
@@ -155,18 +162,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 查询一个字段
-   *
-   * @param sql      查询 sql
-   * @param paramMap 查询参数
-   * @return 查询字段结果
-   */
-  public <T> T queryForObject(String sql, Map<String, ?> paramMap, Class<T> mappedClass) {
-    return jdbcTemplate.queryForObject(sql, paramMap, mappedClass);
-  }
-
-  /**
-   * 分页查询
+   * 分页查询.
    *
    * @param sql         sql语句
    * @param baseParams  参数（包括分页、排序等）
@@ -190,24 +186,8 @@ public class CommonJdbcTemplate {
     return PageUtil.buildPageResponse(content, pageRequest, total);
   }
 
-  public <T> PageDto<T> pagedQueryWithoutRefactor(String searchSql, PageSearchBaseDto baseParams, Class<T> mappedClass) {
-
-    BeanPropertySqlParameterSource parameter = new BeanPropertySqlParameterSource(baseParams);
-
-    // 统计总数
-    Long total = this.countTotalWithoutRefactor(searchSql, parameter);
-
-    // 执行查询
-    PageRequest pageRequest = PageUtil.buildPageRequest(baseParams.getPageNumber(), baseParams.getPageSize());
-    String pagedSql = SqlUtils.buildPagedSql(searchSql, pageRequest);
-    List<T> content = jdbcTemplate.query(pagedSql, parameter, new BeanPropertyRowMapper<>(mappedClass));
-
-    // 构建分页结果
-    return PageUtil.buildPageResponse(content, pageRequest, total);
-  }
-
   /**
-   * 分页查询
+   * 分页查询.
    *
    * @param sql           sql语句
    * @param paramMap      参数map
@@ -226,7 +206,26 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 分页查询
+   * pagedQueryWithoutRefactor.
+   */
+  public <T> PageDto<T> pagedQueryWithoutRefactor(String searchSql, PageSearchBaseDto baseParams, Class<T> mappedClass) {
+
+    BeanPropertySqlParameterSource parameter = new BeanPropertySqlParameterSource(baseParams);
+
+    // 统计总数
+    Long total = this.countTotalWithoutRefactor(searchSql, parameter);
+
+    // 执行查询
+    PageRequest pageRequest = PageUtil.buildPageRequest(baseParams.getPageNumber(), baseParams.getPageSize());
+    String pagedSql = SqlUtils.buildPagedSql(searchSql, pageRequest);
+    List<T> content = jdbcTemplate.query(pagedSql, parameter, new BeanPropertyRowMapper<>(mappedClass));
+
+    // 构建分页结果
+    return PageUtil.buildPageResponse(content, pageRequest, total);
+  }
+
+  /**
+   * 分页查询.
    *
    * @param sql           sql语句
    * @param paramMap      参数map
@@ -267,9 +266,8 @@ public class CommonJdbcTemplate {
     return Long.parseLong(total);
   }
 
-
   /**
-   * 批量执行数据库更新/插入语句
+   * 批量执行数据库更新/插入语句.
    *
    * @param sql    sql语句
    * @param setter 参数列表
@@ -279,19 +277,7 @@ public class CommonJdbcTemplate {
   }
 
   /**
-   * 执行更新状态的sql语句
-   *
-   * @param sql      sql语句
-   * @param paramMap 参数map
-   * @return 更新成功条目数
-   * @throws DataAccessException
-   */
-  public int update(String sql, Map<String, ?> paramMap) throws DataAccessException {
-    return jdbcTemplate.update(sql, paramMap);
-  }
-
-  /**
-   * 批量执行更新状态的sql语句
+   * 批量执行更新状态的sql语句.
    *
    * @param sql            sql语句
    * @param batchParamMaps 参数map
@@ -300,4 +286,16 @@ public class CommonJdbcTemplate {
   public int[] batchUpdate(String sql, Map<String, ?>[] batchParamMaps) {
     return jdbcTemplate.batchUpdate(sql, batchParamMaps);
   }
+
+  /**
+   * 执行更新状态的sql语句.
+   *
+   * @param sql      sql语句
+   * @param paramMap 参数map
+   * @return 更新成功条目数
+   */
+  public int update(String sql, Map<String, ?> paramMap) throws DataAccessException {
+    return jdbcTemplate.update(sql, paramMap);
+  }
+
 }

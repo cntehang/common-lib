@@ -34,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
- * 广播消息消费者
+ * 广播消息消费者.
  */
 @Component
 @Slf4j
@@ -50,17 +50,17 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
   private ApplicationContext applicationContext;
 
   /**
-   * 阿里云底层的消息消费者, 在程序启动时创建并初始化
+   * 阿里云底层的消息消费者, 在程序启动时创建并初始化.
    */
   private Consumer consumer;
 
   /**
-   * 当前服务中广播事件的订阅者集合, key为EventType
+   * 当前服务中广播事件的订阅者集合, key为EventType.
    */
   private ConcurrentMap<String, List<BroadcastingEventSubscriber>> allSubscribers;
 
   /**
-   * 在SpringBoot应用程序启动后, 开启消费者订阅
+   * 在SpringBoot应用程序启动后, 开启消费者订阅.
    */
   @Override
   @SuppressWarnings("all")
@@ -98,11 +98,13 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
         // 处理收到的mq消息
         processMessage(tag, body);
         return Action.CommitMessage;
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         String errorMsg = "BroadcastingMqConsumer error:" + ex.getMessage();
         log.error(errorMsg, ex);
         return Action.ReconsumeLater;
-      } finally {
+      }
+      finally {
         span.finish(); //end span
       }
     });
@@ -135,26 +137,25 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
       }
       log.debug("BroadcastingMqConsumer completed, tag:{}", tag);
 
-    } else {
+    }
+    else {
       log.error("BroadcastingMqConsumer error, unknown tag:{}", tag);
     }
   }
 
   private String getBroadcastingConsumerTags() {
-    return this.allSubscribers.keySet().stream()
-        .map(this::getTagFromEventType)
-        .collect(Collectors.joining("||"));
+    return this.allSubscribers.keySet().stream().map(this::getTagFromEventType).collect(Collectors.joining("||"));
   }
 
   /**
-   * 根据EventType获取对应的tag: TagPrefix + EventType
+   * 根据EventType获取对应的tag: TagPrefix + EventType.
    */
-  private String getTagFromEventType( String eventType) {
+  private String getTagFromEventType(String eventType) {
     return trimToEmpty(mqConfig.getEventTagPrefix()) + eventType;
   }
 
   /**
-   * 根据tag获取对应的EventType: 将Tag移除tagPrefix
+   * 根据tag获取对应的EventType: 将Tag移除tagPrefix.
    */
   private String getEventTypeFromTag(String tag) {
     return StringUtils.removeStart(tag, trimToEmpty(mqConfig.getEventTagPrefix()));
@@ -168,14 +169,11 @@ public class BroadcastingMqConsumer implements CommandLineRunner, DisposableBean
     Map<String, RefreshableCache> refreshableCaches = applicationContext.getBeansOfType(RefreshableCache.class);
 
     // 合并广播订阅者和所有的缓存实例
-    var subscribers = Stream.concat(
-        subscribersMap.values().stream(),
-        refreshableCaches.values().stream().map(RefreshableCacheAdapter::new) // 将缓存对象转换为RefreshableCacheAdapter
-    );
+    // 将缓存对象转换为RefreshableCacheAdapter
+    var subscribers = Stream.concat(subscribersMap.values().stream(), refreshableCaches.values().stream().map(RefreshableCacheAdapter::new));
 
     // 将订阅者按EventType进行分组
-    this.allSubscribers = subscribers
-        .collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
+    this.allSubscribers = subscribers.collect(Collectors.groupingByConcurrent(EventSubscriber::subscribedEventType));
   }
 
   private Properties getProperties() {

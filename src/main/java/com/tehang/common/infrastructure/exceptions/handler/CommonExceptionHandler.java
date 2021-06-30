@@ -39,12 +39,6 @@ public class CommonExceptionHandler implements HandlerExceptionResolver {
 
   /**
    * 业务异常处理.
-   *
-   * @param request
-   * @param response
-   * @param handler
-   * @param ex
-   * @return
    */
   @Override
   public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
@@ -77,21 +71,25 @@ public class CommonExceptionHandler implements HandlerExceptionResolver {
       ApplicationException exception = (ApplicationException) ex;
       writeResponse(response, getCommonData(exception.getCode(), exception.getMessage()));
 
-    } else if (ex instanceof ParameterException || ex instanceof ConstraintViolationException) {
+    }
+    else if (ex instanceof ParameterException || ex instanceof ConstraintViolationException) {
       // 参数校验抛出的异常: 记录warn级别日志
       logger.warn("ParameterException or ConstraintViolationException happen: {}", ex.getMessage(), ex);
       writeResponse(response, getCommonData(CommonCode.PARAMETER_ERROR_CODE, ex.getMessage()));
 
-    } else if (ex instanceof BusinessException) {
+    }
+    else if (ex instanceof BusinessException) {
       // 业务层抛出的异常: 记录warn级别日志
       logger.warn("BusinessException happen: {}", ex.getMessage(), ex);
       writeResponse(response, getOtherData(ex));
 
-    } else if (ex instanceof DataAccessException) {
+    }
+    else if (ex instanceof DataAccessException) {
       // 数据持久层抛出的异常: 记录错误日志
       logger.error("DataAccessException happen: {}", ex.getMessage(), ex);
       writeResponse(response, getDataBaseData(ex));
-    } else {
+    }
+    else {
       //对于这种意料之外的异常，在使用中有两种情况：
       //1. 代码中没考虑到会出错的地方，这种是代码写错了，比如数组越界了之类的
       //2. 出错了也无法在代码层次补救的地方，如基础数据获取不全造成的业务处理错误（获取不到某个保险code对应的保险信息等）
@@ -106,9 +104,11 @@ public class CommonExceptionHandler implements HandlerExceptionResolver {
       out = response.getWriter();
       out.append(new ObjectMapper().writeValueAsString(data));
 
-    } catch (IOException exx) {
+    }
+    catch (IOException exx) {
       LOG.error("Catch IOException: exx = []", exx);
-    } finally {
+    }
+    finally {
       if (out != null) {
         out.close();
       }
@@ -121,19 +121,15 @@ public class CommonExceptionHandler implements HandlerExceptionResolver {
 
   private static DataContainer getDataBaseData(Exception ex) {
     DataContainer data = new DataContainer(CommonCode.SQL_ERROR_CODE, CommonCode.SQL_ERROR_MESSAGE);
-    String sqlDebugMsg = Arrays.stream(ex.getStackTrace())
-        .map(StackTraceElement::toString)
-        .collect(Collectors.joining(";"));
+    String sqlDebugMsg = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining(";"));
     data.setDebugMsg(sqlDebugMsg);
     return data;
   }
 
   private static DataContainer getOtherData(Exception ex) {
     DataContainer data = new DataContainer(CommonCode.COMMON_ERROR_CODE, StringUtils.isNotBlank(ex.getMessage()) ? ex.getMessage() : ex.toString());
-    String debugMsg = Arrays.stream(ex.getStackTrace())
-        .map(StackTraceElement::toString)
-        .filter(msg -> msg.contains("com.tehang"))
-        .collect(Collectors.joining(";"));
+    String debugMsg = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).filter(msg -> msg.contains("com.tehang"))
+      .collect(Collectors.joining(";"));
     data.setDebugMsg(debugMsg);
     return data;
   }

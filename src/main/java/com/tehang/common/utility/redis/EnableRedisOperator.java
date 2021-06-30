@@ -10,15 +10,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用Redis操作的辅助类: TmcRedisOperator
+ * 启用Redis操作的辅助类: TmcRedisOperator.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({
-    CommonRedisOperator.class
-})
+@Import({CommonRedisOperator.class})
 public @interface EnableRedisOperator {
 
 }

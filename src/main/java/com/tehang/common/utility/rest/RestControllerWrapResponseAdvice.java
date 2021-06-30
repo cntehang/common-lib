@@ -17,9 +17,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * 包装Controller的返回值的Advice
+ * 包装Controller的返回值的Advice.
  */
-@RestControllerAdvice(annotations = { WrapResponse.class })
+@RestControllerAdvice(annotations = {WrapResponse.class})
 @Slf4j
 public class RestControllerWrapResponseAdvice implements ResponseBodyAdvice<Object> {
 
@@ -30,8 +30,7 @@ public class RestControllerWrapResponseAdvice implements ResponseBodyAdvice<Obje
 
   @Override
   public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
-                                Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                ServerHttpRequest request, ServerHttpResponse response) {
+    Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
 
     log.debug("Enter RestControllerWrapResponseAdvice.beforeBodyWrite");
 

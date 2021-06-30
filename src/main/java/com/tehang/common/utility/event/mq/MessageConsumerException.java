@@ -1,7 +1,7 @@
 package com.tehang.common.utility.event.mq;
 
 /**
- * MessageConsumerException
+ * MessageConsumerException.
  */
 public class MessageConsumerException extends RuntimeException {
 

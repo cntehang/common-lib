@@ -1,7 +1,7 @@
 package com.tehang.common.infrastructure.exceptions;
 
 /**
- * 资源已经存在
+ * 资源已经存在.
  */
 public class AlreadyExistException extends RuntimeException {
 

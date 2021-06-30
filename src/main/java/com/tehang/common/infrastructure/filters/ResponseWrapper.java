@@ -12,12 +12,11 @@ import java.io.IOException;
 public class ResponseWrapper extends HttpServletResponseWrapper {
 
   private transient ByteArrayOutputStream output;
+
   private transient FilterServletOutputStream filterOutput;
 
   /**
    * constructor.
-   *
-   * @param response
    */
   public ResponseWrapper(HttpServletResponse response) {
     super(response);
@@ -25,10 +24,7 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
   }
 
   /**
-   * getDeptById output stream
-   *
-   * @return
-   * @throws IOException
+   * getDeptById output stream.
    */
   @Override
   public ServletOutputStream getOutputStream() throws IOException {

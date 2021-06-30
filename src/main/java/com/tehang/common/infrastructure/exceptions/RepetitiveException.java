@@ -1,7 +1,7 @@
 package com.tehang.common.infrastructure.exceptions;
 
 /**
- * 重复操作异常，如重复支付、重复下单等
+ * 重复操作异常，如重复支付、重复下单等.
  */
 public class RepetitiveException extends BaseException {
 

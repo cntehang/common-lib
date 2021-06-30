@@ -10,15 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 从容应对数据库 null 值，以及传入时候的 null 参数
- * Integer - JSON 转换类
+ * 从容应对数据库 null 值，以及传入时候的 null 参数 Integer - JSON 转换类.
  */
 @Converter
 public class JsonIntegerListConverter implements AttributeConverter<List<Integer>, String> {
 
 
   /**
-   * Integer 列表，转换为json字符串
+   * Integer 列表，转换为json字符串.
    *
    * @param attribute Integer列表
    * @return 转换后的字符串。json字符串
@@ -33,7 +32,7 @@ public class JsonIntegerListConverter implements AttributeConverter<List<Integer
   }
 
   /**
-   * json字符串，转换为字符串列表
+   * json字符串，转换为字符串列表.
    *
    * @param dbData 数据库字段，json字符串
    * @return 转换后的列表

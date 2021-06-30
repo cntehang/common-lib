@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 操作redis的类
+ * 操作redis的类.
  */
 @Component
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class CommonRedisOperator {
   private final StringRedisTemplate stringRedisTemplate;
 
   /**
-   * 向 redis 中插入一个 key-value 对
+   * 向 redis 中插入一个 key-value 对.
    *
    * @param key   键
    * @param value 值
@@ -26,7 +26,7 @@ public class CommonRedisOperator {
   }
 
   /**
-   * 向 redis 中插入一个 key-value 对
+   * 向 redis 中插入一个 key-value 对.
    *
    * @param key     键
    * @param value   值
@@ -38,7 +38,7 @@ public class CommonRedisOperator {
   }
 
   /**
-   * 从 redis 中获取一个值
+   * 从 redis 中获取一个值.
    *
    * @param key 键
    * @return 值
@@ -48,14 +48,14 @@ public class CommonRedisOperator {
   }
 
   /**
-   * 当redis中未找到相应的key时，向redis中设置值，并返回true。 否则不做任何操作，并返回false
+   * 当redis中未找到相应的key时，向redis中设置值，并返回true。 否则不做任何操作，并返回false.
    */
   public Boolean setIfAbsent(String key, String value, long timeout, TimeUnit unit) {
     return stringRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, unit);
   }
 
   /**
-   * 删除指定的key, 如果删除成功，返回true, 否则返回false
+   * 删除指定的key, 如果删除成功，返回true, 否则返回false.
    */
   public Boolean delete(String key) {
     return stringRedisTemplate.delete(key);

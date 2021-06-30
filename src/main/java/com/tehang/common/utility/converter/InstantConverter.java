@@ -6,6 +6,7 @@ import javax.persistence.AttributeConverter;
 import java.time.Instant;
 
 public class InstantConverter implements AttributeConverter<Instant, String> {
+
   @Override
   public String convertToDatabaseColumn(Instant instant) {
     if (instant == null) {

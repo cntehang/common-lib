@@ -14,27 +14,27 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
- * Tmc仓储的基础接口
+ * Tmc仓储的基础接口.
  */
 @NoRepositoryBean
 public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificationExecutor<T> {
-  Logger log = LoggerFactory.getLogger(BaseRepository.class);
+
+  Logger LOG = LoggerFactory.getLogger(BaseRepository.class);
 
   /**
-   * 获取上下文中的EntityManager
+   * 获取上下文中的EntityManager.
    */
   EntityManager getEntityManager();
 
   /**
-   * 根据id获取对象，如果对象不存在，将抛出NotExistException异常
+   * 根据id获取对象，如果对象不存在，将抛出NotExistException异常.
    */
   default T findByIdEnsured(K id) {
-    return findById(id)
-            .orElseThrow(() -> new NotExistException(String.format("查找的 %s 记录[id: %s]不存在", getTypeName(), id)));
+    return findById(id).orElseThrow(() -> new NotExistException(String.format("查找的 %s 记录[id: %s]不存在", getTypeName(), id)));
   }
 
   /**
-   * 根据id获取对象，如果对象不存在，返回null
+   * 根据id获取对象，如果对象不存在，返回null.
    */
   default T findByIdOrNull(K id) {
     T result = null;
@@ -45,7 +45,7 @@ public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificat
   }
 
   /**
-   * 根据id获取对象，并加上指定的锁类型，如果对象不存在，将抛出NotExistException异常
+   * 根据id获取对象，并加上指定的锁类型，如果对象不存在，将抛出NotExistException异常.
    */
   default T findByIdEnsuredWithLock(Class<T> entityClass, K id, LockModeType lockModeType) {
     T entity = getEntityManager().find(entityClass, id, lockModeType);
@@ -56,33 +56,34 @@ public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificat
   }
 
   /**
-   * 根据对象ID，并加上指定的锁类型，查找对象，并返回Optional对象
+   * 根据对象ID，并加上指定的锁类型，查找对象，并返回Optional对象.
    */
   default Optional<T> findByIdWithLock(Class<T> entityClass, K id, LockModeType lockModeType) {
     T entity = getEntityManager().find(entityClass, id, lockModeType);
     if (entity != null) {
       return Optional.of(entity);
-    } else {
+    }
+    else {
       return Optional.empty();
     }
   }
 
   /**
-   * 根据id获取对象，并加上悲观写锁，如果对象不存在，将抛出NotExistException异常
+   * 根据id获取对象，并加上悲观写锁，如果对象不存在，将抛出NotExistException异常.
    */
   default T findByIdEnsuredWithWriteLock(Class<T> entityClass, K id) {
     return findByIdEnsuredWithLock(entityClass, id, LockModeType.PESSIMISTIC_WRITE);
   }
 
   /**
-   * 为对象加上指定的锁类型
+   * 为对象加上指定的锁类型.
    */
   default void lock(Object entity, LockModeType lockMode) {
     getEntityManager().lock(entity, lockMode);
   }
 
   /**
-   * 获取泛型类型名称
+   * 获取泛型类型名称.
    */
   default String getTypeName() {
     try {
@@ -92,12 +93,13 @@ public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificat
         return ((Class<?>) tType).getSimpleName();
       }
       catch (RuntimeException exception) {
-        log.error("Repository {} T-Type {} cast to Class seems failed: {}", this.getClass().getName(), tType.getTypeName(), exception.getMessage(), exception);
+        LOG.error("Repository {} T-Type {} cast to Class seems failed: {}", this.getClass().getName(), tType.getTypeName(), exception.getMessage(),
+          exception);
         return tType.getTypeName();
       }
     }
     catch (RuntimeException exception) {
-      log.error("Repository {} getTypeName failed: {}", this.getClass().getName(), exception.getMessage(), exception);
+      LOG.error("Repository {} getTypeName failed: {}", this.getClass().getName(), exception.getMessage(), exception);
       return "";
     }
   }

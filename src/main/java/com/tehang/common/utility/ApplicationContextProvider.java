@@ -7,8 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ApplicationContextProvider implements ApplicationContextAware {
+
   /**
-   * 上下文对象实例
+   * 上下文对象实例.
    */
   private static ApplicationContext applicationContext;
 
@@ -18,9 +19,9 @@ public class ApplicationContextProvider implements ApplicationContextAware {
   }
 
   /**
-   * 获取applicationContext
+   * 获取applicationContext.
    *
-   * @return
+   * @return ApplicationContext
    */
   public static ApplicationContext getApplicationContext() {
     return applicationContext;
@@ -29,8 +30,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
   /**
    * 通过name获取 Bean.
    *
-   * @param name
-   * @return
+   * @param name name
+   * @return Object
    */
   public static Object getBean(String name) {
     return getApplicationContext().getBean(name);
@@ -39,21 +40,21 @@ public class ApplicationContextProvider implements ApplicationContextAware {
   /**
    * 通过class获取Bean.
    *
-   * @param clazz
-   * @param <T>
-   * @return
+   * @param clazz clazz
+   * @param <T>   clazz
+   * @return T
    */
   public static <T> T getBean(Class<T> clazz) {
     return getApplicationContext().getBean(clazz);
   }
 
   /**
-   * 通过name,以及Clazz返回指定的Bean
+   * 通过name,以及Clazz返回指定的Bean.
    *
-   * @param name
-   * @param clazz
-   * @param <T>
-   * @return
+   * @param name  name
+   * @param clazz clazz
+   * @param <T>   T
+   * @return T
    */
   public static <T> T getBean(String name, Class<T> clazz) {
     return getApplicationContext().getBean(name, clazz);

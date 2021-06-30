@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import javax.persistence.EntityManager;
 
 /**
+ * ExtendedJpaRepository.
+ *
  * @author Oliver Gierke
  * @soundtrack Elen - Nobody Else (Elen)
  */

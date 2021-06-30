@@ -1,7 +1,7 @@
 package com.tehang.common.infrastructure.exceptions;
 
 /**
- * 参数异常
+ * 参数异常.
  */
 public class ParameterException extends RuntimeException {
 

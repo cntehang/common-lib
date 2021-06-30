@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 使用在Controller的方法上，禁止对方法的返回值使用DataContainer进行包装
+ * 使用在Controller的方法上，禁止对方法的返回值使用DataContainer进行包装.
  */
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited

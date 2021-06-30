@@ -11,15 +11,14 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 /**
- * 设置RestTemplate的请求上线文信息，服务之间，仅传递jwt
+ * 设置RestTemplate的请求上线文信息，服务之间，仅传递jwt.
  */
 public class RequestContextInterceptor implements ClientHttpRequestInterceptor {
+
   private static final Logger LOG = LoggerFactory.getLogger(RequestContextInterceptor.class);
 
   @Override
-  public ClientHttpResponse intercept(
-      HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-      throws IOException {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 
     HttpHeaders headers = request.getHeaders();
     headers.add(RequestContextInfo.REQUEST_CONTEXT_JWY_KEY, RequestContextInfo.getJwt());

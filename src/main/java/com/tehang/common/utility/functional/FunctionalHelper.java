@@ -9,6 +9,9 @@ public final class FunctionalHelper {
   private FunctionalHelper() {
   }
 
+  /**
+   * createExceptionRunnable.
+   */
   public static Runnable createExceptionRunnable(String message) {
     return () -> {
       throw new ParameterException(message);

@@ -19,14 +19,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
 
 /**
- * 打开jpa会话的Aspect类
+ * 打开jpa会话的Aspect类.
  */
 @Aspect
 @Component
 public class OpenJpaSessionAspect implements ApplicationContextAware {
 
   private static final Logger LOG = LoggerFactory.getLogger(OpenJpaSessionAspect.class);
-
 
   private ApplicationContext context;
 
@@ -36,11 +35,7 @@ public class OpenJpaSessionAspect implements ApplicationContextAware {
   }
 
   /**
-   * 通过around方式，在方法执行前打开Session, 在方法执行后关闭Session
-   *
-   * @param joinPoint
-   * @return
-   * @throws Throwable
+   * 通过around方式，在方法执行前打开Session, 在方法执行后关闭Session.
    */
   @Around("@annotation(com.tehang.common.utility.db.jpa.OpenJpaSession)")
   public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -51,7 +46,8 @@ public class OpenJpaSessionAspect implements ApplicationContextAware {
       //当前已经开启了session, 这里不再开启
       wasOpened = false;
 
-    } else {
+    }
+    else {
       LOG.debug("Opening JPA EntityManager in OpenJpaSessionAspect");
       try {
         EntityManager em = emf.createEntityManager();
@@ -59,7 +55,8 @@ public class OpenJpaSessionAspect implements ApplicationContextAware {
         TransactionSynchronizationManager.bindResource(emf, emHolder);
         wasOpened = true;
 
-      } catch (PersistenceException ex) {
+      }
+      catch (PersistenceException ex) {
         LOG.warn("create JPA EntityManager error, {}", ex.getMessage(), ex);
         throw new DataAccessResourceFailureException("Could not create JPA EntityManager", ex);
       }
@@ -68,9 +65,10 @@ public class OpenJpaSessionAspect implements ApplicationContextAware {
     try {
       return joinPoint.proceed();
 
-    } finally {
+    }
+    finally {
       if (wasOpened) {
-        EntityManagerHolder emHolder = (EntityManagerHolder)TransactionSynchronizationManager.unbindResource(emf);
+        EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
         LOG.debug("Closing JPA EntityManager in OpenJpaSessionAspect");
         EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
       }

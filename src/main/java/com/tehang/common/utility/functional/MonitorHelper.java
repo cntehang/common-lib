@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.function.Supplier;
 
 /**
- * 监控相关的辅助方法
+ * 监控相关的辅助方法.
  */
 @SuppressWarnings("PMD.DoNotUseThreads")
 public final class MonitorHelper {
@@ -20,9 +20,7 @@ public final class MonitorHelper {
   }
 
   /**
-   * 性能监控，记录运行时间
-   * 谨慎使用，代码侵入比较严重
-   * 推荐场景：对每一行代码都需要监控运行时间，比如国内机票综合查询订单导出
+   * 性能监控，记录运行时间 谨慎使用，代码侵入比较严重 推荐场景：对每一行代码都需要监控运行时间，比如国内机票综合查询订单导出.
    */
   public static <T> T monitorPerformance(String desc, Supplier<T> supplier) {
 
@@ -38,9 +36,7 @@ public final class MonitorHelper {
   }
 
   /**
-   * 性能监控，记录运行时间
-   * 谨慎使用，代码侵入比较严重
-   * 推荐场景：对每一行代码都需要监控运行时间，比如国内机票综合查询订单导出
+   * 性能监控，记录运行时间 谨慎使用，代码侵入比较严重 推荐场景：对每一行代码都需要监控运行时间，比如国内机票综合查询订单导出.
    */
   public static void monitorPerformance(String desc, Runnable runnable) {
 

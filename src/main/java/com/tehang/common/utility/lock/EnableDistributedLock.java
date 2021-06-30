@@ -11,16 +11,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用分布式锁: DistributedLockFactory
+ * 启用分布式锁: DistributedLockFactory.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({
-    DistributedLockFactory.class,
-    CommonRedisOperator.class
-})
+@Import({DistributedLockFactory.class, CommonRedisOperator.class})
 public @interface EnableDistributedLock {
 
 }

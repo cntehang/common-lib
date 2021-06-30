@@ -12,17 +12,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用特航数据访问相关的辅助类，包括jdbcTemplate, OpenJpaSession, TransactionHelper等。
+ * 启用特航数据访问相关的辅助类，包括jdbcTemplate, OpenJpaSession, TransactionHelper等.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({
-    CommonJdbcTemplate.class,
-    OpenJpaSessionAspect.class,
-    TransactionHelper.class
-})
+@Import({CommonJdbcTemplate.class, OpenJpaSessionAspect.class, TransactionHelper.class})
 public @interface EnableTeHangDbUtils {
 
 }

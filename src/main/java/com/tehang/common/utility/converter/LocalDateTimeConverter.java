@@ -6,6 +6,7 @@ import javax.persistence.AttributeConverter;
 import java.time.LocalDateTime;
 
 public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, String> {
+
   @Override
   public String convertToDatabaseColumn(LocalDateTime localDateTime) {
     if (localDateTime == null) {

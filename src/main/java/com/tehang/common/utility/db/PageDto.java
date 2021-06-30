@@ -8,46 +8,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 分页使用的类
+ * 分页使用的类.
  */
 @Data
 public class PageDto<T> {
 
   /**
-   * 总元素数量
+   * 总元素数量.
    */
   private long totalElements;
 
   /**
-   * 总页数
+   * 总页数.
    */
   private int totalPage;
 
   /**
-   * 当前第几页，下标从1开始
+   * 当前第几页，下标从1开始.
    */
   private int page;
 
   /**
-   * 当前页多少个元素
+   * 当前页多少个元素.
    */
   private int size;
 
   /**
-   * 具体的结果
+   * 具体的结果.
    */
   private List<T> content;
 
   /**
-   * 无参构造方法
+   * 无参构造方法.
    */
   public PageDto() {
     //do nothing
   }
 
   /**
-   * @param content
-   * @param page
+   * PageDto.
    */
   public PageDto(List<T> content, Page page) {
     this.content = content;
@@ -58,7 +57,7 @@ public class PageDto<T> {
   }
 
   /**
-   * 创建空的分页对象，通常用于接口定义阶段
+   * 创建空的分页对象，通常用于接口定义阶段.
    */
   public static <T> PageDto<T> createEmptyPageDto() {
     List<T> emptyContent = new ArrayList<>();
@@ -67,9 +66,7 @@ public class PageDto<T> {
   }
 
   /**
-   * @param content
-   * @param page
-   * @return
+   * build.
    */
   public static <Z> PageDto<Z> build(List<Z> content, Page page) {
     return new PageDto<>(content, page);
