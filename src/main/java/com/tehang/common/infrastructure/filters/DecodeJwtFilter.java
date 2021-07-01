@@ -36,6 +36,7 @@ public class DecodeJwtFilter implements Filter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     decodeContextInfo(httpRequest);
+    chain.doFilter(request, response);
   }
 
   /**
