@@ -11,12 +11,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用DecodeJwt组件
+ * 启用DecodeJwtFilter组件
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 @Import({JwtConfig.class, DecodeJwtFilter.class})
-public @interface EnableDecodeJwt {
+public @interface EnableDecodeJwtFilter {
 }
