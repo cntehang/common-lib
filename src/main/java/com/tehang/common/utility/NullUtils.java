@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NullUtils {
+
   public static <T> T getOrNull(Supplier<T> getMethod) {
     return getOrElse(getMethod, null);
   }

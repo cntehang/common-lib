@@ -5,7 +5,7 @@ import com.tehang.common.utility.event.cache.RefreshableCache;
 import com.tehang.common.utility.event.subscriber.BroadcastingEventSubscriber;
 
 /**
- * 缓存适配器，用来将Refreshable接口转换为BroadcastingEventSubscriber接口。
+ * 缓存适配器，用来将Refreshable接口转换为BroadcastingEventSubscriber接口.
  */
 class RefreshableCacheAdapter implements BroadcastingEventSubscriber {
 

@@ -16,23 +16,26 @@
 
 ## 消费者服务如何引用
 
-### 1. 添加 maven 仓库
+搭建私有仓库后，仍保留 `./lib` 下的原有 jar 文件，兼容原来的老的 jar 包获取方式
 
-在目标服务中添加 common-lib 的仓库地址：
-```gradle
-repositories {
-  maven {
-    url 'https://github.com/cntehang/common-lib/raw/master/lib'
-  }
-}
+- 老的 jar 包获取方式
+
+```text
+    maven {
+        url 'https://github.com/cntehang/common-lib/raw/master/lib'
+    }
+ 
+  // 引入特航公共包
+  compile('com.cntehang:common-lib:1.2.13')
 ```
 
-### 2. 添加依赖包
+- 私有仓库的jar包获取方式为：
 
-在目标服务中依赖 common-lib 包：
-```gradle
-dependencies {
+```text
+    maven {
+        url 'http://nexus.itehang.cn/repository/maven-releases/'
+    }
+
   // 引入特航公共包
-  compile('com.cntehang:common-lib:1.1.0')
-}
+  compile('com.tehang.common:common-lib:1.2.18')
 ```

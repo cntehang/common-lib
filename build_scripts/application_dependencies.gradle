@@ -60,6 +60,8 @@ dependencies {
   annotationProcessor('org.projectlombok:lombok:1.18.2')
   compileOnly('org.projectlombok:lombok:1.18.2')
 
+  implementation group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
+
   // for mock non interface
   testCompile('cglib:cglib-nodep:3.2.5')
   // Use the latest Groovy version for Spock testing

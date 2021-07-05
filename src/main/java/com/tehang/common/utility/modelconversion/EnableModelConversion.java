@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @Inherited
 @Import({ModelConversionService.class})
 public @interface EnableModelConversion {
+
 }

@@ -1,6 +1,5 @@
 package com.tehang.common.utility.api.inner;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tehang.common.utility.api.CommonCode;
@@ -13,7 +12,7 @@ import java.lang.reflect.Type;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
- * 通用的服务调用返回结果范型类，用于接收tmc调用其他服务或其他服务推送给tmc的数据
+ * 通用的服务调用返回结果范型类，用于接收tmc调用其他服务或其他服务推送给tmc的数据.
  */
 @Data
 @JsonInclude(NON_NULL)
@@ -28,14 +27,14 @@ public class ResponseContainer<T> implements Serializable {
   private T data;
 
   /**
-   * 构造方法一
+   * 构造方法一.
    */
   public ResponseContainer() {
     super();
   }
 
   /**
-   * 构造方法二
+   * 构造方法二.
    */
   public ResponseContainer(int code, T data) {
     super();
@@ -44,7 +43,7 @@ public class ResponseContainer<T> implements Serializable {
   }
 
   /**
-   * 构造方法三
+   * 构造方法三.
    */
   public ResponseContainer(int code, String message, T data) {
     super();
@@ -54,7 +53,7 @@ public class ResponseContainer<T> implements Serializable {
   }
 
   /**
-   * 构造方法四
+   * 构造方法四.
    */
   public ResponseContainer(int code, String message) {
     super();
@@ -63,16 +62,14 @@ public class ResponseContainer<T> implements Serializable {
   }
 
   /**
-   * 创建空的成功返回体对象
+   * 创建空的成功返回体对象.
    */
   public static ResponseContainer createSuccessEmptyResponse() {
     return new ResponseContainer(0, "FakeSuccess");
   }
 
   /**
-   * 是否成功
-   *
-   * @return
+   * 是否成功.
    */
   @JsonIgnore
   public boolean isSuccess() {
@@ -80,7 +77,7 @@ public class ResponseContainer<T> implements Serializable {
   }
 
   /**
-   * 获取异常信息
+   * 获取异常信息.
    *
    * @return 异常信息
    */

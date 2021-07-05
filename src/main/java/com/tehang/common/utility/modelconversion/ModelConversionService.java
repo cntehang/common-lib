@@ -7,15 +7,17 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 /**
- * 进行 Model 转换
- * 能够自动对同名属性进行映射（更多实现细节查看 http://modelmapper.org）
- * 如果有特殊的转换需求，通过自定义 `AutoRegisterModelConverter` 以实现
+ * 进行 Model 转换 能够自动对同名属性进行映射（更多实现细节查看 http://modelmapper.org） 如果有特殊的转换需求，通过自定义 `AutoRegisterModelConverter` 以实现
  */
 @Slf4j
 @Service
 public class ModelConversionService {
+
   private final ModelMapper modelMapper = new ModelMapper();
 
+  /**
+   * convert.
+   */
   public <T> T convert(@Nullable Object source, Class<T> targetType) {
     if (source == null) {
       return null;

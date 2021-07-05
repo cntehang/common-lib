@@ -1,7 +1,7 @@
 package com.tehang.common.utility.event.mq;
 
 /**
- * MessageProducerException
+ * MessageProducerException.
  */
 public class MessageProducerException extends RuntimeException {
 

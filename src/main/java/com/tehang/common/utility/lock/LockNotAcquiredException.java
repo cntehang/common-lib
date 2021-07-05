@@ -1,7 +1,7 @@
 package com.tehang.common.utility.lock;
 
 /**
- * 未获取到分布式锁引发的异常
+ * 未获取到分布式锁引发的异常.
  */
 public class LockNotAcquiredException extends RuntimeException {
 

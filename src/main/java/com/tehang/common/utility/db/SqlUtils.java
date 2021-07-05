@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
- * sql语句处理工具类
+ * sql语句处理工具类.
  */
 public final class SqlUtils {
 
@@ -17,9 +17,8 @@ public final class SqlUtils {
     // do nothing
   }
 
-
   /**
-   * 构建分页sql
+   * 构建分页sql.
    *
    * @param sql       原始sql
    * @param pageParam 分页参数
@@ -30,7 +29,7 @@ public final class SqlUtils {
   }
 
   /**
-   * 构建count sql
+   * 构建count sql.
    *
    * @param sql 原始sql
    * @return count sql
@@ -40,17 +39,14 @@ public final class SqlUtils {
   }
 
   /**
-   * 构建count sql，不做order by 的优化
-   *
-   * @param sql
-   * @return
+   * 构建count sql，不做order by 的优化.
    */
   public static String buildCountSqlWithoutRefactor(String sql) {
     return "SELECT COUNT(*) " + removeSelect(sql);
   }
 
   /**
-   * 去除SELECT *语句，便于SELECT count(*)
+   * 去除SELECT *语句，便于SELECT count(*).
    */
   private static String removeSelect(String sql) {
     int beginPosition = sql.toLowerCase(Locale.US).indexOf("from ");
@@ -58,11 +54,10 @@ public final class SqlUtils {
   }
 
   /**
-   * 去除order by 提高select count(*)的速度
+   * 去除order by 提高select count(*)的速度.
    */
   private static String removeOrderBy(String sql) {
-    Pattern pattern = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*",
-        Pattern.CASE_INSENSITIVE);
+    Pattern pattern = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);
     Matcher matcher = pattern.matcher(sql);
     StringBuffer sb = new StringBuffer();
     while (matcher.find()) {
@@ -73,7 +68,7 @@ public final class SqlUtils {
   }
 
   /**
-   * 获取排序方向，默认逆序
+   * 获取排序方向，默认逆序.
    */
   public static String getOrderByDirection(String orderByDirection) {
     String result = "desc";

@@ -1,0 +1,3 @@
+[submodule "build_scripts/quality_assurance"]
+	path = build_scripts/quality_assurance
+	url = git@github.com:cntehang/quality_assurance.git

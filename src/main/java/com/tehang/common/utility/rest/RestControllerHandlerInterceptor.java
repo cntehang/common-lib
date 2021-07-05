@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * 所有RestController执行拦截器
+ * 所有RestController执行拦截器.
  */
 @Slf4j
 public class RestControllerHandlerInterceptor implements HandlerInterceptor {
 
   /**
-   * 在进入方法处理之前，拦截标注了@DisableWrapResponse注解的请求，并设置相应标记
+   * 在进入方法处理之前，拦截标注了@DisableWrapResponse注解的请求，并设置相应标记.
    **/
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

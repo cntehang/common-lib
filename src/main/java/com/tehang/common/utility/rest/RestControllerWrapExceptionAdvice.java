@@ -30,14 +30,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Controller的通用异常处理
+ * Controller的通用异常处理.
  */
 @Slf4j
-@RestControllerAdvice(annotations = { WrapException.class })
+@RestControllerAdvice(annotations = {WrapException.class})
 public class RestControllerWrapExceptionAdvice {
 
   /**
-   * 应用异常, code = ApplicationException.code
+   * 应用异常, code = ApplicationException.code.
    */
   @ExceptionHandler(ApplicationException.class)
   @ResponseStatus(HttpStatus.OK)
@@ -49,7 +49,7 @@ public class RestControllerWrapExceptionAdvice {
   }
 
   /**
-   * 数据访问异常, code = 97
+   * 数据访问异常, code = 97.
    */
   @ExceptionHandler({DataAccessException.class})
   @ResponseStatus(HttpStatus.OK)
@@ -62,7 +62,7 @@ public class RestControllerWrapExceptionAdvice {
   }
 
   /**
-   * 参数异常, code = 98
+   * 参数异常, code = 98.
    */
   @ExceptionHandler({ParameterException.class})
   @ResponseStatus(HttpStatus.OK)
@@ -74,7 +74,7 @@ public class RestControllerWrapExceptionAdvice {
   }
 
   /**
-   * 参数校验异常, code = 98
+   * 参数校验异常, code = 98.
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.OK)
@@ -93,7 +93,7 @@ public class RestControllerWrapExceptionAdvice {
   }
 
   /**
-   * 参数违反约束的异常, code = 98
+   * 参数违反约束的异常, code = 98.
    */
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.OK)
@@ -112,7 +112,7 @@ public class RestControllerWrapExceptionAdvice {
   }
 
   /**
-   * 未知异常, code = 99
+   * 未知异常, code = 99.
    */
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.OK)
@@ -155,11 +155,8 @@ public class RestControllerWrapExceptionAdvice {
     Map<String, String> traceMap = new ConcurrentHashMap<>();
 
     var firstTrace = ex.getStackTrace()[0];
-    String exTrace = Arrays.stream(ex.getStackTrace())
-        .map(StackTraceElement::toString)
-        .filter(msg -> msg.contains("com.tehang"))
-        .findFirst()
-        .orElse(firstTrace.toString());
+    String exTrace = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).filter(msg -> msg.contains("com.tehang")).findFirst()
+      .orElse(firstTrace.toString());
 
     if (StringUtils.isNotBlank(exTrace)) {
       traceMap.put("traceMessage", exTrace);
@@ -169,27 +166,23 @@ public class RestControllerWrapExceptionAdvice {
 
   private List<Object> getErrors(List<FieldError> errors) {
     List<Object> errMapList = new ArrayList<>();
-    errors.forEach(
-        fieldError -> {
-          var value = new HashMap<String, String>();
-          value.put("key", fieldError.getField());
-          value.put("msg", fieldError.getDefaultMessage());
-          errMapList.add(value);
-        }
-    );
+    errors.forEach(fieldError -> {
+      var value = new HashMap<String, String>();
+      value.put("key", fieldError.getField());
+      value.put("msg", fieldError.getDefaultMessage());
+      errMapList.add(value);
+    });
     return errMapList;
   }
 
   private List<Object> buildErrorMsg(List<ConstraintViolation<?>> errors) {
     List<Object> errMapList = new ArrayList<>();
-    errors.forEach(
-        fieldError -> {
-          var value = new HashMap<String, String>();
-          value.put("key", getFieldName(fieldError));
-          value.put("msg", fieldError.getMessage());
-          errMapList.add(value);
-        }
-    );
+    errors.forEach(fieldError -> {
+      var value = new HashMap<String, String>();
+      value.put("key", getFieldName(fieldError));
+      value.put("msg", fieldError.getMessage());
+      errMapList.add(value);
+    });
     return errMapList;
   }
 

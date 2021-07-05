@@ -16,18 +16,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用事件发布组件
+ * 启用事件发布组件.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({MqConfig.class,
-    MqProducer.class,
-    EventPublisher.class,
-    ClusteringMqConsumer.class,
-    BroadcastingMqConsumer.class,
-    ApplicationContextProvider.class})
+@Import({MqConfig.class, MqProducer.class, EventPublisher.class, ClusteringMqConsumer.class, BroadcastingMqConsumer.class,
+  ApplicationContextProvider.class})
 public @interface EnableDomainEvent {
 
 }

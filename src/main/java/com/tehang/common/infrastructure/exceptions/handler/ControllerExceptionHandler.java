@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Controller层的异常处理，主要用于处理参数验证方面的错误。
+ * Controller层的异常处理，主要用于处理参数验证方面的错误.
  */
 @RestControllerAdvice
 @Component
@@ -35,10 +35,7 @@ public class ControllerExceptionHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
   /**
-   * 转换单一属性Request的校验失败结果，如string，int等
-   *
-   * @param exception
-   * @return
+   * 转换单一属性Request的校验失败结果，如string，int等.
    */
   @ExceptionHandler
   @ResponseBody
@@ -57,10 +54,7 @@ public class ControllerExceptionHandler {
   }
 
   /**
-   * 转换对象类Request的校验失败结果
-   *
-   * @param exception
-   * @return
+   * 转换对象类Request的校验失败结果.
    */
   @ExceptionHandler
   @ResponseBody
@@ -79,40 +73,30 @@ public class ControllerExceptionHandler {
   }
 
   /**
-   * Convert all errors to map
-   *
-   * @param errors
-   * @return
+   * Convert all errors to map.
    */
   private List<Object> error(List<FieldError> errors) {
     List<Object> errMapList = new ArrayList<>();
-    errors.stream().forEach(
-        fieldError -> {
-          Map value = new ConcurrentHashMap();
-          value.put("key", fieldError.getField());
-          value.put("msg", fieldError.getDefaultMessage());
-          errMapList.add(value);
-        }
-    );
+    errors.stream().forEach(fieldError -> {
+      Map value = new ConcurrentHashMap();
+      value.put("key", fieldError.getField());
+      value.put("msg", fieldError.getDefaultMessage());
+      errMapList.add(value);
+    });
     return errMapList;
   }
 
   /**
-   * Convert all errors to map
-   *
-   * @param errors
-   * @return
+   * Convert all errors to map.
    */
   private List<Object> buildErrorMsg(List<ConstraintViolation> errors) {
     List<Object> errMapList = new ArrayList<>();
-    errors.stream().forEach(
-        fieldError -> {
-          Map value = new ConcurrentHashMap();
-          value.put("key", getFieldName(fieldError));
-          value.put("msg", fieldError.getMessage());
-          errMapList.add(value);
-        }
-    );
+    errors.stream().forEach(fieldError -> {
+      Map value = new ConcurrentHashMap();
+      value.put("key", getFieldName(fieldError));
+      value.put("msg", fieldError.getMessage());
+      errMapList.add(value);
+    });
     return errMapList;
   }
 

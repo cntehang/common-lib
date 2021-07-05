@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
- * 消息生产者
+ * 消息生产者.
  */
 @Service
 @Slf4j
@@ -47,7 +47,7 @@ public class MqProducer implements InitializingBean, DisposableBean {
   }
 
   /**
-   * 发送消息到队列
+   * 发送消息到队列.
    */
   @SuppressWarnings("all")
   public SendResult sendToQueue(String tag, String key, String body) {
@@ -58,7 +58,8 @@ public class MqProducer implements InitializingBean, DisposableBean {
     try {
       Message msg = new Message(topic, tag, key, body.getBytes(Charset.forName("UTF-8")));
       result = producer.send(msg);
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       log.warn("sendToQueue exception heppen. ", ex);
       throw new MessageProducerException(ex.getMessage(), ex);
     }

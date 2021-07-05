@@ -10,15 +10,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 集合工具类
+ * 集合工具类.
  */
 public final class ThCollectionUtils {
+
   private ThCollectionUtils() {
     // do nothing
   }
 
   /**
-   * 多个集合 -> list
+   * 多个集合 -> list.
    */
   public static <E> List<E> unionToList(Collection<E>... arraysOfCollections) {
     if (ArrayUtils.isEmpty(arraysOfCollections)) {
@@ -26,12 +27,10 @@ public final class ThCollectionUtils {
     }
 
     return Arrays.stream(arraysOfCollections)
-        // 非法数组元素
-        .filter(Objects::nonNull)
-        .flatMap(Collection::stream)
-        // 非法集合元素
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+      // 非法数组元素
+      .filter(Objects::nonNull).flatMap(Collection::stream)
+      // 非法集合元素
+      .filter(Objects::nonNull).collect(Collectors.toList());
   }
 
 }

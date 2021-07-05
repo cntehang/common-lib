@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 目前所有接口的返回头采用了封装型，这统一做封装
+ * 目前所有接口的返回头采用了封装型，这统一做封装.
  */
 @Component
 @Order
@@ -35,14 +35,11 @@ public class ResponseContainerFilter implements Filter {
   private static final Logger LOG = LoggerFactory.getLogger(ResponseContainerFilter.class);
 
   /**
-   * 为所有 Controller 返回的数据同一添加 DateContainer 层
-   * 如果是 CommonExceptionHandler/ControllerExceptionHandler 来到这里
+   * 为所有 Controller 返回的数据同一添加 DateContainer 层 如果是 CommonExceptionHandler/ControllerExceptionHandler 来到这里.
    *
    * @param request  HTTP 请求
    * @param response HTTP 响应
    * @param chain    Filter 调用链
-   * @throws IOException
-   * @throws ServletException
    */
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -53,7 +50,8 @@ public class ResponseContainerFilter implements Filter {
 
       chain.doFilter(request, response);
 
-    } else {
+    }
+    else {
 
       HttpServletResponse httpResponse = (HttpServletResponse) response;
       ResponseWrapper mr = new ResponseWrapper(httpResponse);
@@ -67,7 +65,8 @@ public class ResponseContainerFilter implements Filter {
       if (isFromExceptionHandler(httpResponse)) {
         LOG.trace("Get wrapped response from exception handler, no need to warp again");
         responseContainerContainedResponse = plainResponse;
-      } else {
+      }
+      else {
         LOG.trace("Get plain response from controller, warp with response container");
         responseContainerContainedResponse = warpWithResponseContainer(plainResponse);
       }
@@ -81,10 +80,9 @@ public class ResponseContainerFilter implements Filter {
   }
 
   private boolean isInWhiteList(String requestUri) {
-    return requestUri.contains("getValidateCode") || requestUri.contains("swagger") || requestUri.contains("api-docs")
-        || requestUri.contains("download") || requestUri.contains("export")
-        || requestUri.contains("importFrequentTravellerForSK")
-        || requestUri.contains("importCustomerForSK");
+    return requestUri.contains("getValidateCode") || requestUri.contains("swagger") || requestUri.contains("api-docs") || requestUri
+      .contains("download") || requestUri.contains("export") || requestUri.contains("importFrequentTravellerForSK") || requestUri
+      .contains("importCustomerForSK");
   }
 
   private boolean isFromExceptionHandler(HttpServletResponse httpResponse) {
@@ -107,7 +105,8 @@ public class ResponseContainerFilter implements Filter {
     if (mayBeJson(plainResponse)) {
       LOG.trace("Response maybe json, try to parse");
       data = parseJson(plainResponse, mapper);
-    } else {
+    }
+    else {
       LOG.trace("Response is not json, return directly");
       // 用于处理两种情况：
       // 1. 我们不想让 Jackson 处理的情形。如返回一个 String 类型的纯数字字符，Jackson 会将其转化为 Number 返回
@@ -122,7 +121,8 @@ public class ResponseContainerFilter implements Filter {
     try {
       data = mapper.readValue(plainResponse, Object.class);
       LOG.trace("Parse json successfully");
-    } catch (JsonParseException | JsonMappingException ex) {
+    }
+    catch (JsonParseException | JsonMappingException ex) {
       // 我们对字符串是否为 Json 字符串的判断很简单，还有很多种不能转换的情形，如"{hello"这种情形的字符串
       LOG.trace("Parse json failed, return string directly");
       data = plainResponse;
@@ -131,8 +131,7 @@ public class ResponseContainerFilter implements Filter {
   }
 
   private boolean mayBeJson(String value) {
-    return StringUtils.isNotBlank(value) && StringUtils.startsWith(value, "{") ||
-        StringUtils.isNotBlank(value) && StringUtils.startsWith(value, "[");
+    return StringUtils.isNotBlank(value) && StringUtils.startsWith(value, "{") || StringUtils.isNotBlank(value) && StringUtils.startsWith(value, "[");
   }
 
   /**

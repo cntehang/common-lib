@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用IdGenerator组件
+ * 启用IdGenerator组件.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 所有自定义异常的基类
+ * 所有自定义异常的基类.
  */
 @Getter
 @Setter
 public class BaseException extends RuntimeException {
 
-
   private static final long serialVersionUID = -7333920888847646059L;
+
   /**
    * message.
    */

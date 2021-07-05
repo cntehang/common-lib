@@ -7,7 +7,7 @@ import javax.persistence.AttributeConverter;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * 从容应对数据库 null 值，以及传入时候的 null 参数
+ * 从容应对数据库 null 值，以及传入时候的 null 参数.
  */
 public class JsonToObjectConverter<T> implements AttributeConverter<T, String> {
 
@@ -22,12 +22,13 @@ public class JsonToObjectConverter<T> implements AttributeConverter<T, String> {
       Class<T> clazz = getActualTypeArgument();
       return JsonUtils.toClass(dbData, clazz);
 
-    } else {
+    }
+    else {
       return null;
     }
   }
 
   private Class<T> getActualTypeArgument() {
-    return (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
   }
 }

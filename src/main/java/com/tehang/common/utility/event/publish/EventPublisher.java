@@ -22,7 +22,7 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * 事件发布者，用来发布事件消息到mq
+ * 事件发布者，用来发布事件消息到mq.
  */
 @Service
 @AllArgsConstructor
@@ -36,10 +36,11 @@ public class EventPublisher {
   private static final List<Integer> RE_TRY_SEND_MESSAGE_DELAYS_SECONDS = Lists.newArrayList(1, 3, 10);
 
   private final MqProducer mqProducer;
+
   private final MqConfig mqConfig;
 
   /**
-   * 发布领域事件
+   * 发布领域事件.
    */
   public void publish(DomainEvent event) {
     // 检查事件参数的有效性
@@ -83,7 +84,7 @@ public class EventPublisher {
   }
 
   /**
-   * 获取当前上下文中的traceId
+   * 获取当前上下文中的traceId.
    */
   private static String getCurrentTraceId() {
     // 获取当前的springContext
@@ -125,7 +126,7 @@ public class EventPublisher {
   }
 
   /**
-   * 检查事件参数的有效性, 包括事件类型，事件参数类型
+   * 检查事件参数的有效性, 包括事件类型，事件参数类型.
    */
   private void assertEventValid(DomainEvent event) {
     if (isBlank(event.getKey())) {

@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 打开Jpa Session的注解
+ * 打开Jpa Session的注解.
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -15,8 +15,7 @@ import java.lang.annotation.Target;
 public @interface OpenJpaSession {
 
   /**
-   * value
-   * @return
+   * value.
    */
   String value() default "";
 

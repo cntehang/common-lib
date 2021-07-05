@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用于Controller上，将对该Controller中的异常进行包装, 包括该Controller的所有子类
+ * 用于Controller上，将对该Controller中的异常进行包装, 包括该Controller的所有子类.
  */
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited

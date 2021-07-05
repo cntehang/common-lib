@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 处理跨域请求的filter
+ * 处理跨域请求的filter.
  */
 @Component
 @Order(Integer.MIN_VALUE)
@@ -23,9 +23,6 @@ public class CorsFilter implements Filter {
 
   /**
    * init.
-   *
-   * @param filterConfig Filter config.
-   * @throws ServletException
    */
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -33,13 +30,7 @@ public class CorsFilter implements Filter {
   }
 
   /**
-   * 处理跨域请求
-   *
-   * @param request
-   * @param response
-   * @param chain
-   * @throws IOException
-   * @throws ServletException
+   * 处理跨域请求.
    */
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -52,7 +43,9 @@ public class CorsFilter implements Filter {
       httpResponse.setHeader("Access-Control-Max-Age", "3600");
       httpResponse.setHeader("Access-Control-Allow-Origin", "*");
       //httpResponse.addHeader("Access-Control-Allow-Headers", "*");
-      httpResponse.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
+      httpResponse.setHeader("Access-Control-Allow-Headers",
+        "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, "
+          + "Access-Control-Request-Headers, Authorization");
       return;
     }
     httpResponse.addHeader("Access-Control-Allow-Origin", "*");

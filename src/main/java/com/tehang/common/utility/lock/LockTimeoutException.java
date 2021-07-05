@@ -1,7 +1,7 @@
 package com.tehang.common.utility.lock;
 
 /**
- * 获取分布式锁超时引发的异常
+ * 获取分布式锁超时引发的异常.
  */
 public class LockTimeoutException extends RuntimeException {
 
