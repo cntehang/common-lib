@@ -12,19 +12,19 @@ import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
+import com.tehang.common.utility.lock.DistributedLockFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -41,6 +41,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @Slf4j
 public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
+  // 消费处理的分布式锁的超时时间：用来控制消费者必须同步进行消息处理
+  private static final int REDIS_LOCK_TIMEOUT_MINUTES = 15;
+
   // 用来防重处理的redisKey的过期时间：24小时
   private static final int REDIS_KEY_TIMEOUT_HOURS = 24;
 
@@ -55,6 +58,9 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
   @Autowired
   private StringRedisTemplate redisTemplate;
+
+  @Autowired
+  private DistributedLockFactory lockFactory;
 
   /**
    * 阿里云底层的消息消费者, 在程序启动时创建并初始化.
@@ -140,13 +146,16 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     try {
       log.debug("DomainEvent created: {}", event);
 
-      for (var subscriber : subscribers) {
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
+      // 添加分布式锁，同步进行消息处理
+      try (var ignored = lockFactory.acquireLockUnBlocked(getLockId(event), Duration.ofMinutes(REDIS_LOCK_TIMEOUT_MINUTES))) {
+        for (var subscriber : subscribers) {
+          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
 
-        // 依次调用每个订阅者的处理逻辑
-        handleEventForSubscriber(subscriber, event);
+          // 依次调用每个订阅者的处理逻辑
+          handleEventForSubscriber(subscriber, event);
 
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
+          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
+        }
       }
       log.debug("ClusteringMqConsumer completed, tag:{}", tag);
     }
@@ -159,6 +168,10 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     }
   }
 
+  private static String getLockId(DomainEvent event) {
+    return String.format("MQ_Consumer_Lock_%s", event.getKey());
+  }
+
   /**
    * 调用订阅者的处理逻辑，考虑并发情况下处理逻辑的幂等性，避免重复处理 参考: https://www.yuque.com/wanguoyou/mzkmxr/rsdefp
    */
@@ -166,49 +179,18 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     var redisKey = getRedisKey(subscriber, event);
     var redisOps = redisTemplate.boundValueOps(redisKey);
 
-    // 设置为【消费中】状态，并返回上次的消费状态
-    var oldStatusStr = redisOps.getAndSet(EventConsumeStatus.Consuming.toString());
-    redisOps.expire(REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
+    // 从redis中读取消费状态，如果不为null, 表示该条消息已消费成功，就不再处理
+    var consumeStatus = redisOps.get();
 
-    var oldStatus = EnumUtils.getEnum(EventConsumeStatus.class, oldStatusStr);
-    if (oldStatus == null) {
+    if (StringUtils.isBlank(consumeStatus)) {
       // 老状态不存在，说明是第一次进来，直接进行消息处理
-      handleEventActually(subscriber, event, redisOps);
-      return;
-    }
-
-    switch (oldStatus) {
-      case Consuming:
-        // 老状态为【消费中】，表示此次为重复的并发调用，直接抛出异常，下次继续重试
-        throw new MessageConsumerException("事件正在处理中，此次为重复调用，无需处理，后续进行重试");
-
-      case ConsumeSucceeded:
-        // 老状态为【消费成功】，表示此次为多余的重复调用，直接返回阿里云消费成功，下次不再重试
-        redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
-        break;
-
-      case ConsumeFailed:
-        // 老状态为【消费失败】，表示上次处理失败了，此次应继续进行逻辑处理
-        handleEventActually(subscriber, event, redisOps);
-        break;
-
-      default:
-        throw new MessageConsumerException("无效的消费状态: " + oldStatus);
-    }
-  }
-
-  private void handleEventActually(ClusteringEventSubscriber subscriber, DomainEvent event, BoundValueOperations<String, String> redisOps) {
-    try {
-      // 进行事件处理
       subscriber.handleEvent(event);
 
-      // 处理成功后设置状态为【消费成功】
-      redisOps.set(EventConsumeStatus.ConsumeSucceeded.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
+      // 处理成功后在redis中设置消费状态为OK
+      redisOps.set("OK", REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
     }
-    catch (Exception ex) {
-      // 设置失败后设置状态为【消费失败】，并抛出异常，下次重试
-      redisOps.set(EventConsumeStatus.ConsumeFailed.toString(), REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
-      throw ex;
+    else {
+      log.warn("事件已处理成功, 此次为重复调用, 系统自动忽略, key: {}, event: {}", event.getKey(), event);
     }
   }
 
