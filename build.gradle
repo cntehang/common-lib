@@ -30,7 +30,7 @@ apply from: 'build_scripts/application_dependencies.gradle'
 
 
 // 相关代码检查
-//apply from: 'build_scripts/quality_assurance/checkstyleth.gradle'
+apply from: 'build_scripts/quality_assurance/checkstyleth.gradle'
 apply from: 'build_scripts/quality_assurance/pmd.gradle'
 
 version = this.publishVersion
@@ -39,9 +39,10 @@ group = 'com.tehang'
 publishing {
   publications {
     maven(MavenPublication) {
-      artifact("build/libs/common-lib-$version" + ".jar") {
-        extension 'jar'
-      }
+      groupId project.group
+      artifactId project.name
+      version project.version
+      from components.java
     }
   }
   repositories {
