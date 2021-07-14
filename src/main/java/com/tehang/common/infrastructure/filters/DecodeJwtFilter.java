@@ -59,7 +59,8 @@ public class DecodeJwtFilter implements Filter {
         RequestContextInfo.setContext(payload);
         log.debug("Context: {}", RequestContextInfo.getContext());
       }
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       log.warn("Add user context info failed. error message: {}", ex.getMessage());
     }
   }
