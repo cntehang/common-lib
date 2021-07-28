@@ -1,8 +1,6 @@
 package com.tehang.common.utility.http;
 
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.client.RestTemplate;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({RestTemplateFactory.class, RestTemplateBuilder.class, RestTemplate.class})
+@Import({RestTemplateFactory.class})
 public @interface EnableCommonRestTemplate {
 
 }
