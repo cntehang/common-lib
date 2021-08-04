@@ -146,7 +146,7 @@ public final class JsonUtils {
   public static class InstantDeserializer extends JsonDeserializer<Instant> {
     @Override
     public Instant deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-      return DateUtils.instantFromString(p.getText());
+      return DateTimeUtils.instantFromString(p.getText());
     }
   }
 
@@ -160,7 +160,7 @@ public final class JsonUtils {
         gen.writeNull();
       }
       else {
-        gen.writeString(DateUtils.instantToString(value));
+        gen.writeString(DateTimeUtils.instantToString(value));
       }
     }
   }
@@ -169,11 +169,9 @@ public final class JsonUtils {
    * 将 LocalDate 字段格式化反序列化。
    */
   public static class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
-    public static final DateTimeFormatter TEHANG_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     @Override
     public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-      return LocalDate.parse(p.getText(), TEHANG_DATE);
+      return DateTimeUtils.localDateFromString(p.getText());
     }
   }
 
@@ -181,15 +179,13 @@ public final class JsonUtils {
    * 将 LocalDate 字段格式化序列化。
    */
   public static class LocalDateSerializer extends JsonSerializer<LocalDate> {
-    public static final DateTimeFormatter TEHANG_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     @Override
     public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
       if (value == null) {
         gen.writeNull();
       }
       else {
-        gen.writeString(TEHANG_DATE.format(value));
+        gen.writeString(DateTimeUtils.localDateToString(value));
       }
     }
   }
