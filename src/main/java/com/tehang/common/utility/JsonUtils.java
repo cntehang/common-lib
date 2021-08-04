@@ -2,8 +2,12 @@ package com.tehang.common.utility;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -12,6 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,6 +136,60 @@ public final class JsonUtils {
       }
       else {
         gen.writeString(value.toString());
+      }
+    }
+  }
+
+  /**
+   * 将 Instant 字段格式化反序列化。
+   */
+  public static class InstantDeserializer extends JsonDeserializer<Instant> {
+    @Override
+    public Instant deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+      return DateUtils.instantFromString(p.getText());
+    }
+  }
+
+  /**
+   * 将 Instant 字段格式化序列化。
+   */
+  public static class InstantSerializer extends JsonSerializer<Instant> {
+    @Override
+    public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        gen.writeString(DateUtils.instantToString(value));
+      }
+    }
+  }
+
+  /**
+   * 将 LocalDate 字段格式化反序列化。
+   */
+  public static class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
+    public static final DateTimeFormatter TEHANG_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    @Override
+    public LocalDate deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+      return LocalDate.parse(p.getText(), TEHANG_DATE);
+    }
+  }
+
+  /**
+   * 将 LocalDate 字段格式化序列化。
+   */
+  public static class LocalDateSerializer extends JsonSerializer<LocalDate> {
+    public static final DateTimeFormatter TEHANG_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    @Override
+    public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        gen.writeString(TEHANG_DATE.format(value));
       }
     }
   }
