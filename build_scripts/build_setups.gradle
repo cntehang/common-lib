@@ -1,5 +1,5 @@
 ext {
-  publishVersion = '1.2.24'
+  publishVersion = '1.2.26'
 }
 
 apply plugin: 'java'
@@ -27,23 +27,3 @@ compileJava {
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
 }
-
-// 已作废，改用发布到私有nexus
-//publishing {
-//  publications {
-//    myPublication(MavenPublication) {
-//      groupId = 'com.cntehang'
-//      artifactId = 'common-lib'
-//      version = this.publishVersion
-//
-//      // telling gradle to publish project's jar archive (2)
-//      from components.java
-//    }
-//  }
-//  // telling gradle to publish artifact to local directory (3)
-//  repositories {
-//    maven {
-//      url "file:/${project.projectDir}/lib"
-//    }
-//  }
-//}
