@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -17,10 +16,10 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DateTimeUtils {
-  private static final ZoneId TIMEZONE_BEIJING = ZoneId.of("+08:00");
-  private static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
-  private static final String ISO_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-  private static final DateTimeFormatter INSTANT_FORMATTER = DateTimeFormatter.ofPattern(ISO_PATTERN)
+  static final ZoneId TIMEZONE_BEIJING = ZoneId.of("+08:00");
+  static final ZoneId TIMEZONE_UTC = ZoneId.of("UTC");
+  static final String ISO_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+  static final DateTimeFormatter INSTANT_FORMATTER = DateTimeFormatter.ofPattern(ISO_PATTERN)
           .withZone(TIMEZONE_UTC);
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -74,27 +73,5 @@ public final class DateTimeUtils {
     }
 
     return result;
-  }
-
-  /**
-   * 根据 LocalDate 范围获取 Instant 范围
-   */
-  public static Pair<Instant, Instant> instantRangeFromDateRange(LocalDate rangeStart, LocalDate rangeEnd) {
-    assert rangeStart != null;
-    assert rangeEnd != null;
-    assert !rangeStart.isAfter(rangeEnd);
-
-    return Pair.of(rangeStart.atStartOfDay(TIMEZONE_BEIJING).toInstant(),
-            rangeEnd.plusDays(1).atStartOfDay(TIMEZONE_BEIJING).toInstant());
-  }
-
-  /**
-   * 根据 LocalDate 范围获取 Instant String 范围
-   */
-  public static Pair<String, String> instantStringRangeFromDateRange(LocalDate rangeStart, LocalDate rangeEnd) {
-    final Pair<Instant, Instant> instantRange = instantRangeFromDateRange(rangeStart, rangeEnd);
-
-    return Pair.of(instantToString(instantRange.getLeft()),
-            instantToString(instantRange.getRight()));
   }
 }
