@@ -171,11 +171,23 @@ public class CommonJdbcTemplate {
    * @return 分页查询结果
    */
   public <T> PageDto<T> pagedQuery(String sql, PageSearchBaseDto baseParams, Class<T> mappedClass) {
+    return pagedQuery(sql, SqlUtils.buildCountSql(sql), baseParams, mappedClass);
+  }
 
+  /**
+   * 分页查询.
+   *
+   * @param sql         sql语句
+   * @param baseParams  参数（包括分页、排序等）
+   * @param mappedClass 结果映射类
+   * @param <T>         结果映射类型
+   * @return 分页查询结果
+   */
+  public <T> PageDto<T> pagedQuery(String sql, String countSql, PageSearchBaseDto baseParams, Class<T> mappedClass) {
     BeanPropertySqlParameterSource parameter = new BeanPropertySqlParameterSource(baseParams);
 
     // 统计总数
-    Long total = this.countTotal(sql, parameter);
+    Long total = this.countTotal(sql, countSql, parameter);
 
     // 执行查询
     PageRequest pageRequest = PageUtil.buildPageRequest(baseParams.getPageNumber(), baseParams.getPageSize());
@@ -244,8 +256,7 @@ public class CommonJdbcTemplate {
     return PageUtil.buildPageResponse(content, pageRequest, count);
   }
 
-  private Long countTotal(String sql, BeanPropertySqlParameterSource parameter) {
-    String countSql = SqlUtils.buildCountSql(sql);
+  private Long countTotal(String sql, String countSql, BeanPropertySqlParameterSource parameter) {
     String total = jdbcTemplate.queryForObject(countSql, parameter, String.class);
 
     if (StringUtils.isBlank(total)) {
