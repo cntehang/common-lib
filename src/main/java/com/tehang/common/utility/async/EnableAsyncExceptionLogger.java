@@ -1,4 +1,4 @@
-package com.tehang.common.utility.modelconversion;
+package com.tehang.common.utility.async;
 
 import org.springframework.context.annotation.Import;
 
@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({ModelConversionService.class})
-public @interface EnableModelConversion {
+@Import({AsyncExceptionLoggerAspect.class})
+public @interface EnableAsyncExceptionLogger {
 
 }
