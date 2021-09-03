@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Json相关的工具.
@@ -136,6 +137,22 @@ public final class JsonUtils {
       }
       else {
         gen.writeString(value.toString());
+      }
+    }
+  }
+
+  /**
+   * 将 List<Long> 字段以 List<String> 类型序列化，以规避 JavaScript 的 Long 精度不足问题。
+   */
+  public static class LongListSerializer extends JsonSerializer<List<Long>> {
+    @Override
+    public void serialize(List<Long> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        List<String> stringList = value.stream().map(Object::toString).collect(Collectors.toList());
+        gen.writeObject(stringList);
       }
     }
   }
