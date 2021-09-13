@@ -1,6 +1,7 @@
 package com.tehang.common.utility.elasticsearch;
 
 import com.tehang.common.utility.DateUtils;
+import lombok.Getter;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -22,6 +23,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * 启用elasticSearch需要配置esHost, esPort, esEnvPrefix三个参数
  */
 @Configuration
+@Getter
 public class ElasticSearchCommonConfig {
 
   /**
