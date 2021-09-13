@@ -23,11 +23,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 方法调用日志的Aspect实现类。启用日志记录的服务必须引入@EnableElasticSearch以实现日志写入。
+ * BizLogAspect的实现基类, 用来辅助实现业务日志记录功能。
+ * 启用日志记录的服务必须引入@EnableElasticSearch以实现日志写入。
  */
 @Slf4j
 @AllArgsConstructor
-public abstract class BizLogAspect {
+public abstract class BizLogAspectBase {
   
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   
