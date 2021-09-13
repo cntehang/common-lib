@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.tehang.common.utility.DateUtils;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.elasticsearch.ElasticSearchCommonConfig;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,6 +16,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,14 +27,18 @@ import java.util.UUID;
  * 启用日志记录的服务必须引入@EnableElasticSearch以实现日志写入。
  */
 @Slf4j
-@AllArgsConstructor
 public abstract class BizLogAspectBase {
   
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-  
-  private final Tracer tracer;
-  private final ElasticSearchCommonConfig esConfig;
-  private final RestHighLevelClient esClient;
+
+  @Autowired
+  private Tracer tracer;
+
+  @Autowired
+  private ElasticSearchCommonConfig esConfig;
+
+  @Autowired
+  private RestHighLevelClient esClient;
 
   /**
    * 获取当前服务的名称，如domestic-hotel-resource
