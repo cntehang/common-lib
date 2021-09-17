@@ -62,6 +62,9 @@ dependencies {
 
   implementation group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
 
+  //for chinese to pinyin
+  compile('com.belerweb:pinyin4j:2.5.1')
+
   // for mock non interface
   testCompile('cglib:cglib-nodep:3.2.5')
   // Use the latest Groovy version for Spock testing
