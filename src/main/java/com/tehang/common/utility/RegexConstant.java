@@ -97,6 +97,38 @@ public final class RegexConstant {
     + "(((19|20)\\d{2})-(0?[13578]|1[02])-31)|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|"
     + "[2468][048]|0[48]))|(2000))-0?2-29))\\s(2[0-3]|[01][0-9]):([0-5][0-9])(\\\\.[0-9]+)?(Z)?$";
 
+  /**
+   * 中文姓名，支持两个及以上的汉字
+   */
+  public static final String CHINESE_NAME_PATTERN = "^[\\u4e00-\\u9fa5]{2,100}$";
+
+  /**
+   * 中文名，带斜杠，主要用于复姓的情况，员工表格导入时使用
+   */
+  public static final String CHINESE_NAME_SPLIT_PATTERN = "^[\\u4e00-\\u9fa5]{1,50}/[\\u4e00-\\u9fa5]{1,50}$";
+
+  // 中文名相关
+  /**
+   * 中文字符串，中文字符串，可用于匹配中文姓或中文名
+   */
+  public static final String CHINESE_PATTERN = "^[\\u4e00-\\u9fa5]{1,50}$";
+
+  /**
+   * 是否包含中文的正则表达式
+   */
+  public static final String CONTAINS_CHINESE_PATTERN = "^.*[\\u4e00-\\u9fa5].*$";
+
+  //英文名相关
+  /**
+   * 英文字符串 + 空格
+   */
+  public static final String ENGLISH_WITH_BLANK_PATTERN = "[A-Za-z ]{1,50}";
+
+  /**
+   * 带分隔符/的英文姓名，主要用于机票火车票等业务场景
+   */
+  public static final String SPLIT_ENGLISH_NAME_PATTERN = "^[A-Za-z ]{1,50}/[A-Za-z ]{1,50}$";
+
   private RegexConstant() {
     //do nothing
   }

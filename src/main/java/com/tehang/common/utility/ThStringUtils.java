@@ -42,6 +42,11 @@ public final class ThStringUtils {
    */
   public static final String LINE = "-";
 
+  /**
+   * 空格.
+   */
+  public static final String SPACE = " ";
+
   private ThStringUtils() {
   }
 
