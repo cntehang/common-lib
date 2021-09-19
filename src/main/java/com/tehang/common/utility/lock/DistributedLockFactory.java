@@ -61,7 +61,7 @@ public class DistributedLockFactory {
   /**
    * 获取分布式锁.
    */
-  private DistributedLock acquireLock(String lockId, boolean blocked, long lockExpiredMilliSecond) {
+  public DistributedLock acquireLock(String lockId, boolean blocked, long lockExpiredMilliSecond) {
     log.debug("Enter acquireLock: {}", lockId);
 
     assertLockIdValid(lockId);

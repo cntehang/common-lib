@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({DistributedLockFactory.class, CommonRedisOperator.class})
+@Import({DistributedLockFactory.class, CommonRedisOperator.class, WithDistributedLockAspect.class})
 public @interface EnableDistributedLock {
 
 }
