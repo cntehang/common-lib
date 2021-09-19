@@ -40,7 +40,11 @@ public class WithDistributedLockAspect {
     log.debug("WithDistributedLockAspect.lockKey: {}", lockKey);
 
     // 加上分布式锁
-    try (var ignored = lockFactory.acquireLock(lockKey, lockAnnotation.blocked(), lockAnnotation.lockExpiredMilliSecond())) {
+    try (var ignored = lockFactory.acquireLock(
+            lockKey,
+            lockAnnotation.blocked(),
+            lockAnnotation.expiredSeconds() * 1000)) {
+      // 在锁范围内执行目标方法
       return joinPoint.proceed();
     }
   }

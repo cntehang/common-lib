@@ -35,6 +35,6 @@ public @interface WithDistributedLock {
   /**
    * 锁的过期时间, 默认值为30秒
    */
-  long lockExpiredMilliSecond() default 30000;
+  long expiredSeconds() default 30;
 
 }
