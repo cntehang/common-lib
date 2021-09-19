@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -25,9 +26,18 @@ public class WithDistributedLockAspect {
   private final DistributedLockFactory lockFactory;
 
   @Around("@annotation(com.tehang.common.utility.lock.WithDistributedLock)")
-  public Object doAround(ProceedingJoinPoint joinPoint, WithDistributedLock lockAnnotation) throws Throwable {
+  public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.debug("Enter WithDistributedLockAspect.doAround");
+
+    // 获取方法对象
+    var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+
+    // 获取annotation对象
+    var lockAnnotation = method.getAnnotation(WithDistributedLock.class);
+
     // 获取lockKey
-    String lockKey = getLockKey(joinPoint, lockAnnotation.keyPieces());
+    String lockKey = getLockKey(joinPoint, method, lockAnnotation.keyPieces());
+    log.debug("WithDistributedLockAspect.lockKey: {}", lockKey);
 
     // 加上分布式锁
     try (var ignored = lockFactory.acquireLock(lockKey, lockAnnotation.blocked(), lockAnnotation.lockExpiredMilliSecond())) {
@@ -38,10 +48,7 @@ public class WithDistributedLockAspect {
   /**
    * 获取lockKey: 根据包名，类名，方法名及key片段，拼接出lockKey
    */
-  private static String getLockKey(ProceedingJoinPoint joinPoint, String[] keyPieces) {
-    // 获取方法对象
-    var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-
+  private static String getLockKey(ProceedingJoinPoint joinPoint, Method method, String[] keyPieces) {
     // lockKey = 包名 + 类名 + 方法名 + keyPieces
     var sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getCanonicalName());

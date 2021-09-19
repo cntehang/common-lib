@@ -25,7 +25,7 @@ public @interface WithDistributedLock {
   /**
    * 锁id的附加部分
    */
-  String[] keyPieces();
+  String[] keyPieces() default {};
 
   /**
    * 未获取到锁时，是阻塞线程进行等待，还是抛出异常？默认值为false
