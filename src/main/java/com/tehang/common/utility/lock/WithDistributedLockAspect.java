@@ -25,7 +25,7 @@ public class WithDistributedLockAspect {
 
   private final DistributedLockFactory lockFactory;
 
-  @Around("@annotation(com.tehang.common.utility.lock.WithDistributedLock)")
+  @Around("@annotation(com.tehang.common.utility.lock.Locked)")
   public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
     log.debug("Enter WithDistributedLockAspect.doAround");
 
@@ -33,7 +33,7 @@ public class WithDistributedLockAspect {
     var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
     // 获取annotation对象
-    var lockAnnotation = method.getAnnotation(WithDistributedLock.class);
+    var lockAnnotation = method.getAnnotation(Locked.class);
 
     // 获取lockKey
     String lockKey = getLockKey(joinPoint, method, lockAnnotation.keyPieces());
