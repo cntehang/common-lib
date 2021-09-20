@@ -100,6 +100,11 @@ public class WithDistributedLockAspect {
         // 解析后续的属性表达式
         object = getPropValue(object, token);
       }
+
+      if (object == null) {
+        // 如果取到了null值，就不再继续往后解析，以免出现NPE
+        break;
+      }
     }
     return String.valueOf(object);
   }
