@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -25,6 +26,13 @@ public class ResponseContainer<T> implements Serializable {
   private String message;
 
   private T data;
+
+  /**
+   * 返回结果消息.
+   */
+  private String debugMsg;
+
+  private List<Object> errors;
 
   /**
    * 构造方法一.
