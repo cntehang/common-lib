@@ -7,6 +7,14 @@ import java.util.function.Supplier;
 
 /**
  * 提供使用分布式锁的辅助方法
+ *
+ * 使用方法：
+ * 1. 注入:
+ * DistributedLockHelper lockHelper;
+ * 2. 使用：
+ * lockHelper.withLock("lockId", () -> {
+ *   // do something in locked
+ * }
  */
 @Component
 @AllArgsConstructor
