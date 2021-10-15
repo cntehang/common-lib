@@ -43,6 +43,21 @@ public class EventPublisher {
    * 发布领域事件.
    */
   public void publish(DomainEvent event) {
+    doPublish(event, null);
+  }
+
+  /**
+   * 发布领域事件, 并指定延时投递的时间（单位毫秒）。
+   * @param event 待发布的事件
+   * @param startDeliverTime 设置消息的定时投递时间（绝对时间),最大延迟时间为7天.
+   *  1. 延迟投递: 延迟3s投递, 设置为: System.currentTimeMillis() + 3000;
+   *  2. 定时投递: 2016-02-01 11:30:00投递, 设置为: new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-02-01 11:30:00").getTime()
+   */
+  public void publish(DomainEvent event, long startDeliverTime) {
+    doPublish(event, startDeliverTime);
+  }
+
+  private void doPublish(DomainEvent event, Long startDeliverTime) {
     // 检查事件参数的有效性
     assertEventValid(event);
 
@@ -54,15 +69,15 @@ public class EventPublisher {
     //发送事件到消息队列, 并在失败时进行重试
     String tag = getTag(event);
     String body = JsonUtils.toJson(event);
-    sendEventMessageWithRetry(event, tag, body);
+    sendEventMessageWithRetry(event, tag, body, startDeliverTime);
   }
 
-  private void sendEventMessageWithRetry(DomainEvent event, String tag, String body) {
+  private void sendEventMessageWithRetry(DomainEvent event, String tag, String body, Long startDeliverTime) {
     int retryTimes = 0;
     while (true) {
       try {
         // 发送消息，发送成功后直接返回
-        mqProducer.sendToQueue(tag, event.getKey(), body);
+        mqProducer.sendToQueue(tag, event.getKey(), body, startDeliverTime);
         log.debug("publish event successful, tag: {}, body: {}", tag, body);
         return;
       }
