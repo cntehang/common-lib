@@ -62,7 +62,7 @@ public abstract class BizLogAspectBase {
       
       // 调用成功
       record.setSuccess(true);
-      record.setResult(JsonUtils.toJson(result));
+      record.setResult(String.valueOf(result));
       
       log.trace("Exit BizLogAspect.around, success: true");
       return result;
