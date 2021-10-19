@@ -50,13 +50,18 @@ public class MqProducer implements InitializingBean, DisposableBean {
    * 发送消息到队列.
    */
   @SuppressWarnings("all")
-  public SendResult sendToQueue(String tag, String key, String body) {
+  public SendResult sendToQueue(String tag, String key, String body, Long startDeliverTime) {
     String topic = mqConfig.getTopic();
     log.debug("Enter sendToQueue, topic: {}, tag:{}, key:{}", topic, tag, key);
 
     SendResult result;
     try {
       Message msg = new Message(topic, tag, key, body.getBytes(Charset.forName("UTF-8")));
+
+      if (startDeliverTime != null) {
+        // 发送延时消息
+        msg.setStartDeliverTime(startDeliverTime);
+      }
       result = producer.send(msg);
     }
     catch (Exception ex) {
