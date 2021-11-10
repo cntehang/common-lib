@@ -30,7 +30,7 @@ public final class DateTimeUtils {
    * Instant 格式化为 String.
    */
   public static String instantToString(Instant instant) {
-    return instantToString(instant, ISO_INSTANT_FORMATTER);
+    return instantToString(instant, ISO_INSTANT_FORMATTER, TIMEZONE_UTC);
   }
 
   /**
@@ -44,11 +44,18 @@ public final class DateTimeUtils {
    * Instant 格式化为 String.
    */
   public static String instantToString(Instant instant, DateTimeFormatter formatter) {
+    return instantToString(instant, formatter, TIMEZONE_BEIJING);
+  }
+
+  /**
+   * Instant 格式化为 String. 指定时区.
+   */
+  public static String instantToString(Instant instant, DateTimeFormatter formatter, ZoneId zoneId) {
     if (instant == null) {
       return null;
     }
 
-    return formatter.format(instant);
+    return formatter.format(instant.atZone(zoneId));
   }
 
   /**

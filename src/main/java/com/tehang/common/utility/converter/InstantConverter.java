@@ -1,6 +1,6 @@
 package com.tehang.common.utility.converter;
 
-import com.tehang.common.utility.DateUtils;
+import com.tehang.common.utility.DateTimeUtils;
 
 import javax.persistence.AttributeConverter;
 import java.time.Instant;
@@ -12,7 +12,7 @@ public class InstantConverter implements AttributeConverter<Instant, String> {
     if (instant == null) {
       return null;
     }
-    return DateUtils.instantToString(instant);
+    return DateTimeUtils.instantToString(instant);
   }
 
   @Override
@@ -20,6 +20,6 @@ public class InstantConverter implements AttributeConverter<Instant, String> {
     if (s == null) {
       return null;
     }
-    return DateUtils.instantFromString(s);
+    return DateTimeUtils.instantFromString(s);
   }
 }

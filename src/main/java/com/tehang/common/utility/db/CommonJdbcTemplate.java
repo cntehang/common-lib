@@ -256,7 +256,7 @@ public class CommonJdbcTemplate {
     return PageUtil.buildPageResponse(content, pageRequest, count);
   }
 
-  private Long countTotal(String sql, String countSql, BeanPropertySqlParameterSource parameter) {
+  public Long countTotal(String sql, String countSql, BeanPropertySqlParameterSource parameter) {
     String total = jdbcTemplate.queryForObject(countSql, parameter, String.class);
 
     if (StringUtils.isBlank(total)) {
@@ -266,7 +266,7 @@ public class CommonJdbcTemplate {
     return Long.parseLong(total);
   }
 
-  private Long countTotalWithoutRefactor(String sql, BeanPropertySqlParameterSource parameter) {
+  public Long countTotalWithoutRefactor(String sql, BeanPropertySqlParameterSource parameter) {
     String countSql = SqlUtils.buildCountSqlWithoutRefactor(sql);
     String total = jdbcTemplate.queryForObject(countSql, parameter, String.class);
 
