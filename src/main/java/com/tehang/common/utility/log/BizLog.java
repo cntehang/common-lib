@@ -20,4 +20,9 @@ public @interface BizLog {
    * 日志标签，可以指定多个, 方便根据标签搜索
    */
   String[] tags() default {};
+
+  /**
+   * 参数解析器类名
+   */
+  String paramParseClassName() default "";
 }

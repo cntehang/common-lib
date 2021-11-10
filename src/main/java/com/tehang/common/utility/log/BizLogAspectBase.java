@@ -6,6 +6,7 @@ import com.tehang.common.utility.DateUtils;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.elasticsearch.ElasticSearchCommonConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.CodeSignature;
@@ -40,11 +41,21 @@ public abstract class BizLogAspectBase {
   @Autowired
   private RestHighLevelClient esClient;
 
+  @Autowired
+  private ParamParseFinder paramParseFinder;
+
   /**
    * 获取当前服务的名称，如domestic-hotel-resource
    * 具体的服务可以实现该方法提供服务名称。
    */
   protected abstract String getSvcName();
+
+  /**
+   * 获取当前登陆的用户信息
+   * tmc-services可以从jwt中获取
+   * 其他资源服务返回null即可
+   */
+  protected abstract LoginUserInfo getLoginUserInfo();
   
   /**
    * 实现类可以调用doAround方法，以实现日志记录。
@@ -104,9 +115,21 @@ public abstract class BizLogAspectBase {
     record.setClassFullName(method.getDeclaringClass().getCanonicalName());
     record.setMethod(method.getName());
     record.setTags(Lists.newArrayList(tags));
+    record.setUser(getLoginUserInfo());  // 登陆用户信息通过抽象方法获取，实现类可以提供该方法的实现
+
+    // 从BizLog获取参数解析器类名
+    String paramParseClassName = method.getAnnotation(BizLog.class).paramParseClassName();
+    if (StringUtils.isNotBlank(paramParseClassName)) {
+      var paramParse = paramParseFinder.findParamParse(paramParseClassName);
+      // 由参数解析器实现类填充BizInfo
+      record.setBizInfo(paramParse.getBizInfo(parameterValues));
+    }
+
     record.setParams(JsonUtils.toJson(parameterValues));
     record.setStart(DateUtils.getCstNow().toString(DATE_TIME_FORMAT));
     record.setTraceId(getTraceIdString());
+    record.setSpanId(getSpanIdString());
+    record.setParentId(getParentIdString());
     return record;
   }
   
@@ -159,5 +182,21 @@ public abstract class BizLogAspectBase {
       traceId = tracer.currentSpan().context().traceIdString();
     }
     return traceId;
+  }
+
+  private String getSpanIdString() {
+    String spanId = null;
+    if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
+      spanId = tracer.currentSpan().context().spanIdString();
+    }
+    return spanId;
+  }
+
+  private String getParentIdString() {
+    String parentId = null;
+    if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
+      parentId = tracer.currentSpan().context().parentIdString();
+    }
+    return parentId;
   }
 }
