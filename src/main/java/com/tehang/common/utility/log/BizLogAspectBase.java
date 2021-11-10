@@ -52,10 +52,12 @@ public abstract class BizLogAspectBase {
 
   /**
    * 获取当前登陆的用户信息
-   * tmc-services可以从jwt中获取
-   * 其他资源服务返回null即可
+   * <p>
+   * 默认返回null
    */
-  protected abstract LoginUserInfo getLoginUserInfo();
+  protected LoginUserInfo getLoginUserInfo() {
+    return null;
+  }
   
   /**
    * 实现类可以调用doAround方法，以实现日志记录。
