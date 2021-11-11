@@ -20,6 +20,11 @@ public class LoginUserInfo implements Serializable {
    * 前台的员工姓名
    */
   private String employeeName;
+
+  /**
+   * 前台的员工手机号
+   */
+  private String employeeMobile;
   
   /**
    * 前台的公司id
