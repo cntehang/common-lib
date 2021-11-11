@@ -71,6 +71,16 @@ public class BizLogRecord implements Serializable {
    * 调用时的traceId
    */
   private String traceId;
+
+  /**
+   * 调用时的spanId
+   */
+  private String spanId;
+
+  /**
+   * 调用时的parentId
+   */
+  private String parentId;
   
   /**
    * 调用开始时间, 格式为yyyy-MM-dd HH:mm:ss.SSS
