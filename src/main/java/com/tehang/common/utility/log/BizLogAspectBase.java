@@ -65,7 +65,7 @@ public abstract class BizLogAspectBase {
     long start = System.currentTimeMillis();
     try {
       // 调用目标方法
-      BizLogContextHolder.setBizLogContext(new BizLogContext());
+      BizLogContextHolder.addBizLogContext();
       Object result = joinPoint.proceed();
 
       // 调用成功

@@ -28,16 +28,16 @@ public final class BizLogContextHolder {
   }
 
   /**
-   * 设置业务日志上下文
+   * 添加业务日志上下文
    */
-  public static void setBizLogContext(BizLogContext bizLogContext) {
-    getStack(bizLogContextThreadLocal).push(bizLogContext);
+  static void addBizLogContext() {
+    getStack(bizLogContextThreadLocal).push(new BizLogContext());
   }
 
   /**
    * 移除业务日志上下文
    */
-  public static void removeBizLogContext() {
+  static void removeBizLogContext() {
     getStack(bizLogContextThreadLocal).pop();
   }
 
