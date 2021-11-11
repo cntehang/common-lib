@@ -6,7 +6,6 @@ import com.tehang.common.utility.DateUtils;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.elasticsearch.ElasticSearchCommonConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.CodeSignature;
@@ -24,12 +23,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * BizLogAspect的实现基类, 用来辅助实现业务日志记录功能。
- * 启用日志记录的服务必须引入@EnableElasticSearch以实现日志写入。
+ * BizLogAspect的实现基类, 用来辅助实现业务日志记录功能。 启用日志记录的服务必须引入@EnableElasticSearch以实现日志写入。
  */
 @Slf4j
 public abstract class BizLogAspectBase {
-  
+
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
   @Autowired
@@ -41,12 +39,8 @@ public abstract class BizLogAspectBase {
   @Autowired
   private RestHighLevelClient esClient;
 
-  @Autowired
-  private ParamParseFinder paramParseFinder;
-
   /**
-   * 获取当前服务的名称，如domestic-hotel-resource
-   * 具体的服务可以实现该方法提供服务名称。
+   * 获取当前服务的名称，如domestic-hotel-resource 具体的服务可以实现该方法提供服务名称。
    */
   protected abstract String getSvcName();
 
@@ -58,25 +52,26 @@ public abstract class BizLogAspectBase {
   protected LoginUserInfo getLoginUserInfo() {
     return null;
   }
-  
+
   /**
    * 实现类可以调用doAround方法，以实现日志记录。
    */
   protected Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
     log.trace("Enter BizLogAspect.around");
-  
+
     // 构造日志记录
     BizLogRecord record = createLogRecord(joinPoint);
-  
+
     long start = System.currentTimeMillis();
     try {
       // 调用目标方法
+      BizLogContextHolder.setBizLogContext(new BizLogContext());
       Object result = joinPoint.proceed();
-      
+
       // 调用成功
       record.setSuccess(true);
       record.setResult(String.valueOf(result));
-      
+
       log.trace("Exit BizLogAspect.around, success: true");
       return result;
     }
@@ -85,7 +80,7 @@ public abstract class BizLogAspectBase {
       record.setSuccess(false);
       record.setMsg(ex.getMessage());
       record.setException(ExceptionUtils.getStackTrace(ex));
-  
+
       log.trace("Exit BizLogAspect.around, success: false");
       throw ex;
     }
@@ -93,22 +88,29 @@ public abstract class BizLogAspectBase {
       // 填写截止时间
       record.setEnd(DateUtils.getCstNow().toString(DATE_TIME_FORMAT));
       record.setElapsed(calculateElapsed(start));
-      
+
+      var currentBizContext = BizLogContextHolder.getCurrentBizLogContext();
+      if (currentBizContext != null) {
+        record.setBizInfo(currentBizContext.getBizInfo());
+      }
+
+      BizLogContextHolder.removeBizLogContext();
+
       // 保存调用日志
       saveRecord(record);
     }
   }
-  
+
   private BizLogRecord createLogRecord(ProceedingJoinPoint joinPoint) {
     // 获取方法对象
     var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-    
+
     // 获取方法参数值
     Map<String, Object> parameterValues = getNameAndValue(joinPoint);
-    
+
     // 从BizLog获取tags
     String[] tags = method.getAnnotation(BizLog.class).tags();
-    
+
     // 构造日志记录
     var record = new BizLogRecord();
     record.setId(UUID.randomUUID().toString());
@@ -118,15 +120,6 @@ public abstract class BizLogAspectBase {
     record.setMethod(method.getName());
     record.setTags(Lists.newArrayList(tags));
     record.setUser(getLoginUserInfo());  // 登陆用户信息通过抽象方法获取，实现类可以提供该方法的实现
-
-    // 从BizLog获取参数解析器类名
-    String paramParseClassName = method.getAnnotation(BizLog.class).paramParseClassName();
-    if (StringUtils.isNotBlank(paramParseClassName)) {
-      var paramParse = paramParseFinder.findParamParse(paramParseClassName);
-      // 由参数解析器实现类填充BizInfo
-      record.setBizInfo(paramParse.getBizInfo(parameterValues));
-    }
-
     record.setParams(JsonUtils.toJson(parameterValues));
     record.setStart(DateUtils.getCstNow().toString(DATE_TIME_FORMAT));
     record.setTraceId(getTraceIdString());
@@ -134,19 +127,19 @@ public abstract class BizLogAspectBase {
     record.setParentId(getParentIdString());
     return record;
   }
-  
+
   private float calculateElapsed(long start) {
     long end = System.currentTimeMillis();
     // 结果以秒为单位
     return (end - start) / 1000f;
   }
-  
+
   private void saveRecord(BizLogRecord record) {
     // 创建es索引请求
     var request = new IndexRequest(esConfig.getIndexNameForBizLog());
     request.id(record.getId());
     request.source(JsonUtils.toJson(record), XContentType.JSON);
-    
+
     // 异步添加索引
     esClient.indexAsync(request, RequestOptions.DEFAULT, new ActionListener<IndexResponse>() {
       @Override
@@ -154,7 +147,7 @@ public abstract class BizLogAspectBase {
         // 保存日志成功
         log.trace("save logRecord response: {}", indexResponse.getResult());
       }
-  
+
       @Override
       public void onFailure(Exception ex) {
         // 保存日志失败
@@ -162,22 +155,22 @@ public abstract class BizLogAspectBase {
       }
     });
   }
-  
+
   /**
    * 获取参数值
    */
   private Map<String, Object> getNameAndValue(ProceedingJoinPoint joinPoint) {
     Map<String, Object> param = new HashMap<>();
-  
+
     Object[] paramValues = joinPoint.getArgs();
     String[] paramNames = ((CodeSignature) joinPoint.getSignature()).getParameterNames();
-  
+
     for (int i = 0; i < paramNames.length; i++) {
       param.put(paramNames[i], paramValues[i]);
     }
     return param;
   }
-  
+
   private String getTraceIdString() {
     String traceId = null;
     if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
