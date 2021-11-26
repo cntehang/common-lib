@@ -1,11 +1,9 @@
 package com.tehang.common.utility.converter;
 
 import com.tehang.common.utility.DateTimeUtils;
-import com.tehang.common.utility.DateUtils;
 
 import javax.persistence.AttributeConverter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class LocalDateConverter implements AttributeConverter<LocalDate, String> {
 
