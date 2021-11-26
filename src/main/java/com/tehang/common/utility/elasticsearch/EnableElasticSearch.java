@@ -11,6 +11,12 @@ import java.lang.annotation.Target;
 
 /**
  * 启用elasticSearch组件. 启用elasticSearch需要配置esHost, esPort, esEnvPrefix三个参数
+ *
+ * 引用common-lib的服务如需禁用SpringBoot针对es的健康检查, 可以添加以下配置：
+ * management:
+ *   health:
+ *     elasticsearch:
+ *       enabled: false
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
