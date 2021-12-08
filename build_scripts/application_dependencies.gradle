@@ -83,7 +83,7 @@ dependencies {
   compile('org.modelmapper:modelmapper:2.3.9')
 
   // elasticSearch
-  compile('org.elasticsearch:elasticsearch:7.10.0')
-  compile('org.elasticsearch.client:elasticsearch-rest-client:7.10.0')
-  compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.0')
+  compile('org.elasticsearch:elasticsearch:7.15.1')
+  compile('org.elasticsearch.client:elasticsearch-rest-client:7.15.1')
+  compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.15.1')
 }
