@@ -1,0 +1,71 @@
+// PUT dev1-user-operation-log
+{
+  "mappings": {
+    "dynamic" : "strict",
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "operatorId": {
+        "type": "keyword"
+      },
+      "operatorName": {
+        "type": "keyword"
+      },
+      "operatorCorpId": {
+        "type": "keyword"
+      },
+      "operatorCorpName": {
+        "type": "keyword"
+      },
+      "operatorType": {
+        "type": "keyword"
+      },
+      "fromAdmin": {
+        "type": "boolean"
+      },
+      "staffName": {
+        "type": "keyword"
+      },
+      "svc": {
+        "type": "keyword"
+      },
+      "operateSource": {
+        "type": "keyword"
+      },
+      "createTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS"
+      },
+      "objectId":{
+        "type": "keyword"
+      },
+      "objectName": {
+        "type": "keyword"
+      },
+      "operationName": {
+        "type": "keyword"
+      },
+      "operationDesc": {
+        "type": "keyword",
+        "ignore_above": 256
+      },
+      "attributes": {
+        "properties":{
+          "attributeName": {
+            "type": "keyword"
+          },
+          "attributeAlias": {
+            "type": "keyword"
+          },
+          "oldValue": {
+            "type": "keyword"
+          },
+          "newValue": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
