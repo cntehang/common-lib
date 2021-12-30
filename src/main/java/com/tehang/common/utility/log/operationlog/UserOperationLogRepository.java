@@ -10,6 +10,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class UserOperationLogRepository {
       userOperationLog.setId(UUID.randomUUID().toString());
     }
     if (userOperationLog.getCreateTime() == null) {
-      userOperationLog.setCreateTime(UserOperationLog.currentTime());
+      userOperationLog.setCreateTime(currentTime());
     }
 
     if (userOperationLog.getAttributes() == null) {
@@ -74,5 +76,13 @@ public class UserOperationLogRepository {
                       .filter(Objects::nonNull)
                       .collect(Collectors.toList()));
     }
+  }
+
+  /**
+   * 获取北京时区的当前时间, 格式为: yyyy-MM-dd HH:mm:ss.SSS
+   */
+  private static String currentTime() {
+    var bjTimeZone = DateTimeZone.forID("+08:00");
+    return DateTime.now().toDateTime(bjTimeZone).toString("yyyy-MM-dd HH:mm:ss.SSS");
   }
 }

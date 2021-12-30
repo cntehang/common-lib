@@ -1,20 +1,22 @@
 package com.tehang.common.utility.log.operationlog;
 
 import com.tehang.common.utility.JsonUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 用户操作日志。用来记录用户对系统的重要操作，并提供菜单供业务人员查询。
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserOperationLog implements Serializable {
 
   private static final long serialVersionUID = -1231234537057856201L;
@@ -101,12 +103,6 @@ public class UserOperationLog implements Serializable {
   
   // ----------- 方法 ---------------
 
-  public UserOperationLog() {
-    this.id = UUID.randomUUID().toString();
-    this.createTime = currentTime();
-    this.attributes = new ArrayList<>();
-  }
-
   /**
    * 根据字段的旧值和新值，创建变更的属性信息
    */
@@ -119,14 +115,6 @@ public class UserOperationLog implements Serializable {
    */
   public static ChangedAttribute getChangedCollectionAttribute(String attributeName, String attributeAlias, Collection<?> oldValue, Collection<?> newValue) {
     return UserOperationLogUtils.getChangedCollectionAttribute(attributeName, attributeAlias, oldValue, newValue);
-  }
-
-    /**
-     * 获取北京时区的当前时间, 格式为: yyyy-MM-dd HH:mm:ss.SSS
-     */
-  static String currentTime() {
-    var bjTimeZone = DateTimeZone.forID("+08:00");
-    return DateTime.now().toDateTime(bjTimeZone).toString("yyyy-MM-dd HH:mm:ss.SSS");
   }
 
   @Override
