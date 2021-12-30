@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,12 +104,27 @@ public class UserOperationLog implements Serializable {
   public UserOperationLog() {
     this.id = UUID.randomUUID().toString();
     this.createTime = currentTime();
+    this.attributes = new ArrayList<>();
   }
 
   /**
-   * 获取北京时区的当前时间, 格式为: yyyy-MM-dd HH:mm:ss.SSS
+   * 根据字段的旧值和新值，创建变更的属性信息
    */
-  private static String currentTime() {
+  public static ChangedAttribute getChangedAttribute(String attributeName, String attributeAlias, Object oldValue, Object newValue) {
+    return UserOperationLogUtils.getChangedAttribute(attributeName, attributeAlias, oldValue, newValue);
+  }
+
+  /**
+   * 根据集合字段的旧值和新值，创建变更的属性信息
+   */
+  public static ChangedAttribute getChangedCollectionAttribute(String attributeName, String attributeAlias, Collection<?> oldValue, Collection<?> newValue) {
+    return UserOperationLogUtils.getChangedCollectionAttribute(attributeName, attributeAlias, oldValue, newValue);
+  }
+
+    /**
+     * 获取北京时区的当前时间, 格式为: yyyy-MM-dd HH:mm:ss.SSS
+     */
+  static String currentTime() {
     var bjTimeZone = DateTimeZone.forID("+08:00");
     return DateTime.now().toDateTime(bjTimeZone).toString("yyyy-MM-dd HH:mm:ss.SSS");
   }

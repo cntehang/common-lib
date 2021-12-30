@@ -1,7 +1,10 @@
 package com.tehang.common.utility.log.operationlog;
 
 import com.tehang.common.utility.JsonUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -9,6 +12,9 @@ import java.io.Serializable;
  * 用户操作时变更的属性信息
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ChangedAttribute implements Serializable {
 
   private static final long serialVersionUID = -1231234537057856201L;
