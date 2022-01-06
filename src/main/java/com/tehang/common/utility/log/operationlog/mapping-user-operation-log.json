@@ -7,47 +7,58 @@
         "type": "keyword"
       },
       "operatorId": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operatorName": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operatorCorpId": {
         "type": "keyword"
       },
       "operatorCorpName": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operatorType": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "fromAdmin": {
         "type": "boolean"
       },
       "staffName": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "svc": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operateSource": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "createTime": {
         "type": "date",
         "format": "yyyy-MM-dd HH:mm:ss.SSS"
       },
       "objectId":{
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "objectName": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operationName": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase"
       },
       "operationDesc": {
         "type": "keyword",
+        "normalizer": "lowercase",
         "ignore_above": 256
       },
       "attributes": {
