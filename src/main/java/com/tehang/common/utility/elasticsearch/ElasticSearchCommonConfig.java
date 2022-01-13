@@ -61,6 +61,13 @@ public class ElasticSearchCommonConfig {
     String thisMonth = DateUtils.getCstNow().toString("yyyyMM");
     return getIndexNameByYearMonth(thisMonth);
   }
+
+  /**
+   * 获取【用户操作日志】索引名称, eg: dev1-user-operation-log
+   */
+  public String getIndexNameForUserOperationLog() {
+    return lowerCase(trimToEmpty(esEnvPrefix)) + "user-operation-log";
+  }
   
   private String getIndexNameByDateTime(DateTime startDate) {
     String yearMonth = startDate.toString("yyyyMM");
