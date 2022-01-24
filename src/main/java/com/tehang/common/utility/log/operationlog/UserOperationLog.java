@@ -97,6 +97,11 @@ public class UserOperationLog implements Serializable {
   private String operationDesc;
 
   /**
+   * 花费时间，以秒为单位
+   */
+  private float elapsed;
+
+  /**
    * 用户操作变更的属性集合
    */
   private List<ChangedAttribute> attributes;
