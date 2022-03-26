@@ -1,9 +1,17 @@
 package com.tehang.common.utility.time;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import javax.persistence.AttributeConverter;
+import java.io.IOException;
 import java.io.Serializable;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -72,6 +80,34 @@ public final class BjTimeToMS extends BjDateTime implements Serializable {
       return isBlank(s)
               ? null
               : new BjTimeToMS(s);
+    }
+  }
+
+  /**
+   * 将BjTimeToMS序列化为Json。
+   */
+  public static class Serializer extends JsonSerializer<BjTimeToMS> {
+    @Override
+    public void serialize(BjTimeToMS value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        gen.writeString(value.toString());
+      }
+    }
+  }
+
+  /**
+   * 将json反序列化为BjTimeToMS。
+   */
+  public static class Deserializer extends JsonDeserializer<BjTimeToMS> {
+    @Override
+    public BjTimeToMS deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JsonProcessingException {
+      String text = p.getText();
+      return isBlank(text)
+              ? null
+              : new BjTimeToMS(text);
     }
   }
 }
