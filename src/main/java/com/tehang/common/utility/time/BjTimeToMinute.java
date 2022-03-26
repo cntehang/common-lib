@@ -3,7 +3,10 @@ package com.tehang.common.utility.time;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import javax.persistence.AttributeConverter;
 import java.io.Serializable;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * 表示北京时间，精确到分钟，格式为yyyy-MM-dd HH:mm
@@ -51,5 +54,24 @@ public final class BjTimeToMinute extends BjDateTime implements Serializable {
 
   public BjTimeToMinute minusMinutes(int minutes) {
     return new BjTimeToMinute(this.innerTime.minusMinutes(minutes));
+  }
+
+
+  // Jpa Converter的定义
+  public static class Converter implements AttributeConverter<BjTimeToMinute, String> {
+
+    @Override
+    public String convertToDatabaseColumn(BjTimeToMinute date) {
+      return date == null
+              ? null
+              : date.toString();
+    }
+
+    @Override
+    public BjTimeToMinute convertToEntityAttribute(String s) {
+      return isBlank(s)
+              ? null
+              : new BjTimeToMinute(s);
+    }
   }
 }
