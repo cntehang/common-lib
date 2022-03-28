@@ -1,4 +1,4 @@
-package com.tehang.common.utility.external.common;
+package com.tehang.common.utility.external;
 
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.api.inner.EmptyResponseContainer;
