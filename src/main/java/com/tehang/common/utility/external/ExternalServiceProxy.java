@@ -28,11 +28,7 @@ public class ExternalServiceProxy {
   public <Req, Resp> Resp post(String url, Req request, ParameterizedTypeReference<Resp> responseType) {
     log.debug("Enter ExternalServiceProxy.post, request: {}", request);
 
-    ResponseEntity<Resp> responseEntity =
-      restTemplate.exchange(url, HttpMethod.POST,
-                            new HttpEntity<>(request),
-                            responseType);
-
+    ResponseEntity<Resp> responseEntity = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(request), responseType);
     Resp resp = responseEntity.getBody();
 
     if (resp == null) {
