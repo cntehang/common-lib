@@ -53,6 +53,9 @@ dependencies {
   // For google collect lib
   compile('com.google.guava:guava:21.0')
 
+  // caffeine cache
+  compile ('com.github.ben-manes.caffeine:caffeine:3.0.4')
+
   //ali mq
   compile('com.aliyun.openservices:ons-client:1.8.7.1.Final')
 
