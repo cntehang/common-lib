@@ -17,6 +17,14 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 public class CaffeineCacheConfig {
 
+  public static final String CACHE_ONE_MINUTE = "cacheManagerOneMinute";
+  public static final String CACHE_FIVE_MINUTES = "cacheManagerFiveMinutes";
+  public static final String CACHE_TEN_MINUTES = "cacheManagerTenMinutes";
+
+  public static final String CACHE_ONE_HOUR = "cacheManagerOneHour";
+  public static final String CACHE_FIVE_HOURS = "cacheManagerFiveHours";
+  public static final String CACHE_TEN_HOURS = "cacheManagerTenHours";
+
   /**
    * CacheManager, 缓存1分钟
    */
