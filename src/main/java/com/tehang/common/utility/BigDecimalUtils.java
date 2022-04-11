@@ -362,4 +362,22 @@ public final class BigDecimalUtils {
   public static BigDecimal floor(BigDecimal price, int scale) {
     return price.setScale(scale, RoundingMode.HALF_UP);
   }
+
+  /**
+   * 判断是否为整数
+   */
+  public static boolean isInteger(BigDecimal value) {
+    if (value == null) {
+      throw new ParameterException("参数不能为空: value");
+    }
+
+    return value.stripTrailingZeros().scale() <= 0;
+  }
+
+  /**
+   * 判断是否正整数
+   */
+  public static boolean isPositiveInteger(BigDecimal value) {
+    return greaterThanZero(value) && isInteger(value);
+  }
 }
