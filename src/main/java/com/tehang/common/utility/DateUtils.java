@@ -1,5 +1,6 @@
 package com.tehang.common.utility;
 
+import com.tehang.common.infrastructure.exceptions.ParameterException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -16,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * 日期工具类. 采用joda工具包实现.
@@ -840,4 +843,42 @@ public final class DateUtils {
     return result;
   }
 
+
+  /**
+   * 比较第一个日期是否大于等于第二个日期(转为北京时间比较)
+   */
+  public static boolean isDateAfterOrEqualInBeijing(String firstDate, String secondDate) {
+    if (isBlank(firstDate)) {
+      throw new ParameterException("第一个日期不能为空");
+    }
+
+    if (isBlank(secondDate)) {
+      throw new ParameterException("第二个日期不能为空");
+    }
+
+    DateTime firstDateInBeijing = parseInBeijing(firstDate);
+    DateTime secondDateInBeijing = parseInBeijing(secondDate);
+
+    return firstDateInBeijing.withTimeAtStartOfDay().isAfter(secondDateInBeijing.withTimeAtStartOfDay())
+      || firstDateInBeijing.withTimeAtStartOfDay().isEqual(secondDateInBeijing.withTimeAtStartOfDay());
+  }
+
+  /**
+   * 比较第一个日期是否小于等于第二个日期(转为北京时间比较)
+   */
+  public static boolean isDateBeforeOrEqualInBeijing(String firstDate, String secondDate) {
+    if (isBlank(firstDate)) {
+      throw new ParameterException("第一个日期不能为空");
+    }
+
+    if (isBlank(secondDate)) {
+      throw new ParameterException("第二个日期不能为空");
+    }
+
+    DateTime firstDateInBeijing = parseInBeijing(firstDate);
+    DateTime secondDateInBeijing = parseInBeijing(secondDate);
+
+    return firstDateInBeijing.withTimeAtStartOfDay().isBefore(secondDateInBeijing.withTimeAtStartOfDay())
+      || firstDateInBeijing.withTimeAtStartOfDay().isEqual(secondDateInBeijing.withTimeAtStartOfDay());
+  }
 }
