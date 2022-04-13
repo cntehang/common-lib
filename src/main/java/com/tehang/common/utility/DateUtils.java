@@ -826,7 +826,7 @@ public final class DateUtils {
    * String 格式化为 Instant.
    */
   public static Instant instantFromString(String dateTimeString) {
-    if (StringUtils.isBlank(dateTimeString)) {
+    if (isBlank(dateTimeString)) {
       return null;
     }
 
