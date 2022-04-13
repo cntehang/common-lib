@@ -82,8 +82,6 @@ class BjTimeToMSSpec extends TestSpecification {
     date1.compareTo(date2) < 0
     date2.compareTo(date1) > 0
     date2.compareTo(date3) == 0
-    date1 != date2
-    date2 == date3
   }
 
   def "test9: BjTimeToMS.isAfterNow, isBeforeNow test"() {

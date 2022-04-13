@@ -175,20 +175,6 @@ public abstract class BjDateTime implements Serializable {
     return this.innerTime.compareTo(bjDateTime.innerTime);
   }
 
-  // ----------- equals --------------
-  /**
-   * 比较两个时间是否相等: 当两个时间的格式不同，但时间值相同时，也视为相等。 精确到毫秒。
-   */
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof BjDateTime) {
-      return isEqual((BjDateTime) obj);
-    }
-    else {
-      return false;
-    }
-  }
-
   // ----------- toString --------------
   @Override
   public String toString() {
