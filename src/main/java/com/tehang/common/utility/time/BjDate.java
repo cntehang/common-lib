@@ -1,5 +1,6 @@
 package com.tehang.common.utility.time;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +57,31 @@ public final class BjDate extends BjDateTime implements Serializable {
     return new BjDate(this.innerTime.minusDays(days));
   }
 
+  /**
+   * 是否晚于今天?
+   */
+  @JsonIgnore
+  public boolean isAfterToday() {
+    return isAfter(today());
+  }
+
+  /**
+   * 是否早于今天？
+   */
+  @JsonIgnore
+  public boolean isBeforeToday() {
+    return isBefore(today());
+  }
+
+  /**
+   * 是否正好是今天？
+   */
+  @JsonIgnore
+  public boolean isToday() {
+    return isEqual(today());
+  }
+
+  // ----------- 相关的转换类 --------------
 
   // Jpa Converter的定义
   public static class Converter implements AttributeConverter<BjDate, String> {

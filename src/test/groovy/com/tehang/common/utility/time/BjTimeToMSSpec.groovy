@@ -66,4 +66,33 @@ class BjTimeToMSSpec extends TestSpecification {
     then:
     time.minusSeconds(1).toString() == "2022-03-15 10:30:19.555"
   }
+
+  def "test8: BjTimeToMS.isAfter, isBefore, isEqual, compareTo, equals test"() {
+    when:
+    BjTimeToMS date1 = new BjTimeToMS("2022-04-08 10:30:00.000")
+    BjTimeToMS date2 = new BjTimeToMS("2022-04-08 10:31:00.000")
+    BjTimeToMS date3 = new BjTimeToMS("2022-04-08 10:31:00.000")
+
+    then:
+    date1.isBefore(date2)
+    date2.isAfter(date1)
+    date2.isEqual(date3)
+    !date1.isEqual(date2)
+
+    date1.compareTo(date2) < 0
+    date2.compareTo(date1) > 0
+    date2.compareTo(date3) == 0
+    date1 != date2
+    date2 == date3
+  }
+
+  def "test9: BjTimeToMS.isAfterNow, isBeforeNow test"() {
+    when:
+    BjTimeToMS date1 = new BjTimeToMS("2022-04-08 10:35:00.000")
+    BjTimeToMS date2 = new BjTimeToMS("2080-01-01 00:00:00.000")
+
+    then:
+    date1.isBeforeNow()
+    date2.isAfterNow()
+  }
 }

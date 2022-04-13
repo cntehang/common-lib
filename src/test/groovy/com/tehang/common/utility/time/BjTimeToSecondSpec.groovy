@@ -66,4 +66,27 @@ class BjTimeToSecondSpec extends TestSpecification {
     then:
     time.minusSeconds(1).toString() == "2022-03-15 10:30:19"
   }
+
+  def "test8: BjTimeToSecond.isAfter, isBefore, isEqual test"() {
+    when:
+    BjTimeToSecond date1 = new BjTimeToSecond("2022-04-08 10:30:00")
+    BjTimeToSecond date2 = new BjTimeToSecond("2022-04-08 10:31:00")
+    BjTimeToSecond date3 = new BjTimeToSecond("2022-04-08 10:31:00")
+
+    then:
+    date1.isBefore(date2)
+    date2.isAfter(date1)
+    date2.isEqual(date3)
+    !date1.isEqual(date2)
+  }
+
+  def "test9: BjTimeToSecond.isAfterNow, isBeforeNow test"() {
+    when:
+    BjTimeToSecond date1 = new BjTimeToSecond("2022-04-08 10:35:00")
+    BjTimeToSecond date2 = new BjTimeToSecond("2080-01-01 00:00:00")
+
+    then:
+    date1.isBeforeNow()
+    date2.isAfterNow()
+  }
 }

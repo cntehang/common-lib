@@ -59,7 +59,7 @@ class BjTimeToMinuteSpec extends TestSpecification {
     time.plusMinutes(1).toString() == "2022-03-15 10:31"
   }
 
-  def "test7: BjTimeToMS.minusSeconds() is OK"() {
+  def "test7: BjTimeToMinute.minusMinutes() is OK"() {
     when:
     String timeString = "2022-03-15 10:30"
     BjTimeToMinute time = new BjTimeToMinute(timeString);
@@ -68,4 +68,26 @@ class BjTimeToMinuteSpec extends TestSpecification {
     time.minusMinutes(1).toString() == "2022-03-15 10:29"
   }
 
+  def "test8: BjTimeToMinute.isAfter, isBefore, isEqual test"() {
+    when:
+    BjTimeToMinute date1 = new BjTimeToMinute("2022-04-08 10:30")
+    BjTimeToMinute date2 = new BjTimeToMinute("2022-04-08 10:31")
+    BjTimeToMinute date3 = new BjTimeToMinute("2022-04-08 10:31")
+
+    then:
+    date1.isBefore(date2)
+    date2.isAfter(date1)
+    date2.isEqual(date3)
+    !date1.isEqual(date2)
+  }
+
+  def "test9: BjTimeToMinute.isAfterNow, isBeforeNow test"() {
+    when:
+    BjTimeToMinute date1 = new BjTimeToMinute("2022-04-08 10:35")
+    BjTimeToMinute date2 = new BjTimeToMinute("2080-01-01 00:00")
+
+    then:
+    date1.isBeforeNow()
+    date2.isAfterNow()
+  }
 }
