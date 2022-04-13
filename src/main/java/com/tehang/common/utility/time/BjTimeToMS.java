@@ -1,5 +1,6 @@
 package com.tehang.common.utility.time;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,6 +65,23 @@ public final class BjTimeToMS extends BjDateTime implements Serializable {
     return new BjTimeToMS(this.innerTime.minusSeconds(seconds));
   }
 
+  /**
+   * 是否晚于当前时间?
+   */
+  @JsonIgnore
+  public boolean isAfterNow() {
+    return isAfter(now());
+  }
+
+  /**
+   * 是否早于当前时间？
+   */
+  @JsonIgnore
+  public boolean isBeforeNow() {
+    return isBefore(now());
+  }
+
+  // ----------- 相关的转换类 --------------
 
   // Jpa Converter的定义
   public static class Converter implements AttributeConverter<BjTimeToMS, String> {
