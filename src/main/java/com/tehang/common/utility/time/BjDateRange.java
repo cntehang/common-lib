@@ -22,30 +22,30 @@ public final class BjDateRange implements Serializable {
    */
   @JsonSerialize(using = BjDate.Serializer.class)
   @JsonDeserialize(using = BjDate.Deserializer.class)
-  private BjDate start;
+  private BjDate from;
 
   /**
    * 结束日期, null表示结束日期无限制。结束日期可以和开始日期相同，这样就只表示那一天的范围。
    */
   @JsonSerialize(using = BjDate.Serializer.class)
   @JsonDeserialize(using = BjDate.Deserializer.class)
-  private BjDate end;
+  private BjDate to;
 
   // ----------- 构造函数 --------------
 
   private BjDateRange() {
   }
 
-  public BjDateRange(BjDate dateStart, BjDate dateEnd) {
-    if (dateStart != null && dateEnd != null) {
-      if (dateStart.isAfter(dateEnd)) {
-        this.start = dateEnd;
-        this.end = dateStart;
+  public BjDateRange(BjDate dateFrom, BjDate dateTo) {
+    if (dateFrom != null && dateTo != null) {
+      if (dateFrom.isAfter(dateTo)) {
+        this.from = dateTo;
+        this.to = dateFrom;
       }
     }
 
-    this.start = dateStart;
-    this.end = dateEnd;
+    this.from = dateFrom;
+    this.to = dateTo;
   }
 
   // ----------- 其他函数 --------------
@@ -53,8 +53,8 @@ public final class BjDateRange implements Serializable {
   /**
    * 创建一个时间段对象，参数可以为null, 表示无限制。
    */
-  public static BjDateRange create(BjDate dateStart, BjDate dateEnd) {
-    return new BjDateRange(dateStart, dateEnd);
+  public static BjDateRange create(BjDate dateFrom, BjDate dateTo) {
+    return new BjDateRange(dateFrom, dateTo);
   }
 
   /**
@@ -64,28 +64,28 @@ public final class BjDateRange implements Serializable {
     if (date == null) {
       throw new IllegalArgumentException("date can not be null");
     }
-    return (start == null || start.compareTo(date) <= 0)
-        && (end == null || end.compareTo(date) >= 0);
+    return (from == null || from.compareTo(date) <= 0)
+        && (to == null || to.compareTo(date) >= 0);
   }
 
   /**
    * 当前的时间段是否和指定的时间段有重合？
    */
   public boolean overlapped(BjDateRange range) {
-    return isBeforeOrEqual(this.start, range.end)
-        && isBeforeOrEqual(range.start, this.end);
+    return isBeforeOrEqual(this.from, range.to)
+        && isBeforeOrEqual(range.from, this.to);
   }
 
-  private static boolean isBeforeOrEqual(BjDate start, BjDate end) {
-    if (start == null || end == null) {
+  private static boolean isBeforeOrEqual(BjDate from, BjDate to) {
+    if (from == null || to == null) {
       return true;
     }
-    return start.compareTo(end) <= 0;
+    return from.compareTo(to) <= 0;
   }
 
   // ----------- toString --------------
   @Override
   public String toString() {
-    return String.format("(%s, %s)", start, end);
+    return String.format("(%s, %s)", from, to);
   }
 }

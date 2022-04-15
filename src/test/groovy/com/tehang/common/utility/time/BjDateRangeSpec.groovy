@@ -80,28 +80,28 @@ class BjDateRangeSpec extends TestSpecification {
     def range3 = BjDateRange.create(null, null)
 
     then:
-    JsonUtils.toJson(range1) == '{"start":"2022-04-13","end":"2022-04-14"}'
-    JsonUtils.toJson(range2) == '{"start":"2022-04-13"}'
+    JsonUtils.toJson(range1) == '{"from":"2022-04-13","to":"2022-04-14"}'
+    JsonUtils.toJson(range2) == '{"from":"2022-04-13"}'
     JsonUtils.toJson(range3) == '{}'
   }
 
   def "test7: JsonSerialize test"() {
     when:
-    def range1 = JsonUtils.toClass('{"start":"2022-04-13","end":"2022-04-14"}', BjDateRange.class)
-    def range2 = JsonUtils.toClass('{"start":"2022-04-13"}', BjDateRange.class)
+    def range1 = JsonUtils.toClass('{"from":"2022-04-13","to":"2022-04-14"}', BjDateRange.class)
+    def range2 = JsonUtils.toClass('{"from":"2022-04-13"}', BjDateRange.class)
     def range3 = JsonUtils.toClass('{}', BjDateRange.class)
 
     def date1 = BjDate.parse("2022-04-13")
     def date2 = BjDate.parse("2022-04-14")
 
     then:
-    range1.getStart().isEqual(date1)
-    range1.getEnd().isEqual(date2)
+    range1.getFrom().isEqual(date1)
+    range1.getTo().isEqual(date2)
 
-    range2.getStart().isEqual(date1)
-    range2.getEnd() == null
+    range2.getFrom().isEqual(date1)
+    range2.getTo() == null
 
-    range3.getStart() == null
-    range3.getEnd() == null
+    range3.getFrom() == null
+    range3.getTo() == null
   }
 }
