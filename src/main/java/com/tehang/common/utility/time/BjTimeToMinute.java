@@ -41,6 +41,25 @@ public final class BjTimeToMinute extends BjDateTime implements Serializable {
   // ----------- 其他函数 --------------
 
   /**
+   * 解析yyyy-MM-dd HH:mm格式的字符串为北京时间对象，对于无效的字符串将抛出IllegalArgumentException。
+   */
+  public static BjTimeToMinute parse(String dateString) {
+    return new BjTimeToMinute(dateString);
+  }
+
+  public static BjTimeToMinute parseOrNull(String dateString) {
+    return isValid(dateString) ? parse(dateString) : null;
+  }
+
+  /**
+   * 判断给定的字符串是否为有效的北京时间格式，即yyyy-MM-dd HH:mm格式
+   */
+  public static boolean isValid(String dateString) {
+    return !isBlank(dateString)
+        && dateString.matches(DATE_FORMAT_TO_MINUTE_REGEX);
+  }
+
+  /**
    * 获取北京时间当前时间，精确到分钟
    */
   public static BjTimeToMinute now() {

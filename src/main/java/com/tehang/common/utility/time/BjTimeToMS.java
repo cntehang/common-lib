@@ -41,6 +41,25 @@ public final class BjTimeToMS extends BjDateTime implements Serializable {
   // ----------- 其他函数 --------------
 
   /**
+   * 解析yyyy-MM-dd HH:mm:ss.SSS格式的字符串为北京时间对象，对于无效的字符串将抛出IllegalArgumentException。
+   */
+  public static BjTimeToMS parse(String dateString) {
+    return new BjTimeToMS(dateString);
+  }
+
+  public static BjTimeToMS parseOrNull(String dateString) {
+    return isValid(dateString) ? parse(dateString) : null;
+  }
+
+  /**
+   * 判断给定的字符串是否为有效的北京时间格式，即yyyy-MM-dd HH:mm:ss.SSS格式
+   */
+  public static boolean isValid(String dateString) {
+    return !isBlank(dateString)
+        && dateString.matches(DATE_FORMAT_TO_MS_REGEX);
+  }
+
+  /**
    * 获取北京时间当前时间，精确到毫秒
    */
   public static BjTimeToMS now() {

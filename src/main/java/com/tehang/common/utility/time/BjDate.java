@@ -41,6 +41,25 @@ public final class BjDate extends BjDateTime implements Serializable {
   // ----------- 其他函数 --------------
 
   /**
+   * 解析yyyy-MM-dd格式的字符串为北京时间对象，对于无效的字符串将抛出IllegalArgumentException。
+   */
+  public static BjDate parse(String dateString) {
+    return new BjDate(dateString);
+  }
+
+  public static BjDate parseOrNull(String dateString) {
+    return isValid(dateString) ? parse(dateString) : null;
+  }
+
+  /**
+   * 判断给定的字符串是否为有效的北京日期格式，即yyyy-MM-dd格式
+   */
+  public static boolean isValid(String dateString) {
+    return !isBlank(dateString)
+        && dateString.matches(DATE_FORMAT_TO_DAY_REGEX);
+  }
+
+  /**
    * 获取北京时间当前的日期，精确到天
    */
   public static BjDate today() {
