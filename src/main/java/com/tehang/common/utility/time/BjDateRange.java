@@ -41,6 +41,7 @@ public final class BjDateRange implements Serializable {
       if (dateFrom.isAfter(dateTo)) {
         this.from = dateTo;
         this.to = dateFrom;
+        return;
       }
     }
 

@@ -10,8 +10,12 @@ class BjDateRangeSpec extends TestSpecification {
     def start = BjDate.parse("2022-04-15")
     def end = BjDate.parse("2022-04-18")
     def range1 = BjDateRange.create(start, end)
+    def range2 = BjDateRange.create(end, start)
 
     then:
+    range1.getFrom().isEqual(range2.getFrom())
+    range1.getTo().isEqual(range2.getTo())
+
     range1.contains(start)
     range1.contains(end)
     !range1.contains(BjDate.parse("2022-04-14"))
