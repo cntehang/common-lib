@@ -89,7 +89,7 @@ class BjDateRangeSpec extends TestSpecification {
     JsonUtils.toJson(range3) == '{}'
   }
 
-  def "test7: JsonSerialize test"() {
+  def "test7: JsonDeserialize test"() {
     when:
     def range1 = JsonUtils.toClass('{"from":"2022-04-13","to":"2022-04-14"}', BjDateRange.class)
     def range2 = JsonUtils.toClass('{"from":"2022-04-13"}', BjDateRange.class)
