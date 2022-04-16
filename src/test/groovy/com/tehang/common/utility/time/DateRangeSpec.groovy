@@ -3,7 +3,7 @@ package com.tehang.common.utility.time
 import com.tehang.common.TestSpecification
 import com.tehang.common.utility.JsonUtils
 
-class BjDateRangeSpec extends TestSpecification {
+class DateRangeSpec extends TestSpecification {
 
   def "test1: BjDateRange.contains"() {
     when:

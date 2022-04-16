@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter(AccessLevel.PRIVATE)
-public final class BjDateRange implements Serializable {
+public final class DateRange implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -34,10 +34,10 @@ public final class BjDateRange implements Serializable {
 
   // ----------- 构造函数 --------------
 
-  private BjDateRange() {
+  private DateRange() {
   }
 
-  public BjDateRange(BjDate dateFrom, BjDate dateTo) {
+  public DateRange(BjDate dateFrom, BjDate dateTo) {
     if (dateFrom != null && dateTo != null) {
       if (dateFrom.isAfter(dateTo)) {
         this.from = dateTo;
@@ -55,8 +55,8 @@ public final class BjDateRange implements Serializable {
   /**
    * 创建一个时间段对象，参数可以为null, 表示无限制。
    */
-  public static BjDateRange create(BjDate dateFrom, BjDate dateTo) {
-    return new BjDateRange(dateFrom, dateTo);
+  public static DateRange create(BjDate dateFrom, BjDate dateTo) {
+    return new DateRange(dateFrom, dateTo);
   }
 
   /**
@@ -73,7 +73,7 @@ public final class BjDateRange implements Serializable {
   /**
    * 当前的时间段是否和指定的时间段有重合？
    */
-  public boolean overlapped(BjDateRange range) {
+  public boolean overlapped(DateRange range) {
     return isBeforeOrEqual(this.from, range.to)
         && isBeforeOrEqual(range.from, this.to);
   }
