@@ -32,6 +32,16 @@ class BjDateSpec extends TestSpecification {
     thrown(IllegalArgumentException)
   }
 
+  def "test3.2: new BjDate(String dateString) with invalid date for leap year get IllegalArgumentException"() {
+    when:
+    // 由于2022年是平年，2.29是不存在的
+    String notExistedDate = "2022-02-29"
+    BjDate date = new BjDate(notExistedDate)
+
+    then:
+    thrown(IllegalArgumentException)
+  }
+
   def "test4: BjDate.plusDays() is OK"() {
     when:
     String dayString = DateUtils.nowOfCst().plusDays(1).toString(BjDate.DATE_FORMAT_TO_DAY)

@@ -80,6 +80,14 @@ public final class Money implements Serializable, Comparable<Money> {
   }
 
   // ----------- 其他函数 --------------
+
+  /**
+   * 解析金额字符串
+   */
+  public static Money parse(String amountString) {
+    return new Money(amountString);
+  }
+
   /**
    * 当前值是否为0
    */
