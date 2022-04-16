@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.joda.time.Days;
 
 import java.io.Serializable;
 
@@ -82,6 +83,21 @@ public final class BjDateRange implements Serializable {
       return true;
     }
     return from.compareTo(to) <= 0;
+  }
+
+  /**
+   * 计算当前时间段包含了多少天？
+   */
+  public int totalDays() {
+    if (from == null) {
+      throw new UnsupportedOperationException("totalDays not supported, from is null");
+    }
+    if (to == null) {
+      throw new UnsupportedOperationException("totalDays not supported, to is null");
+    }
+    int days = Days.daysBetween(from.innerTime, to.innerTime).getDays();
+    // totalDays包含结束的那一天
+    return days + 1;
   }
 
   // ----------- toString --------------

@@ -9,8 +9,8 @@ class BjDateRangeSpec extends TestSpecification {
     when:
     def start = BjDate.parse("2022-04-15")
     def end = BjDate.parse("2022-04-18")
-    def range1 = BjDateRange.create(start, end)
-    def range2 = BjDateRange.create(end, start)
+    def range1 = DateRange.create(start, end)
+    def range2 = DateRange.create(end, start)
 
     then:
     range1.getFrom().isEqual(range2.getFrom())
@@ -25,7 +25,7 @@ class BjDateRangeSpec extends TestSpecification {
   def "test2: BjDateRange start is null"() {
     when:
     def end = BjDate.parse("2022-04-18")
-    def range1 = BjDateRange.create(null, end)
+    def range1 = DateRange.create(null, end)
 
     then:
     range1.contains(BjDate.parse("2022-04-15"))
@@ -36,7 +36,7 @@ class BjDateRangeSpec extends TestSpecification {
   def "test3: BjDateRange end is null"() {
     when:
     def start = BjDate.parse("2022-04-18")
-    def range1 = BjDateRange.create(start, null)
+    def range1 = DateRange.create(start, null)
 
     then:
     !range1.contains(BjDate.parse("2022-04-15"))
@@ -46,7 +46,7 @@ class BjDateRangeSpec extends TestSpecification {
 
   def "test4: BjDateRange start, end all is null"() {
     when:
-    def range1 = BjDateRange.create(null, null)
+    def range1 = DateRange.create(null, null)
 
     then:
     range1.contains(BjDate.parse("2022-04-15"))
@@ -55,12 +55,12 @@ class BjDateRangeSpec extends TestSpecification {
 
   def "test5: BjDateRange overlapped"() {
     when:
-    def range1 = BjDateRange.create(null, BjDate.parse("2022-04-15"))
-    def range2 = BjDateRange.create(BjDate.parse("2022-04-15"), BjDate.parse("2022-04-18"))
-    def range3 = BjDateRange.create(BjDate.parse("2022-04-18"), null)
-    def range4 = BjDateRange.create(BjDate.parse("2022-04-13"), BjDate.parse("2022-04-14"))
-    def range5 = BjDateRange.create(BjDate.parse("2022-04-16"), BjDate.parse("2022-04-20"))
-    def range6 = BjDateRange.create(null, null)
+    def range1 = DateRange.create(null, BjDate.parse("2022-04-15"))
+    def range2 = DateRange.create(BjDate.parse("2022-04-15"), BjDate.parse("2022-04-18"))
+    def range3 = DateRange.create(BjDate.parse("2022-04-18"), null)
+    def range4 = DateRange.create(BjDate.parse("2022-04-13"), BjDate.parse("2022-04-14"))
+    def range5 = DateRange.create(BjDate.parse("2022-04-16"), BjDate.parse("2022-04-20"))
+    def range6 = DateRange.create(null, null)
 
     then:
     range1.overlapped(range1)
@@ -77,11 +77,25 @@ class BjDateRangeSpec extends TestSpecification {
     range6.overlapped(range6)
   }
 
-  def "test6: JsonSerialize test"() {
+  def "test6: BjDateRange totalDays"() {
     when:
-    def range1 = BjDateRange.create(BjDate.parse("2022-04-13"), BjDate.parse("2022-04-14"))
-    def range2 = BjDateRange.create(BjDate.parse("2022-04-13"), null)
-    def range3 = BjDateRange.create(null, null)
+    def range1 = DateRange.create(BjDate.parse("2022-04-15"), BjDate.parse("2022-04-18"))
+    def range2 = DateRange.create(BjDate.parse("2022-04-15"), BjDate.parse("2022-04-15"))
+    def range3 = DateRange.create(BjDate.parse("2022-02-28"), BjDate.parse("2022-03-01"))
+    def range4 = DateRange.create(BjDate.parse("2020-02-28"), BjDate.parse("2020-03-01"))
+
+    then:
+    range1.totalDays() == 4 // 包含结束的那一天
+    range2.totalDays() == 1
+    range3.totalDays() == 2
+    range4.totalDays() == 3 // 能够识别闰年
+  }
+
+  def "test10.1: JsonSerialize test"() {
+    when:
+    def range1 = DateRange.create(BjDate.parse("2022-04-13"), BjDate.parse("2022-04-14"))
+    def range2 = DateRange.create(BjDate.parse("2022-04-13"), null)
+    def range3 = DateRange.create(null, null)
 
     then:
     JsonUtils.toJson(range1) == '{"from":"2022-04-13","to":"2022-04-14"}'
@@ -89,11 +103,11 @@ class BjDateRangeSpec extends TestSpecification {
     JsonUtils.toJson(range3) == '{}'
   }
 
-  def "test7: JsonDeserialize test"() {
+  def "test10.2: JsonDeserialize test"() {
     when:
-    def range1 = JsonUtils.toClass('{"from":"2022-04-13","to":"2022-04-14"}', BjDateRange.class)
-    def range2 = JsonUtils.toClass('{"from":"2022-04-13"}', BjDateRange.class)
-    def range3 = JsonUtils.toClass('{}', BjDateRange.class)
+    def range1 = JsonUtils.toClass('{"from":"2022-04-13","to":"2022-04-14"}', DateRange.class)
+    def range2 = JsonUtils.toClass('{"from":"2022-04-13"}', DateRange.class)
+    def range3 = JsonUtils.toClass('{}', DateRange.class)
 
     def date1 = BjDate.parse("2022-04-13")
     def date2 = BjDate.parse("2022-04-14")
