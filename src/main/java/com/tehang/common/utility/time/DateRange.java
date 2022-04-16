@@ -86,7 +86,7 @@ public final class DateRange implements Serializable {
   }
 
   /**
-   * 计算当前时间段包含了多少天？
+   * 计算当前时间段包含了多少天(包含截止的那一天)？
    */
   public int totalDays() {
     if (from == null) {
