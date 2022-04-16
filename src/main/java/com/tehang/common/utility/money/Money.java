@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.AttributeConverter;
 import javax.validation.constraints.NotNull;
@@ -26,6 +28,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * 表示金额，精确到两位小数（不包含币种，仅表示金额的数值）。
  */
+@JsonSerialize(using = Money.Serializer.class)
+@JsonDeserialize(using = Money.Deserializer.class)
 public final class Money implements Serializable, Comparable<Money> {
 
   private static final long serialVersionUID = -5962799069942105993L;

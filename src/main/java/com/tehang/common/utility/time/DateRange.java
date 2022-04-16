@@ -1,7 +1,6 @@
 package com.tehang.common.utility.time;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,15 +20,13 @@ public final class DateRange implements Serializable {
   /**
    * 开始日期, null表示开始日期无限制。
    */
-  @JsonSerialize(using = BjDate.Serializer.class)
-  @JsonDeserialize(using = BjDate.Deserializer.class)
+  @ApiModelProperty(value = "开始日期, null表示开始日期无限制", dataType = "java.lang.String", example = "2022-04-15")
   private BjDate from;
 
   /**
-   * 结束日期, null表示结束日期无限制。结束日期可以和开始日期相同，这样就只表示那一天的范围。
+   * 结束日期, null表示结束日期无限制。该时间段为闭区间，包含开始和结束的时间点。
    */
-  @JsonSerialize(using = BjDate.Serializer.class)
-  @JsonDeserialize(using = BjDate.Deserializer.class)
+  @ApiModelProperty(value = "结束日期, null表示结束日期无限制。该时间段为闭区间，包含开始和结束的时间点", dataType = "java.lang.String", example = "2022-04-18")
   private BjDate to;
 
   // ----------- 构造函数 --------------
