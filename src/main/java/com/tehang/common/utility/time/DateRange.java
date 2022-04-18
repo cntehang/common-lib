@@ -2,6 +2,7 @@ package com.tehang.common.utility.time;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.Days;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@EqualsAndHashCode
 public final class DateRange implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;

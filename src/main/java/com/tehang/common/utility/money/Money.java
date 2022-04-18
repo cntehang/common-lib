@@ -9,6 +9,10 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.AttributeConverter;
 import javax.validation.constraints.NotNull;
@@ -28,6 +32,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * 表示金额，精确到两位小数（不包含币种，仅表示金额的数值）。
  */
+@Getter
+@Setter(AccessLevel.PRIVATE)
+@EqualsAndHashCode
 @JsonSerialize(using = Money.Serializer.class)
 @JsonDeserialize(using = Money.Deserializer.class)
 public final class Money implements Serializable, Comparable<Money> {
@@ -45,13 +52,6 @@ public final class Money implements Serializable, Comparable<Money> {
    * 内部持有的金额的数值
    */
   private final BigDecimal amount;
-
-  /**
-   * 获取内部保存的金额值
-   */
-  public BigDecimal getAmount() {
-    return amount;
-  }
 
   // ----------- 构造函数 --------------
 
@@ -169,20 +169,6 @@ public final class Money implements Serializable, Comparable<Money> {
             .map(evaluator)
             .filter(Objects::nonNull)
             .reduce(Money.ZERO, Money::add);
-  }
-
-  // ----------- equals --------------
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof Money)) {
-      return false;
-    }
-    if (o == this) {
-      return true;
-    }
-
-    Money that = (Money) o;
-    return this.amount.equals(that.amount);
   }
 
   @Override

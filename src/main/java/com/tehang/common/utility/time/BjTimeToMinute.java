@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -22,6 +23,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * 表示北京时间，精确到分钟，格式为yyyy-MM-dd HH:mm
  */
+@EqualsAndHashCode(callSuper = true)
 @JsonSerialize(using = BjTimeToMinute.Serializer.class)
 @JsonDeserialize(using = BjTimeToMinute.Deserializer.class)
 public final class BjTimeToMinute extends BjDateTime implements Serializable {
