@@ -1,5 +1,9 @@
 package com.tehang.common.utility.time;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -11,6 +15,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * 表示北京时间，根据精度的不同，有不同的格式。可以精确到天，分钟，秒和毫秒。
  */
+@Getter
+@Setter(AccessLevel.PRIVATE)
+@EqualsAndHashCode
 public abstract class BjDateTime implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
@@ -75,20 +82,6 @@ public abstract class BjDateTime implements Serializable {
    * 格式化字符串
    */
   protected String format;
-
-  /**
-   * 获取内部保存的DateTime对象。
-   */
-  public DateTime getInnerTime() {
-    return innerTime;
-  }
-
-  /**
-   * 获取内部保存的格式化字符串。
-   */
-  public String getFormat() {
-    return format;
-  }
 
   // ----------- 构造函数 --------------
   protected BjDateTime() {

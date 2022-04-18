@@ -44,6 +44,8 @@ class MoneySpec extends TestSpecification {
     then:
     money.toString() == "151"
     money.toTwoDecimalString() == "151.00"
+    Money.ZERO.toString() == "0"
+    Money.ZERO.toTwoDecimalString() == "0.00"
   }
 
   def "test5: new Money(String amountString) with invalid format get Exception"() {
@@ -77,14 +79,15 @@ class MoneySpec extends TestSpecification {
   }
 
   def "test7: Money JsonSerializer is OK"() {
-    when:
-    def object = new TestClassWithMoneyField()
-    object.money = new Money("151.465")
+    expect:
+    JsonUtils.toJson(new Money('151.465')) == '151.47'
+    JsonUtils.toJson(new Money('-99.5')) == '-99.5'
+    JsonUtils.toJson(new Money('0.00')) == '0'
+    JsonUtils.toJson(new Money('0')) == '0'
 
-    def json = '{"money":151.47}'
-
-    then:
-    JsonUtils.toJson(object) == json
-    object.money == JsonUtils.toClass(json, TestClassWithMoneyField.class).money
+    JsonUtils.toClass('151.47', Money.class) == new Money('151.47')
+    JsonUtils.toClass('-99.5', Money.class) == new Money('-99.5')
+    JsonUtils.toClass('0.00', Money.class) == new Money('0')
+    JsonUtils.toClass('0', Money.class) == new Money('0')
   }
 }
