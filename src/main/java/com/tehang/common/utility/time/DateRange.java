@@ -78,7 +78,10 @@ public final class DateRange implements Serializable {
   }
 
   private static boolean isBeforeOrEqual(BjDate from, BjDate to) {
-    if (from == null || to == null) {
+    if (from == null) {
+      return true;
+    }
+    if (to == null) {
       return true;
     }
     return from.compareTo(to) <= 0;

@@ -222,7 +222,7 @@ public final class Money implements Serializable, Comparable<Money> {
         gen.writeNull();
       }
       else {
-        gen.writeNumber(value.getAmount());
+        gen.writeNumber(value.toString());
       }
     }
   }
