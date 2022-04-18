@@ -1,6 +1,5 @@
 package com.tehang.common.utility.money;
 
-;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
