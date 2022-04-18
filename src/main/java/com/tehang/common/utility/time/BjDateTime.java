@@ -16,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * 表示北京时间，根据精度的不同，有不同的格式。可以精确到天，分钟，秒和毫秒。
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
 public abstract class BjDateTime implements Serializable {
 

@@ -26,17 +26,17 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @EqualsAndHashCode(callSuper = true)
 @JsonSerialize(using = BjDate.Serializer.class)
 @JsonDeserialize(using = BjDate.Deserializer.class)
-public final class BjDate extends BjDateTime implements Serializable {
+public class BjDate extends BjDateTime implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
   // ----------- 构造函数 --------------
-  private BjDate() {
+  protected BjDate() {
     // 私有的无参构造函数
     super();
   }
 
-  private BjDate(DateTime innerTime) {
+  protected BjDate(DateTime innerTime) {
     super(innerTime, DATE_FORMAT_TO_DAY);
   }
 
@@ -109,6 +109,7 @@ public final class BjDate extends BjDateTime implements Serializable {
   // ----------- 相关的转换类 --------------
 
   // Jpa Converter的定义
+  @javax.persistence.Converter(autoApply = true)
   public static class Converter implements AttributeConverter<BjDate, String> {
 
     @Override

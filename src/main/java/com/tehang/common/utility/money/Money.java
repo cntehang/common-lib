@@ -33,11 +33,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * 表示金额，精确到两位小数（不包含币种，仅表示金额的数值）。
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @JsonSerialize(using = Money.Serializer.class)
 @JsonDeserialize(using = Money.Deserializer.class)
-public final class Money implements Serializable, Comparable<Money> {
+public class Money implements Serializable, Comparable<Money> {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -55,7 +55,7 @@ public final class Money implements Serializable, Comparable<Money> {
 
   // ----------- 构造函数 --------------
 
-  private Money() {
+  protected Money() {
     // 私有的默认构造函数，默认为0
     this(BigDecimal.ZERO);
   }
@@ -195,6 +195,7 @@ public final class Money implements Serializable, Comparable<Money> {
 
 
   // Jpa Converter的定义
+  @javax.persistence.Converter(autoApply = true)
   public static class Converter implements AttributeConverter<Money, BigDecimal> {
 
     @Override

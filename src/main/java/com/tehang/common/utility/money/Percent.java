@@ -28,11 +28,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * 表示百分比，精确到两位小数, 比如15.88%。一般用于金额计算。
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @JsonSerialize(using = Percent.Serializer.class)
 @JsonDeserialize(using = Percent.Deserializer.class)
-public final class Percent implements Serializable, Comparable<Percent> {
+public class Percent implements Serializable, Comparable<Percent> {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -53,7 +53,7 @@ public final class Percent implements Serializable, Comparable<Percent> {
 
   // ----------- 构造函数 --------------
 
-  private Percent() {
+  protected Percent() {
     // 私有的默认构造函数，默认为0
     this(BigDecimal.ZERO);
   }
@@ -195,8 +195,8 @@ public final class Percent implements Serializable, Comparable<Percent> {
   }
 
   // Jpa Converter的定义
+  @javax.persistence.Converter(autoApply = true)
   public static class Converter implements AttributeConverter<Percent, BigDecimal> {
-
     @Override
     public BigDecimal convertToDatabaseColumn(Percent percent) {
       return percent == null

@@ -6,15 +6,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
  * 表示一个价格范围，为闭区间。
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public final class MoneyRange implements Serializable {
+@Embeddable
+public class MoneyRange implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -22,17 +25,20 @@ public final class MoneyRange implements Serializable {
    * 最低价格, null表示最低价格无限制。
    */
   @ApiModelProperty(value = "最低价格, null表示最低价格无限制", dataType = "java.math.BigDecimal", example = "200.00")
+  @Column(columnDefinition = "DECIMAL(19, 2) NULL")
   private Money from;
 
   /**
    * 最高价格, null表示最高价格无限制。该价格段为闭区间。
    */
   @ApiModelProperty(value = "最高价格, null表示最高价格无限制。该价格段为闭区间", dataType = "java.math.BigDecimal", example = "300.00")
+  @Column(columnDefinition = "DECIMAL(19, 2) NULL")
   private Money to;
 
   // ----------- 构造函数 --------------
 
-  private MoneyRange() {
+  protected MoneyRange() {
+    // 保留此空构造函数，以方便一些框架使用
   }
 
   public MoneyRange(Money moneyFrom, Money moneyTo) {

@@ -7,15 +7,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.Days;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
  * 表示一个时间段，包含开始和截止日期。时区为北京时间，精确到天。
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public final class DateRange implements Serializable {
+@Embeddable
+public class DateRange implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -23,17 +26,20 @@ public final class DateRange implements Serializable {
    * 开始日期, null表示开始日期无限制。
    */
   @ApiModelProperty(value = "开始日期, null表示开始日期无限制", dataType = "java.lang.String", example = "2022-04-15")
+  @Column(columnDefinition = "VARCHAR(10) NULL")
   private BjDate from;
 
   /**
    * 结束日期, null表示结束日期无限制。该时间段为闭区间，包含开始和结束的时间点。
    */
   @ApiModelProperty(value = "结束日期, null表示结束日期无限制。该时间段为闭区间，包含开始和结束的时间点", dataType = "java.lang.String", example = "2022-04-18")
+  @Column(columnDefinition = "VARCHAR(10) NULL")
   private BjDate to;
 
   // ----------- 构造函数 --------------
 
-  private DateRange() {
+  protected DateRange() {
+    // 保留此空构造函数，以方便一些框架使用
   }
 
   public DateRange(BjDate dateFrom, BjDate dateTo) {

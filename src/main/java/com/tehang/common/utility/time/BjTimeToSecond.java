@@ -26,12 +26,12 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @EqualsAndHashCode(callSuper = true)
 @JsonSerialize(using = BjTimeToSecond.Serializer.class)
 @JsonDeserialize(using = BjTimeToSecond.Deserializer.class)
-public final class BjTimeToSecond extends BjDateTime implements Serializable {
+public class BjTimeToSecond extends BjDateTime implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
   // ----------- 构造函数 --------------
-  private BjTimeToSecond() {
+  protected BjTimeToSecond() {
     // 私有的无参构造函数
     super();
   }
@@ -109,6 +109,7 @@ public final class BjTimeToSecond extends BjDateTime implements Serializable {
   // ----------- 相关的转换类 --------------
 
   // Jpa Converter的定义
+  @javax.persistence.Converter(autoApply = true)
   public static class Converter implements AttributeConverter<BjTimeToSecond, String> {
 
     @Override
