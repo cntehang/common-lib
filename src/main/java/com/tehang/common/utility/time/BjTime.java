@@ -24,23 +24,23 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * 表示北京时间，精确到毫秒，格式为yyyy-MM-dd HH:mm:ss.SSS
  */
 @EqualsAndHashCode(callSuper = true)
-@JsonSerialize(using = BjTimeToMS.Serializer.class)
-@JsonDeserialize(using = BjTimeToMS.Deserializer.class)
-public class BjTimeToMS extends BjDateTime implements Serializable {
+@JsonSerialize(using = BjTime.Serializer.class)
+@JsonDeserialize(using = BjTime.Deserializer.class)
+public class BjTime extends BjDateTime implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
   // ----------- 构造函数 --------------
-  protected BjTimeToMS() {
+  protected BjTime() {
     // 私有的无参构造函数
     super();
   }
 
-  private BjTimeToMS(DateTime innerTime) {
+  private BjTime(DateTime innerTime) {
     super(innerTime, DATE_FORMAT_TO_MS);
   }
 
-  public BjTimeToMS(String dateString) {
+  public BjTime(String dateString) {
     super(dateString, DATE_FORMAT_TO_MS);
   }
 
@@ -49,11 +49,11 @@ public class BjTimeToMS extends BjDateTime implements Serializable {
   /**
    * 解析yyyy-MM-dd HH:mm:ss.SSS格式的字符串为北京时间对象，对于无效的字符串将抛出IllegalArgumentException。
    */
-  public static BjTimeToMS parse(String dateString) {
-    return new BjTimeToMS(dateString);
+  public static BjTime parse(String dateString) {
+    return new BjTime(dateString);
   }
 
-  public static BjTimeToMS parseOrNull(String dateString) {
+  public static BjTime parseOrNull(String dateString) {
     return isValid(dateString) ? parse(dateString) : null;
   }
 
@@ -68,26 +68,26 @@ public class BjTimeToMS extends BjDateTime implements Serializable {
   /**
    * 获取北京时间当前时间，精确到毫秒
    */
-  public static BjTimeToMS now() {
+  public static BjTime now() {
     DateTime cstNow = new DateTime(DateTimeZone.forID(ZONE_SHANGHAI));
     String dateString = cstNow.toString(DATE_FORMAT_TO_MS);
-    return new BjTimeToMS(dateString);
+    return new BjTime(dateString);
   }
 
-  public BjTimeToMS plusDays(int days) {
-    return new BjTimeToMS(this.innerTime.plusDays(days));
+  public BjTime plusDays(int days) {
+    return new BjTime(this.innerTime.plusDays(days));
   }
 
-  public BjTimeToMS minusDays(int days) {
-    return new BjTimeToMS(this.innerTime.minusDays(days));
+  public BjTime minusDays(int days) {
+    return new BjTime(this.innerTime.minusDays(days));
   }
 
-  public BjTimeToMS plusSeconds(int seconds) {
-    return new BjTimeToMS(this.innerTime.plusSeconds(seconds));
+  public BjTime plusSeconds(int seconds) {
+    return new BjTime(this.innerTime.plusSeconds(seconds));
   }
 
-  public BjTimeToMS minusSeconds(int seconds) {
-    return new BjTimeToMS(this.innerTime.minusSeconds(seconds));
+  public BjTime minusSeconds(int seconds) {
+    return new BjTime(this.innerTime.minusSeconds(seconds));
   }
 
   /**
@@ -110,29 +110,29 @@ public class BjTimeToMS extends BjDateTime implements Serializable {
 
   // Jpa Converter的定义
   @javax.persistence.Converter(autoApply = true)
-  public static class Converter implements AttributeConverter<BjTimeToMS, String> {
+  public static class Converter implements AttributeConverter<BjTime, String> {
 
     @Override
-    public String convertToDatabaseColumn(BjTimeToMS date) {
+    public String convertToDatabaseColumn(BjTime date) {
       return date == null
               ? null
               : date.toString();
     }
 
     @Override
-    public BjTimeToMS convertToEntityAttribute(String s) {
+    public BjTime convertToEntityAttribute(String s) {
       return isBlank(s)
               ? null
-              : new BjTimeToMS(s);
+              : new BjTime(s);
     }
   }
 
   /**
-   * 将BjTimeToMS序列化为Json。
+   * 将BjTime序列化为Json。
    */
-  public static class Serializer extends JsonSerializer<BjTimeToMS> {
+  public static class Serializer extends JsonSerializer<BjTime> {
     @Override
-    public void serialize(BjTimeToMS value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(BjTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
       if (value == null) {
         gen.writeNull();
       }
@@ -143,15 +143,15 @@ public class BjTimeToMS extends BjDateTime implements Serializable {
   }
 
   /**
-   * 将json反序列化为BjTimeToMS。
+   * 将json反序列化为BjTime。
    */
-  public static class Deserializer extends JsonDeserializer<BjTimeToMS> {
+  public static class Deserializer extends JsonDeserializer<BjTime> {
     @Override
-    public BjTimeToMS deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JsonProcessingException {
+    public BjTime deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JsonProcessingException {
       String text = p.getText();
       return isBlank(text)
               ? null
-              : new BjTimeToMS(text);
+              : new BjTime(text);
     }
   }
 }
