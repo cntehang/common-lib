@@ -147,7 +147,7 @@ public class Percent implements Serializable, Comparable<Percent> {
       throw new IllegalArgumentException("money should not be null");
     }
 
-    BigDecimal percentValue = this.amount.divide(new BigDecimal(100), RoundingMode.HALF_UP);
+    BigDecimal percentValue = this.amount.divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
     return money.multiply(percentValue);
   }
 
