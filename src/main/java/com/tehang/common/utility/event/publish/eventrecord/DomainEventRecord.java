@@ -28,6 +28,9 @@ import java.util.UUID;
 @Table(name = "domain_event_record")
 public class DomainEventRecord extends AggregateRoot<String> {
 
+  // 最大发送次数：5次
+  private static final int MAX_SEND_TIMES = 5;
+
   /** PK, uuid */
   @Id
   @Column(nullable = false, length = 50)
@@ -74,6 +77,7 @@ public class DomainEventRecord extends AggregateRoot<String> {
 
   // ------------- 方法 ------------
 
+  /** 创建事件记录的工厂方法 */
   public static DomainEventRecord create(DomainEvent event, Long startDeliverTime, String mqGroupId) {
     var record = new DomainEventRecord();
     record.id = UUID.randomUUID().toString();
@@ -87,5 +91,23 @@ public class DomainEventRecord extends AggregateRoot<String> {
 
     record.resetCreateAndUpdateTimeToNow();
     return record;
+  }
+
+  /** 发送成功后更新记录信息 */
+  public void onSendSuccess() {
+    this.status = DomainEventSendStatus.SendSuccess;
+    this.count++;
+    this.publishTime = BjTime.now();
+    this.resetUpdateTimeToNow();
+  }
+
+  /** 发送失败后更新记录信息 */
+  public void onSendFailed() {
+    this.count++;
+    this.resetUpdateTimeToNow();
+
+    if (this.count >= MAX_SEND_TIMES) {
+      this.status = DomainEventSendStatus.SendFailed;
+    }
   }
 }
