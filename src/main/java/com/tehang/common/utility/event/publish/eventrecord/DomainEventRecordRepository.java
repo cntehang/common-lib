@@ -1,4 +1,4 @@
-package com.tehang.common.utility.event.publish.DomainEventRecord;
+package com.tehang.common.utility.event.publish.eventrecord;
 
 import com.tehang.common.utility.db.jpa.BaseRepository;
 import org.springframework.stereotype.Repository;

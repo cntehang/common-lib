@@ -1,4 +1,4 @@
-package com.tehang.common.utility.event.publish.DomainEventRecord;
+package com.tehang.common.utility.event.publish.eventrecord;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
