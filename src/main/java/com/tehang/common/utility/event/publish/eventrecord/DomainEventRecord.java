@@ -102,12 +102,14 @@ public class DomainEventRecord extends AggregateRoot<String> {
   }
 
   /** 发送失败后更新记录信息 */
-  public void onSendFailed() {
+  public void onSendFailed(String errorMsg) {
     this.count++;
     this.resetUpdateTimeToNow();
 
     if (this.count >= MAX_SEND_TIMES) {
       this.status = DomainEventSendStatus.SendFailed;
+
+      log.error("发送事件消息到mq失败, key: {}, eventType: {}, errorMsg: {}", this.eventKey, this.eventType, errorMsg);
     }
   }
 }

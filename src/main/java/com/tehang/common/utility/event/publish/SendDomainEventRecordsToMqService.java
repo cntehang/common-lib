@@ -59,9 +59,9 @@ public class SendDomainEventRecordsToMqService {
     }
     catch (MessageProducerException ex) {
       // 发布失败后更新记录信息
-      eventRecord.onSendFailed();
+      eventRecord.onSendFailed(ex.getMessage());
       eventRecordRepository.save(eventRecord);
-      log.debug("publish event failed, tag: {}, key: {}, body: {}, msg: {}", tag, key, body, ex.getMessage(), ex);
+      log.warn("publish event failed, tag: {}, key: {}, body: {}, msg: {}", tag, key, body, ex.getMessage(), ex);
     }
   }
 
