@@ -8,6 +8,7 @@ import com.tehang.common.utility.event.mq.MqProducer;
 import com.tehang.common.utility.event.publish.EventPublisher;
 import com.tehang.common.utility.event.publish.SendDomainEventRecordsToMqService;
 import com.tehang.common.utility.event.publish.TransactionalEventPublisher;
+import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecordRepository;
 import com.tehang.common.utility.lock.DistributedLockFactory;
 import com.tehang.common.utility.redis.CommonRedisOperator;
 import org.springframework.context.annotation.Import;
@@ -36,7 +37,8 @@ import java.lang.annotation.Target;
   DistributedLockFactory.class,
   CommonRedisOperator.class,
   TransactionalEventPublisher.class,
-  SendDomainEventRecordsToMqService.class
+  SendDomainEventRecordsToMqService.class,
+  DomainEventRecordRepository.class
 })
 public @interface EnableDomainEvent {
 
