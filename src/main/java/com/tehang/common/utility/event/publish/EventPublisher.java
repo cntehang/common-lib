@@ -1,9 +1,7 @@
 package com.tehang.common.utility.event.publish;
 
-import brave.Tracer;
 import com.google.common.collect.Lists;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
-import com.tehang.common.utility.ApplicationContextProvider;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.mq.MessageProducerException;
@@ -14,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,7 +61,7 @@ public class EventPublisher {
     // 填充事件的发送信息
     event.setPublisher(mqConfig.getGroupId());
     event.setPublishTime(nowOfBeijing());
-    event.setTraceId(getCurrentTraceId());
+    event.setTraceId(TraceInfoHelper.getCurrentTraceId());
 
     //发送事件到消息队列, 并在失败时进行重试
     String tag = getTag(event);
@@ -96,38 +93,6 @@ public class EventPublisher {
         }
       }
     }
-  }
-
-  /**
-   * 获取当前上下文中的traceId.
-   */
-  private static String getCurrentTraceId() {
-    // 获取当前的springContext
-    var applicationContext = ApplicationContextProvider.getApplicationContext();
-    if (applicationContext == null) {
-      return null;
-    }
-
-    Tracer tracer;
-    try {
-      // 获取当前上下文的tracer
-      tracer = applicationContext.getBean(Tracer.class);
-    }
-    catch (NoSuchBeanDefinitionException ex) {
-      // 未启用Tracer时，直接返回null
-      log.debug("cannot found Tracer bean");
-      return null;
-    }
-
-    if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
-      var traceContext = tracer.currentSpan().context();
-      var traceId = traceContext.traceId();
-      if (traceId != 0) {
-        log.debug("Exit getCurrentTraceId: {}", traceId);
-        return String.valueOf(traceId);
-      }
-    }
-    return null;
   }
 
   private void sleepForMillis(long sleepMillis) {
