@@ -21,13 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用事务性的事件发布组件，请使用TransactionalEventPublisher发布事件。
+ * 启用事务性的事件发布组件。在发布事件时使用TransactionalEventPublisher发布事务性事件。
  *
- * 启用事件发布组件后，还需要在Application.java中启用事件存储相关的Enitity, Repository, 以及Scheduling，如下所示：
- * 1. @EnableJpaRepositories(basePackageClasses = { ThStringUtils.class, Application.class }, repositoryBaseClass = ExtendedJpaRepository.class)
- * 2. @EntityScan(basePackageClasses = { ThStringUtils.class, Application.class })
- * 3. @EnableScheduling
- * 4. 执行以下sql，创建事件存储表。
+ * 启用事物性的事件发布组件的步骤如下：
+ * 1. Application中添加: @EnableTransactionalDomainEvent
+ * 2. Application中添加: @EnableJpaRepositories(basePackageClasses = { ThStringUtils.class, Application.class }, repositoryBaseClass = ExtendedJpaRepository.class)
+ * 3. Application中添加: @EntityScan(basePackageClasses = { ThStringUtils.class, Application.class })
+ * 4. Application中添加: @EnableScheduling
+ * 5. 执行以下sql，创建事件存储表。
  *
  * -- 领域事件记录表
  * create table if not exists `domain_event_record`
