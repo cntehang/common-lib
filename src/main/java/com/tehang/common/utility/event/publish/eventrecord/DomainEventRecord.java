@@ -48,12 +48,9 @@ public class DomainEventRecord extends AggregateRoot<String> {
   @Column(length = 200)
   private String publisher;
 
-  /**
-   * 设置消息的延时投递时间（绝对时间),最大延迟时间为7天.
-   *  1. 延迟投递: 延迟3s投递, 设置为: System.currentTimeMillis() + 3000;
-   *  2. 定时投递: 2016-02-01 11:30:00投递, 设置为: new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-02-01 11:30:00").getTime()
-   */
-  private Long startDeliverTime;
+  /** 设置消息的延时投递时间（绝对时间),最大延迟时间为7天. null表示立即投递。*/
+  @Column(length = 23)
+  private BjTime startDeliverTime;
 
   /** 发布事件所在的TraceId */
   @Column(length = 200)
@@ -78,7 +75,7 @@ public class DomainEventRecord extends AggregateRoot<String> {
   // ------------- 方法 ------------
 
   /** 创建事件记录的工厂方法 */
-  public static DomainEventRecord create(DomainEvent event, Long startDeliverTime, String mqGroupId) {
+  public static DomainEventRecord create(DomainEvent event, BjTime startDeliverTime, String mqGroupId) {
     var record = new DomainEventRecord();
     record.id = UUID.randomUUID().toString();
     record.eventKey = event.getKey();

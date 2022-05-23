@@ -47,10 +47,11 @@ public class SendDomainEventRecordsToMqService {
     String tag = getTag(eventRecord.getEventType());
     String key = eventRecord.getEventKey();
     String body = eventRecord.getBody();
+    Long deliverTime = getDeliverTime(eventRecord);
 
     try {
       // 发送消息
-      mqProducer.sendToQueue(tag, key, body, eventRecord.getStartDeliverTime());
+      mqProducer.sendToQueue(tag, key, body, deliverTime);
 
       // 发送成功后更新记录信息
       eventRecord.onSendSuccess();
@@ -63,6 +64,13 @@ public class SendDomainEventRecordsToMqService {
       eventRecordRepository.save(eventRecord);
       log.warn("publish event failed, tag: {}, key: {}, body: {}, msg: {}", tag, key, body, ex.getMessage(), ex);
     }
+  }
+
+  private static Long getDeliverTime(DomainEventRecord eventRecord) {
+    if (eventRecord.getStartDeliverTime() == null) {
+      return null;
+    }
+    return eventRecord.getStartDeliverTime().getInnerTime().getMillis();
   }
 
   private String getTag(String eventType) {
