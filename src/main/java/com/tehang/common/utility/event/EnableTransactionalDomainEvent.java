@@ -21,8 +21,34 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 启用事务性的事件发布组件.
- * 使用TransactionalEventPublisher发布事件，将是事务性的。
+ * 启用事务性的事件发布组件，请使用TransactionalEventPublisher发布事件。
+ *
+ * 启用事件发布组件后，还需要在Application.java中启用事件存储相关的Enitity, Repository, 以及Scheduling，如下所示：
+ * 1. @EnableJpaRepositories(basePackageClasses = { ThStringUtils.class, Application.class }, repositoryBaseClass = ExtendedJpaRepository.class)
+ * 2. @EntityScan(basePackageClasses = { ThStringUtils.class, Application.class })
+ * 3. @EnableScheduling
+ * 4. 执行以下sql，创建事件存储表。
+ *
+ * -- 领域事件记录表
+ * create table if not exists `domain_event_record`
+ * (
+ *   `id`                 varchar(50)  not null    comment 'PK, uuid',
+ *   `event_key`          varchar(100) not null    comment '事件key',
+ *   `event_type`         varchar(100) not null    comment '事件类型，和mq中的tag保持一致(tag可能包含前缀，但eventType字段并不包含前缀)',
+ *   `publisher`          varchar(200) null        comment '事件发布者(对应于mq中的groupId)',
+ *   `start_deliver_time` varchar(23)  null        comment '设置消息的延时投递时间（绝对时间),最大延迟时间为7天',
+ *   `trace_id`           varchar(200) null        comment '发布事件所在的TraceId',
+ *   `body`               text         null        comment '事件发送的消息body',
+ *   `status`             varchar(30)  not null    comment '事件的发送状态',
+ *   `publish_time`       varchar(23)  null        comment '事件发布时间，指实际发送到mq的时间',
+ *   `count`              int(11)      not null    comment '实际发送的次数，初始为0',
+ *
+ *   `create_time`        varchar(23)  not null    comment '创建时间',
+ *   `update_time`        varchar(23)  not null    comment '更新时间',
+ *   primary key (`id`),
+ *   index idx_domain_event_record_status(status),
+ *   index idx_domain_event_record_status_create_time(status, create_time)
+ * ) engine = innodb default charset = utf8mb4 comment = '领域事件记录表';
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
