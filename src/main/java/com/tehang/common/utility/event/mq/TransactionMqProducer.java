@@ -27,6 +27,11 @@ public class TransactionMqProducer implements InitializingBean, DisposableBean {
   private final LocalTransactionCheckerService localTransactionCheckerService;
   private TransactionProducer transactionProducer;
 
+  /**
+   * 事务第一次回查的时间，为相对时间。单位：秒
+   */
+  private static final int CHECK_IMMUNITY_TIME_IN_SECONDS = 1;
+
   private Properties getProducerProperties() {
     Properties properties = new Properties();
 
@@ -50,6 +55,9 @@ public class TransactionMqProducer implements InitializingBean, DisposableBean {
     SendResult result;
     try {
       Message msg = new Message(topic, tag, key, body.getBytes(StandardCharsets.UTF_8));
+      // 设置事务第一次回查的时间，为相对时间。单位：秒
+      // 第一次事务回查后如果消息没有提交或者回滚，则之后每隔1s左右会回查一次，共回查24小时。
+      msg.putUserProperties(PropertyKeyConst.CheckImmunityTimeInSeconds, String.valueOf(CHECK_IMMUNITY_TIME_IN_SECONDS));
 
       if (startDeliverTime != null) {
         // 发送延时消息
