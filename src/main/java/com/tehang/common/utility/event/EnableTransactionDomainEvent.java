@@ -1,7 +1,6 @@
 package com.tehang.common.utility.event;
 
 import com.tehang.common.utility.ApplicationContextProvider;
-import com.tehang.common.utility.event.eventrecord.DomainEventRecordRepository;
 import com.tehang.common.utility.event.mq.BroadcastingMqConsumer;
 import com.tehang.common.utility.event.mq.ClusteringMqConsumer;
 import com.tehang.common.utility.event.mq.LocalTransactionCheckerService;
