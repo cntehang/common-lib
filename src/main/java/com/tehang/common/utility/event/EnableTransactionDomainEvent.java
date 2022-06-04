@@ -6,6 +6,7 @@ import com.tehang.common.utility.event.mq.ClusteringMqConsumer;
 import com.tehang.common.utility.event.mq.LocalTransactionCheckerService;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.mq.MqProducer;
+import com.tehang.common.utility.event.mq.TransactionMqProducer;
 import com.tehang.common.utility.event.publish.EventPublisher;
 import com.tehang.common.utility.event.publish.TransactionEventPublisher;
 import com.tehang.common.utility.lock.DistributedLockFactory;
@@ -51,8 +52,7 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @Import({MqConfig.class,
-  MqProducer.class,
-  EventPublisher.class,
+  TransactionMqProducer.class,
   ClusteringMqConsumer.class,
   BroadcastingMqConsumer.class,
   ApplicationContextProvider.class,
