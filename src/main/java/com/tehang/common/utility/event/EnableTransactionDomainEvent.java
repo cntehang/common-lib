@@ -58,8 +58,7 @@ import java.lang.annotation.Target;
   DistributedLockFactory.class,
   CommonRedisOperator.class,
   TransactionEventPublisher.class,
-  LocalTransactionCheckerService.class,
-  DomainEventRecordRepository.class
+  LocalTransactionCheckerService.class
 })
 public @interface EnableTransactionDomainEvent {
 
