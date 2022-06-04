@@ -6,10 +6,10 @@ import com.aliyun.openservices.ons.api.PropertyKeyConst;
 import com.aliyun.openservices.ons.api.SendResult;
 import com.aliyun.openservices.ons.api.transaction.TransactionProducer;
 import com.aliyun.openservices.ons.api.transaction.TransactionStatus;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -20,11 +20,14 @@ import java.util.Properties;
  */
 @Service
 @Slf4j
-@AllArgsConstructor
 public class TransactionMqProducer implements InitializingBean, DisposableBean {
 
-  private final MqConfig mqConfig;
-  private final LocalTransactionCheckerService localTransactionCheckerService;
+  @Autowired
+  private MqConfig mqConfig;
+
+  @Autowired
+  private LocalTransactionCheckerService localTransactionCheckerService;
+
   private TransactionProducer transactionProducer;
 
   /**
