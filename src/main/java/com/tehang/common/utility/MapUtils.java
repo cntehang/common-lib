@@ -29,25 +29,20 @@ public final class MapUtils {
 
     Map<String, Object> map = new ConcurrentHashMap<>();
     Field[] fields = obj.getClass().getDeclaredFields();
-    try {
-      for (Field value : fields) {
-        try {
-          Field field = obj.getClass().getDeclaredField(value.getName());
-          field.setAccessible(true);
-          Object object = field.get(obj);
-          if (object != null) {
-            map.put(value.getName(), object);
-          }
-        }
-        catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
-          log.warn(ERROR_MSG.concat(ex.getMessage()), ex);
-          throw new ParameterException(ERROR_MSG.concat(ex.getMessage()));
+
+    for (Field value : fields) {
+      try {
+        Field field = obj.getClass().getDeclaredField(value.getName());
+        field.setAccessible(true);
+        Object object = field.get(obj);
+        if (object != null) {
+          map.put(value.getName(), object);
         }
       }
-    }
-    catch (SecurityException ex) {
-      log.warn(ERROR_MSG.concat(ex.getMessage()), ex);
-      throw new ParameterException(ERROR_MSG.concat(ex.getMessage()));
+      catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
+        log.warn(ERROR_MSG.concat(ex.getMessage()), ex);
+        throw new ParameterException(ERROR_MSG.concat(ex.getMessage()));
+      }
     }
 
     return map;
