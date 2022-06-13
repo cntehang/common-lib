@@ -56,6 +56,14 @@ public class PageDto<T> {
     this.size = page.getNumberOfElements();
   }
 
+  public PageDto(List<T> content, PageDto page) {
+    this.content = content;
+    this.totalElements = page.getTotalElements();
+    this.totalPage = page.getTotalPage();
+    this.page = page.getPage();
+    this.size = page.getSize();
+  }
+
   /**
    * 创建空的分页对象，通常用于接口定义阶段.
    */
@@ -72,4 +80,8 @@ public class PageDto<T> {
     return new PageDto<>(content, page);
   }
 
+
+  public static <T> PageDto<T> build(List<T> content, PageDto<?> page) {
+    return new PageDto<>(content, page);
+  }
 }
