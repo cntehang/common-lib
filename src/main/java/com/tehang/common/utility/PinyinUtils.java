@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class PinyinUtils {
 
+  private static final int FIRST_INDEX = 0;
+
   private PinyinUtils() {
     //do nothing
   }
@@ -20,7 +22,7 @@ public final class PinyinUtils {
   /**
    * 翻译汉字字符串为拼音
    *
-   * @param target 字符春
+   * @param target 字符串
    * @return 翻译过后的字符串
    */
   public static String translate(String target) {
@@ -37,5 +39,27 @@ public final class PinyinUtils {
     } catch (BadHanyuPinyinOutputFormatCombination ex) {
       throw new ParameterException("拼音转换错误", ex);
     }
+  }
+
+  /**
+   * 翻译汉字字符串转为短拼音
+   * @param target 汉字字符串
+   * @return 短拼音
+   */
+  public static String translateToShortPingYin(String target) {
+    StringBuilder sb = new StringBuilder();
+
+    if (StringUtils.isNotBlank(target)) {
+      for (int i = 0; i < target.length(); i++) {
+        char singleChinese = target.charAt(i);
+        String singlePinyin = translate(String.valueOf(singleChinese));
+
+        if (StringUtils.isNotEmpty(singlePinyin)) {
+          sb.append(singlePinyin.charAt(FIRST_INDEX));
+        }
+      }
+    }
+
+    return sb.toString();
   }
 }
