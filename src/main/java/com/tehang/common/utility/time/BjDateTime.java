@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -143,28 +144,60 @@ public abstract class BjDateTime implements Serializable {
   /**
    * 当前时间是否在指定的时间之后？
    */
-  public boolean isAfter(BjDateTime bjDateTime) {
-    return this.innerTime.isAfter(bjDateTime.innerTime);
+  public boolean isAfter(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
+    return compareTo(bjDateTime) > 0;
+  }
+
+  /**
+   * 当前时间是否在指定的时间之后或相等？
+   */
+  public boolean isAfterOrEqual(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
+    return compareTo(bjDateTime) >= 0;
   }
 
   /**
    * 当前时间是否在指定的时间之前？
    */
-  public boolean isBefore(BjDateTime bjDateTime) {
-    return this.innerTime.isBefore(bjDateTime.innerTime);
+  public boolean isBefore(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
+    return compareTo(bjDateTime) < 0;
+  }
+
+  /**
+   * 当前时间是否在指定的时间之前或相等？
+   */
+  public boolean isBeforeOrEqual(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
+    return compareTo(bjDateTime) <= 0;
   }
 
   /**
    * 当前时间是否与指定的时间相同：比较时间值的大小，忽略格式。精确到毫秒。
    */
-  public boolean isEqual(BjDateTime bjDateTime) {
+  public boolean isEqual(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
     return this.innerTime.isEqual(bjDateTime.innerTime);
   }
 
   /**
    * 比较两个时间的大小：比较时间值的大小，忽略格式。精确到毫秒。
    */
-  public int compareTo(BjDateTime bjDateTime) {
+  public int compareTo(@NotNull BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      throw new IllegalArgumentException("argument must not be null");
+    }
     return this.innerTime.compareTo(bjDateTime.innerTime);
   }
 
