@@ -3,6 +3,7 @@ package com.tehang.common.utility;
 import com.tehang.common.infrastructure.exceptions.ParameterException;
 import com.tehang.common.utility.time.BjDate;
 import com.tehang.common.utility.time.BjTimeToMinute;
+import com.tehang.common.utility.time.BjTimeToSecond;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,5 +51,89 @@ public final class BjDateUtils {
     }
 
     return Minutes.minutesBetween(startTime.getInnerTime(), endTime.getInnerTime()).getMinutes();
+  }
+
+  /**
+   * 判断一个日期是否小于或等于另一个日期.
+   * @param date 日期
+   * @param compareToDate 被比较日期
+   * @return 比较结果
+   */
+  public static boolean isBeforeOrEqual(BjDate date, BjDate compareToDate) {
+    if (date == null || compareToDate == null) {
+      return false;
+    }
+
+    return !compareToDate.isAfter(date);
+  }
+
+  /**
+   * 判断一个时间是否小于或等于另一个时间.
+   * @param timeOfMinute 时间
+   * @param compareToTimeOfMinute 被比较时间
+   * @return 比较结果
+   */
+  public static boolean isBeforeOrEqual(BjTimeToMinute timeOfMinute, BjTimeToMinute compareToTimeOfMinute) {
+    if (timeOfMinute == null || compareToTimeOfMinute == null) {
+      return false;
+    }
+
+    return !compareToTimeOfMinute.isAfter(timeOfMinute);
+  }
+
+  /**
+   * 判断一个时间是否小于或等于另一个时间.
+   * @param timeOfSecond 时间
+   * @param compareToTimeOfSecond 被比较时间
+   * @return 比较结果
+   */
+  public static boolean isBeforeOrEqual(BjTimeToSecond timeOfSecond, BjTimeToSecond compareToTimeOfSecond) {
+    if (timeOfSecond == null || compareToTimeOfSecond == null) {
+      return false;
+    }
+
+    return !compareToTimeOfSecond.isAfter(timeOfSecond);
+  }
+
+  /**
+   * 判断一个日期是否大于或等于另一个日期.
+   * @param date 日期
+   * @param compareToDate 被比较日期
+   * @return 比较结果
+   */
+  public static boolean isAfterOrOrEqual(BjDate date, BjDate compareToDate) {
+    if (date == null || compareToDate == null) {
+      return false;
+    }
+
+    return !compareToDate.isBefore(date);
+  }
+
+  /**
+   * 判断一个时间是否大于或等于另一个时间.
+   * @param timeOfMinute 时间
+   * @param compareToTimeOfMinute 被比较时间
+   * @return 比较结果
+   */
+  public static boolean isAfterOrOrEqual(BjTimeToMinute timeOfMinute, BjTimeToMinute compareToTimeOfMinute) {
+    if (timeOfMinute == null || compareToTimeOfMinute == null) {
+      return false;
+    }
+
+    return !compareToTimeOfMinute.isBefore(timeOfMinute);
+  }
+
+  /**
+   * 判断一个时间是否大于或等于另一个时间.
+   * @param timeOfSecond 时间
+   * @param compareToTimeOfSecond 被比较时间
+   * @return 比较结果
+   */
+  public static boolean isAfterOrOrEqual(BjTimeToSecond timeOfSecond, BjTimeToSecond compareToTimeOfSecond) {
+    if (timeOfSecond == null || compareToTimeOfSecond == null) {
+      return false;
+    }
+
+    return !compareToTimeOfSecond.isBefore(timeOfSecond);
   }
 }
