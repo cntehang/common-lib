@@ -35,6 +35,15 @@ public final class NameUtils {
   }
 
   /**
+   * 检查是否为中文名，允许名字带拼音
+   *
+   * @param name 姓名
+   */
+  public static boolean isChineseNameWithPinyin(String name) {
+    return name != null && name.matches(RegexConstant.CHINESE_NAME_WITH_PINYIN_PATTERN);
+  }
+
+  /**
    * 检查是否为中文名(姓名之间以/分隔)
    *
    * @param name 姓名
