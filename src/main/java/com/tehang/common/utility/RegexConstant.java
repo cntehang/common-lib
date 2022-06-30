@@ -118,6 +118,12 @@ public final class RegexConstant {
    */
   public static final String CONTAINS_CHINESE_PATTERN = "^.*[\\u4e00-\\u9fa5].*$";
 
+  /**
+   * 中文姓名，支持两个及以上的汉字
+   * 允许「名」生僻字用拼音替换，第一个字不支持拼音
+   */
+  public static final String CHINESE_NAME_WITH_PINYIN_PATTERN = "^([\\u4e00-\\u9fa5]+[a-zA-Z]+)$|^([\\u4e00-\\u9fa5]{2,}[a-zA-Z]*)$";
+
   //英文名相关
   /**
    * 英文字符串 + 空格
