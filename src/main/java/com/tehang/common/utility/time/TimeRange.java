@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -35,8 +36,14 @@ public class TimeRange implements Serializable {
   public static final String TIME_FORMAT_TO_SECOND_REGEX = "^(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])";
 
   /**
+   * 时间格式: HH:mm:ss 或者空 的正则表达式
+   */
+  public static final String TIME_FORMAT_TO_SECOND_REGEX_OR_EMPTY = TIME_FORMAT_TO_SECOND_REGEX + "|";
+
+  /**
    * 开始时间, 格式为HH:mm:ss, null表示开始时间无限制。
    */
+  @Pattern(regexp = TIME_FORMAT_TO_SECOND_REGEX_OR_EMPTY, message = "请指定正确的开始时间")
   @ApiModelProperty(value = "开始时间, 格式为HH:mm:ss, null表示开始时间无限制", example = "10:05:10")
   @Column(columnDefinition = "VARCHAR(8) NULL")
   private String from;
@@ -44,6 +51,7 @@ public class TimeRange implements Serializable {
   /**
    * 结束时间, 格式为HH:mm:ss, null表示结束时间无限制。该时间段为闭区间，包含开始和结束的时间点
    */
+  @Pattern(regexp = TIME_FORMAT_TO_SECOND_REGEX_OR_EMPTY, message = "请指定正确的结束时间")
   @ApiModelProperty(value = "结束时间, 格式为HH:mm:ss, null表示结束时间无限制。该时间段为闭区间，包含开始和结束的时间点", example = "10:05:30")
   @Column(columnDefinition = "VARCHAR(8) NULL")
   private String to;
