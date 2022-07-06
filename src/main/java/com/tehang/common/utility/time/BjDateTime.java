@@ -7,11 +7,13 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * 表示北京时间，根据精度的不同，有不同的格式。可以精确到天，分钟，秒和毫秒。
@@ -72,6 +74,15 @@ public abstract class BjDateTime implements Serializable {
    * 日期格式: yyyy-MM-dd HH:mm:ss.SSS 的正则表达式
    */
   public static final String DATE_FORMAT_TO_MS_REGEX = DATE_FORMAT_TO_SECOND_REGEX + "(\\.[0-9]{3})";
+
+  /**
+   * 验证UTC时间格式的正则表达式.
+   */
+  public static final String ISO_DATE_REGEX = "^((((19|20)\\d{2})-(0?[13-9]|1[012])-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-(0?[13578]|1[02])-31)"
+    + "|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-29))T"
+    + "(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]{3})Z";
+
+  private static final String INVALID_DATE_TIME_PATTERN = "%s时间格式非法";
 
   // ----------- 字段 ------------
   /**
@@ -199,6 +210,13 @@ public abstract class BjDateTime implements Serializable {
       throw new IllegalArgumentException("argument must not be null");
     }
     return this.innerTime.compareTo(bjDateTime.innerTime);
+  }
+
+  /**
+   * 检查是否是UTC时间格式
+   */
+  public static void checkUtcTimeFormat(String utcDateTime) {
+    Assert.isTrue(isNotBlank(utcDateTime) && utcDateTime.matches(ISO_DATE_REGEX), String.format(INVALID_DATE_TIME_PATTERN, utcDateTime));
   }
 
   // ----------- toString --------------

@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.persistence.AttributeConverter;
 import java.io.IOException;
@@ -29,6 +31,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class BjTimeToMinute extends BjDateTime implements Serializable {
 
   private static final long serialVersionUID = -5962799069942105993L;
+
+  private static final DateTimeFormatter PATTERN = DateTimeFormat.forPattern(DATE_FORMAT_TO_MINUTE).withZone(DateTimeZone.forID(ZONE_SHANGHAI));
 
   // ----------- 构造函数 --------------
   protected BjTimeToMinute() {
@@ -55,6 +59,24 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
 
   public static BjTimeToMinute parseOrNull(String dateString) {
     return isValid(dateString) ? parse(dateString) : null;
+  }
+
+  /**
+   * 从UTC时间格式字符串转为BjTimeToMinute
+   */
+  public static BjTimeToMinute parseFromUtc(String utcDateTime) {
+    checkUtcTimeFormat(utcDateTime);
+
+    var dateTime = DateTime.parse(utcDateTime);
+    return new BjTimeToMinute(dateTime.toDateTime(DateTimeZone.forID(ZONE_SHANGHAI)).toString(PATTERN));
+  }
+
+  /**
+   * 转为UTC时间格式字符串
+   */
+  public String parseToUtc() {
+    var dateTime = PATTERN.parseDateTime(this.toString());
+    return dateTime.toDateTime(DateTimeZone.UTC).toString();
   }
 
   /**
@@ -152,6 +174,34 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
       return isBlank(text)
               ? null
               : new BjTimeToMinute(text);
+    }
+  }
+
+  /**
+   * 将BjTimeToMinute序列化为Json.
+   */
+  public static class UtcFormatSerializer extends JsonSerializer<BjTimeToMinute> {
+    @Override
+    public void serialize(BjTimeToMinute value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+      if (value == null) {
+        gen.writeNull();
+      }
+      else {
+        gen.writeString(value.parseToUtc());
+      }
+    }
+  }
+
+  /**
+   * 将json反序列化为BjTimeToMinute.
+   */
+  public static class UtcFormatDeserializer extends JsonDeserializer<BjTimeToMinute> {
+    @Override
+    public BjTimeToMinute deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JsonProcessingException {
+      String text = p.getText();
+      return isBlank(text)
+          ? null
+          : BjTimeToMinute.parseFromUtc(text);
     }
   }
 }
