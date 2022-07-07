@@ -126,11 +126,11 @@ public class RestControllerWrapExceptionAdvice {
 
   // ------------ 一些辅助方法 ---------------
 
-  /**  */
+  /** 标准化异常消息，限制最大长度 */
   private static String normalizeMessage(String msg) {
     int msgMaxLength = 300;
     if (msg != null && msg.length() > msgMaxLength) {
-      return StringUtils.substring(msg, msgMaxLength);
+      return StringUtils.substring(msg, 0, msgMaxLength);
     }
     else {
       return msg;
