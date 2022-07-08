@@ -120,7 +120,7 @@ public class CommonExceptionHandler implements HandlerExceptionResolver {
   }
 
   private static DataContainer getDataBaseData(Exception ex) {
-    DataContainer data = new DataContainer(CommonCode.SQL_ERROR_CODE, CommonCode.SQL_ERROR_MESSAGE);
+    DataContainer data = new DataContainer(CommonCode.SQL_ERROR_CODE, CommonCode.SQL_ERROR_MESSAGE + ": " + ex.getMessage());
     String sqlDebugMsg = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining(";"));
     data.setDebugMsg(sqlDebugMsg);
     return data;

@@ -45,7 +45,7 @@ public class RestControllerWrapExceptionAdvice {
     var code = ex.getCode();
     var msg = ex.getMessage();
     log.debug("ApplicationException happen, code: {}, msg: {}", code, msg, ex);
-    return createDataContainer(code, msg, ex);
+    return createDataContainer(code, normalizeMessage(msg), ex);
   }
 
   /**
@@ -55,10 +55,10 @@ public class RestControllerWrapExceptionAdvice {
   @ResponseStatus(HttpStatus.OK)
   public DataContainer handleDataAccessException(DataAccessException ex) {
     var code = CommonCode.SQL_ERROR_CODE;
-    var msg = CommonCode.SQL_ERROR_MESSAGE;
+    var msg = CommonCode.SQL_ERROR_MESSAGE + ": " + ex.getMessage();
     // 数据持久层抛出的异常, 记录error级别日志
     log.error("DataAccessException happen, code: {}, msg: {}", code, msg, ex);
-    return createDataContainer(code, msg, ex);
+    return createDataContainer(code, normalizeMessage(msg), ex);
   }
 
   /**
@@ -70,7 +70,7 @@ public class RestControllerWrapExceptionAdvice {
     var code = CommonCode.PARAMETER_ERROR_CODE;
     var msg = ex.getMessage();
     log.debug("ParameterException happen, code: {}, msg: {}", code, msg, ex);
-    return createDataContainer(code, msg, ex);
+    return createDataContainer(code, normalizeMessage(msg), ex);
   }
 
   /**
@@ -87,7 +87,7 @@ public class RestControllerWrapExceptionAdvice {
     var code = CommonCode.PARAMETER_ERROR_CODE;
     var msg = error.getDefaultMessage();
 
-    var container = new DataContainer(code, msg);
+    var container = new DataContainer(code, normalizeMessage(msg));
     container.setErrors(getErrors(fieldErrors));
     return container;
   }
@@ -106,7 +106,7 @@ public class RestControllerWrapExceptionAdvice {
     var code = CommonCode.PARAMETER_ERROR_CODE;
     var msg = error.getMessage();
 
-    var container = new DataContainer(code, msg);
+    var container = new DataContainer(code, normalizeMessage(msg));
     container.setErrors(buildErrorMsg(fieldErrors));
     return container;
   }
@@ -121,10 +121,21 @@ public class RestControllerWrapExceptionAdvice {
     var msg = ex.getMessage();
     // 未知异常, 记录error级别日志
     log.error("Unknown Exception happen, code: {}, msg: {}", code, msg, ex);
-    return createDataContainer(code, msg, ex);
+    return createDataContainer(code, normalizeMessage(msg), ex);
   }
 
   // ------------ 一些辅助方法 ---------------
+
+  /** 标准化异常消息，限制最大长度 */
+  private static String normalizeMessage(String msg) {
+    int msgMaxLength = 300;
+    if (msg != null && msg.length() > msgMaxLength) {
+      return StringUtils.substring(msg, 0, msgMaxLength);
+    }
+    else {
+      return msg;
+    }
+  }
 
   private DataContainer createDataContainer(int code, String msg, Exception ex) {
     var dataContainer = new DataContainer(code, msg);

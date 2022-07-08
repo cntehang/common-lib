@@ -63,7 +63,7 @@ public final class ControllerResponseWrapper {
     }
     catch (DataAccessException ex) {
       var code = CommonCode.SQL_ERROR_CODE;
-      var msg = CommonCode.SQL_ERROR_MESSAGE;
+      var msg = CommonCode.SQL_ERROR_MESSAGE + ": " + ex.getMessage();
       // 数据持久层抛出的异常, 记录error级别日志
       log.error("DataAccessException happen, code: {}, msg: {}", code, msg, ex);
       return createResponseContainer(code, msg, ex);
