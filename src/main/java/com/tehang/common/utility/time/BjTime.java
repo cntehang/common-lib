@@ -82,6 +82,22 @@ public class BjTime extends BjDateTime implements Serializable {
     return new BjTime(this.innerTime.minusDays(days));
   }
 
+  public BjTime plusHours(int hours) {
+    return new BjTime(this.innerTime.plusHours(hours));
+  }
+
+  public BjTime minusHours(int hours) {
+    return new BjTime(this.innerTime.minusHours(hours));
+  }
+
+  public BjTime plusMinutes(int minutes) {
+    return new BjTime(this.innerTime.plusMinutes(minutes));
+  }
+
+  public BjTime minusMinutes(int minutes) {
+    return new BjTime(this.innerTime.minusMinutes(minutes));
+  }
+
   public BjTime plusSeconds(int seconds) {
     return new BjTime(this.innerTime.plusSeconds(seconds));
   }
