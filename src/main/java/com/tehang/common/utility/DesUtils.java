@@ -1,6 +1,5 @@
 package com.tehang.common.utility;
 
-import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -45,12 +44,7 @@ public final class DesUtils {
    * DES加密.
    */
   public static String encrypt(String plainText, String secretKey) {
-    try {
-      return byte2hex(encrypt(plainText.getBytes(StandardCharsets.UTF_8), secretKey.getBytes()));
-    }
-    catch (Exception ex) {
-      throw new SystemErrorException(String.format("DES加密失败，原因:%s", ex.getMessage()), ex);
-    }
+    return byte2hex(encrypt(plainText.getBytes(StandardCharsets.UTF_8), secretKey.getBytes()));
   }
 
   @SneakyThrows
@@ -68,12 +62,7 @@ public final class DesUtils {
    * DES解密.
    */
   public static String decrypt(byte[] cipherText, String secretKey) {
-    try {
-      return new String(decrypt(hex2byte(cipherText), secretKey.getBytes()), StandardCharsets.UTF_8);
-    }
-    catch (Exception ex) {
-      throw new SystemErrorException(String.format("DES加密失败，原因:%s", ex.getMessage()), ex);
-    }
+    return new String(decrypt(hex2byte(cipherText), secretKey.getBytes()), StandardCharsets.UTF_8);
   }
 
   @SneakyThrows
