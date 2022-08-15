@@ -57,6 +57,12 @@ public class BjTimeToSecond extends BjDateTime implements Serializable {
     return isValid(dateString) ? parse(dateString) : null;
   }
 
+  public static BjTimeToSecond parse(BjDateTime bjDateTime) {
+    return bjDateTime == null
+        ? null
+        : new BjTimeToSecond(bjDateTime.toString(DATE_FORMAT_TO_SECOND));
+  }
+
   /**
    * 判断给定的字符串是否为有效的北京时间格式，即yyyy-MM-dd HH:mm:ss格式
    */

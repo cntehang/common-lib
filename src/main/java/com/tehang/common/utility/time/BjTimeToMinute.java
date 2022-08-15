@@ -57,6 +57,12 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
     return isValid(dateString) ? parse(dateString) : null;
   }
 
+  public static BjTimeToMinute parse(BjDateTime bjDateTime) {
+    return bjDateTime == null
+        ? null
+        : new BjTimeToMinute(bjDateTime.toString(DATE_FORMAT_TO_MINUTE));
+  }
+
   /**
    * 判断给定的字符串是否为有效的北京时间格式，即yyyy-MM-dd HH:mm格式
    */

@@ -206,4 +206,11 @@ public abstract class BjDateTime implements Serializable {
   public String toString() {
     return innerTime.toString(format);
   }
+
+  /**
+   * 将内部的DateTime对象按指定的格式输出。
+   */
+  public String toString(String format) {
+    return innerTime.toString(format);
+  }
 }
