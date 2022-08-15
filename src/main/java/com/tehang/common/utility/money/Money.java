@@ -93,13 +93,6 @@ public class Money implements Serializable, Comparable<Money> {
   }
 
   /**
-   * 当前值是否为0
-   */
-  public boolean wasZero() {
-    return equals(Money.ZERO);
-  }
-
-  /**
    * 获取绝对值
    */
   public Money abs() {
@@ -171,9 +164,57 @@ public class Money implements Serializable, Comparable<Money> {
             .reduce(Money.ZERO, Money::add);
   }
 
+  // ---------- 比较的相关方法 -------------
+
   @Override
   public int compareTo(@NotNull Money o) {
     return this.amount.compareTo(o.amount);
+  }
+
+  /** 比较两个Money的值是否相等。*/
+  public boolean valueEquals(@NotNull Money o) {
+    return compareTo(o) == 0;
+  }
+
+  /** 当前值是否为0 */
+  public boolean wasZero() {
+    return valueEquals(Money.ZERO);
+  }
+
+  /** 当前对象是否大于指定的值 */
+  public boolean greaterThan(@NotNull Money o) {
+    return this.compareTo(o) > 0;
+  }
+
+  /** 当前对象是否大于或等于指定的值 */
+  public boolean greaterThanOrEqual(@NotNull Money o) {
+    return this.compareTo(o) >= 0;
+  }
+
+  /** 当前对象是否小于指定的值 */
+  public boolean lessThan(@NotNull Money o) {
+    return this.compareTo(o) < 0;
+  }
+
+  /** 当前对象是否小于或等于指定的值 */
+  public boolean lessThanOrEqual(@NotNull Money o) {
+    return this.compareTo(o) <= 0;
+  }
+
+  /** 获取指定Money数组中的最小值 */
+  public static Money min(Money... nums) {
+    return Arrays.stream(nums)
+        .filter(Objects::nonNull)
+        .min(Money::compareTo)
+        .orElseThrow(() -> new IllegalArgumentException("nums should not be empty"));
+  }
+
+  /** 获取指定Money数组中的最大值 */
+  public static Money max(Money... nums) {
+    return Arrays.stream(nums)
+        .filter(Objects::nonNull)
+        .max(Money::compareTo)
+        .orElseThrow(() -> new IllegalArgumentException("nums should not be empty"));
   }
 
   // ----------- toString --------------
