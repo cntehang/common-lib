@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -141,6 +142,16 @@ public class Money implements Serializable, Comparable<Money> {
     return Arrays.stream(nums)
             .filter(Objects::nonNull)
             .reduce(Money.ZERO, Money::add);
+  }
+
+
+  /**
+   * 求和
+   */
+  public static Money sum(List<Money> nums) {
+    return emptyIfNull(nums).stream()
+        .filter(Objects::nonNull)
+        .reduce(Money.ZERO, Money::add);
   }
 
   /**
