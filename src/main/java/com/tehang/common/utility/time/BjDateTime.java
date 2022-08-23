@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public abstract class BjDateTime implements Serializable {
+public abstract class BjDateTime implements Serializable, Comparable<BjDateTime> {
 
   private static final long serialVersionUID = -5962799069942105993L;
 
@@ -194,11 +194,9 @@ public abstract class BjDateTime implements Serializable {
   /**
    * 比较两个时间的大小：比较时间值的大小，忽略格式。精确到毫秒。
    */
-  public int compareTo(@NotNull BjDateTime bjDateTime) {
-    if (bjDateTime == null) {
-      throw new IllegalArgumentException("argument must not be null");
-    }
-    return this.innerTime.compareTo(bjDateTime.innerTime);
+  @Override
+  public int compareTo(BjDateTime o) {
+    return this.innerTime.compareTo(o.innerTime);
   }
 
   // ----------- toString --------------
