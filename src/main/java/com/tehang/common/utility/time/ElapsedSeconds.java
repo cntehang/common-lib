@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * 表示一个时间范围，以秒为单位。常用于日志记录时获取花费的时间。
@@ -27,8 +28,8 @@ public class ElapsedSeconds implements Serializable {
 
   public static ElapsedSeconds create(BjTime start, BjTime end) {
     var result = new ElapsedSeconds();
-    result.start = start;
-    result.end = end;
+    result.start = Objects.requireNonNull(start, "start must not be null");
+    result.end = Objects.requireNonNull(end, "end must not be null");
     return result;
   }
 
