@@ -80,6 +80,17 @@ public class BjTime extends BjDateTime implements Serializable {
     return new BjTime(dateString);
   }
 
+  /**
+   * 获取一个时间范围，表示从start到当前时间，以秒为单位，保留1位小数。
+   * 常用于日志记录时获取花费的时间, eg:
+   * var start = BjTime.now();
+   * do_some_work();
+   * log.debug("do_some_work elapsed {} seconds", BjTime.elapsedSeconds(start));
+   */
+  public static ElapsedSeconds elapsedSeconds(BjTime start) {
+    return ElapsedSeconds.from(start);
+  }
+
   public BjTime plusDays(int days) {
     return new BjTime(this.innerTime.plusDays(days));
   }
