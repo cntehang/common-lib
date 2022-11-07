@@ -123,6 +123,14 @@ public class BjTime extends BjDateTime implements Serializable {
     return new BjTime(this.innerTime.minusSeconds(seconds));
   }
 
+  public BjTime plusMonths(int months) {
+    return new BjTime(this.innerTime.plusMonths(months));
+  }
+
+  public BjTime minusMonths(int months) {
+    return new BjTime(this.innerTime.minusMonths(months));
+  }
+
   /**
    * 是否晚于当前时间?
    */
