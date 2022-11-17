@@ -1,12 +1,10 @@
 package com.tehang.common.utility.event.publish;
 
-import com.tehang.common.utility.db.jpa.OpenJpaSession;
 import com.tehang.common.utility.event.mq.MessageProducerException;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.mq.MqProducer;
 import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecord;
-import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecordRepository;
-import com.tehang.common.utility.event.publish.eventrecord.DomainEventSendStatus;
+import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecordJdbcRepository;
 import com.tehang.common.utility.lock.Locked;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +23,16 @@ public class SendDomainEventRecordsToMqService {
 
   private final MqConfig mqConfig;
   private final MqProducer mqProducer;
-  private final DomainEventRecordRepository eventRecordRepository;
+  private final DomainEventRecordJdbcRepository eventRecordJdbcRepository;
 
   /**
    * 查找db中的待发送的领域事件记录，发送到mq
    * 需加锁，以防止并发调用
    */
-  @OpenJpaSession
-  @Locked(blocked = true)
+  @Locked
   public void sendDomainEventRecords() {
     // 查找待发送的事件记录，按时间正序排列
-    List<DomainEventRecord> eventRecords = eventRecordRepository.findByStatusOrderByCreateTimeAsc(DomainEventSendStatus.WaitSend);
+    List<DomainEventRecord> eventRecords = eventRecordJdbcRepository.findAllByWaitSend();
     log.debug("find eventRecords to Send, size: {}", eventRecords.size());
 
     // 依次处理每个事件记录
@@ -54,14 +51,14 @@ public class SendDomainEventRecordsToMqService {
       mqProducer.sendToQueue(tag, key, body, deliverTime);
 
       // 发送成功后更新记录信息
-      eventRecord.onSendSuccess();
-      eventRecordRepository.save(eventRecord);
+      eventRecordJdbcRepository.updateOnSendSuccess(eventRecord);
+
       log.debug("publish event successful, tag: {}, key: {}, body: {}", tag, key, body);
     }
     catch (MessageProducerException ex) {
       // 发布失败后更新记录信息
-      eventRecord.onSendFailed(ex.getMessage());
-      eventRecordRepository.save(eventRecord);
+      eventRecordJdbcRepository.updateOnSendFailed(eventRecord, ex.getMessage());
+
       log.warn("publish event failed, tag: {}, key: {}, body: {}, msg: {}", tag, key, body, ex.getMessage(), ex);
     }
   }

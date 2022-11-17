@@ -4,7 +4,7 @@ import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.mq.MqConfig;
 import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecord;
-import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecordRepository;
+import com.tehang.common.utility.event.publish.eventrecord.DomainEventRecordJdbcRepository;
 import com.tehang.common.utility.time.BjTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class TransactionalEventPublisher {
 
   private final MqConfig mqConfig;
-  private final DomainEventRecordRepository eventRecordRepository;
+  private final DomainEventRecordJdbcRepository eventRecordJdbcRepository;
+
 
   /**
    * 发布领域事件, 这里是将事件保存到db，由定时任务来发送到mq。
@@ -46,7 +47,7 @@ public class TransactionalEventPublisher {
 
     // 创建事件记录，并保存到db
     var eventRecord = DomainEventRecord.create(event, startDeliverTime, mqConfig.getGroupId());
-    eventRecordRepository.save(eventRecord);
+    eventRecordJdbcRepository.add(eventRecord);
   }
 
   /** 检查事件参数的有效性, 包括事件类型，事件参数类型. */

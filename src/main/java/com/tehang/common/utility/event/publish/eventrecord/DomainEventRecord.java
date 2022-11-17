@@ -11,11 +11,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.UUID;
 
 /**
@@ -24,8 +22,6 @@ import java.util.UUID;
 @Slf4j
 @Getter
 @Setter(AccessLevel.PACKAGE)
-@Entity
-@Table(name = "domain_event_record")
 public class DomainEventRecord extends AggregateRoot<String> {
 
   // 最大发送次数：5次
@@ -88,25 +84,5 @@ public class DomainEventRecord extends AggregateRoot<String> {
 
     record.resetCreateAndUpdateTimeToNow();
     return record;
-  }
-
-  /** 发送成功后更新记录信息 */
-  public void onSendSuccess() {
-    this.status = DomainEventSendStatus.SendSuccess;
-    this.count++;
-    this.publishTime = BjTime.now();
-    this.resetUpdateTimeToNow();
-  }
-
-  /** 发送失败后更新记录信息 */
-  public void onSendFailed(String errorMsg) {
-    this.count++;
-    this.resetUpdateTimeToNow();
-
-    if (this.count >= MAX_SEND_TIMES) {
-      this.status = DomainEventSendStatus.SendFailed;
-
-      log.error("发送事件消息到mq失败, key: {}, eventType: {}, errorMsg: {}", this.eventKey, this.eventType, errorMsg);
-    }
   }
 }
