@@ -29,7 +29,7 @@ public class SendDomainEventRecordsToMqService {
    * 查找db中的待发送的领域事件记录，发送到mq
    * 需加锁，以防止并发调用
    */
-  @Locked
+  @Locked(blocked = true)
   public void sendDomainEventRecords() {
     // 查找待发送的事件记录，按时间正序排列
     List<DomainEventRecord> eventRecords = eventRecordJdbcRepository.findAllByWaitSend();
