@@ -5,7 +5,6 @@ import com.tehang.common.utility.baseclass.AggregateRoot;
 import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.publish.TraceInfoHelper;
 import com.tehang.common.utility.time.BjTime;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ import java.util.UUID;
  */
 @Slf4j
 @Getter
-@Setter(AccessLevel.PACKAGE)
+@Setter
 public class DomainEventRecord extends AggregateRoot<String> {
 
   // 最大发送次数：5次
