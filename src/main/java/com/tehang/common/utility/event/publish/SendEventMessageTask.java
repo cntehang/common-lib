@@ -20,8 +20,8 @@ public class SendEventMessageTask {
 
   private final SendDomainEventRecordsToMqService sendDomainEventRecordsToMqService;
 
-  /** 查找db中的待发送的领域事件记录，发送到mq。每秒执行一次 */
-  @Scheduled(cron = "0/1 * * * * ?", zone = ZONE_SHANGHAI)
+  /** 查找db中的待发送的领域事件记录，发送到mq。每2秒执行一次 */
+  @Scheduled(cron = "0/2 * * * * ?", zone = ZONE_SHANGHAI)
   public void sendDomainEventRecordsToMq() {
     log.debug("Enter sendDomainEventRecordsToMq");
     try {
