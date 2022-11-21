@@ -33,11 +33,11 @@ public class DomainEventRecordJdbcRepository {
     params.put("event_key", record.getEventKey());
     params.put("event_type", record.getEventType());
     params.put("publisher", record.getPublisher());
-    params.put("start_deliver_time", record.getStartDeliverTime().toString());
+    params.put("start_deliver_time", record.getStartDeliverTime() != null ? record.getStartDeliverTime().toString() : null);
     params.put("trace_id", record.getTraceId());
     params.put("body", record.getBody());
     params.put("status", record.getStatus().toString());
-    params.put("publish_time", record.getPublishTime().toString());
+    params.put("publish_time", record.getPublishTime() != null ? record.getPublishTime().toString() : null);
     params.put("count", record.getCount());
     params.put("create_time", record.getCreateTime().toString());
     params.put("update_time", record.getUpdateTime().toString());

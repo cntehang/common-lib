@@ -46,8 +46,15 @@ public class TransactionalEventPublisher {
     assertEventValid(event);
 
     // 创建事件记录，并保存到db
-    var eventRecord = DomainEventRecord.create(event, startDeliverTime, mqConfig.getGroupId());
-    eventRecordJdbcRepository.add(eventRecord);
+    try {
+      var eventRecord = DomainEventRecord.create(event, startDeliverTime, mqConfig.getGroupId());
+      eventRecordJdbcRepository.add(eventRecord);
+    }
+    catch (Exception ex) {
+      var msg = "publish event failed, errorMsg: " + ex.getMessage();
+      log.error(msg, ex);
+      throw new SystemErrorException(msg, ex);
+    }
   }
 
   /** 检查事件参数的有效性, 包括事件类型，事件参数类型. */
