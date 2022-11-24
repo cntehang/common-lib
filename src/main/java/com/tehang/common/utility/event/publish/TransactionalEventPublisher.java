@@ -23,6 +23,7 @@ public class TransactionalEventPublisher {
 
   private final MqConfig mqConfig;
   private final DomainEventRecordJdbcRepository eventRecordJdbcRepository;
+  private final EventPublisher eventPublisher;
 
 
   /**
@@ -39,6 +40,27 @@ public class TransactionalEventPublisher {
    */
   public void publish(DomainEvent event, BjTime startDeliverTime) {
     doPublish(event, startDeliverTime);
+  }
+
+  /**
+   * 不参与当前事物而直接发布事件消息，不需要保存到事件记录中异步发送。
+   * 此方法同eventPublisher.publish(), 提供此方法是为了效率考虑。
+   */
+  public void publishDirectly(DomainEvent event) {
+    eventPublisher.publish(event);
+  }
+
+  /**
+   * 不参与当前事物而直接发布事件消息，不需要保存到事件记录中异步发送。
+   * 此方法同eventPublisher.publish(), 提供此方法是为了效率考虑。
+   */
+  public void publishDirectly(DomainEvent event, BjTime startDeliverTime) {
+    if (startDeliverTime == null) {
+      eventPublisher.publish(event);
+    }
+    else {
+      eventPublisher.publish(event, startDeliverTime.getInnerTime().getMillis());
+    }
   }
 
   private void doPublish(DomainEvent event, BjTime startDeliverTime) {
