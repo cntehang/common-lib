@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @AllArgsConstructor
-@SuppressWarnings("PMD.AvoidCatchingGenericException")
 public class SendEventMessageTask {
 
   /** 北京时区（上海）*/
@@ -23,14 +22,9 @@ public class SendEventMessageTask {
   /** 查找db中的待发送的领域事件记录，发送到mq。每2秒执行一次 */
   @Scheduled(cron = "0/2 * * * * ?", zone = ZONE_SHANGHAI)
   public void sendDomainEventRecordsToMq() {
-    log.debug("Enter sendDomainEventRecordsToMq");
-    try {
-      // 发送事件消息
-      sendDomainEventRecordsToMqService.sendDomainEventRecords();
-    }
-    catch (Exception ex) {
-      log.error("sendDomainEventRecordsToMq error, message: {}", ex.getMessage(), ex);
-    }
+    // 发送事件消息, 异步执行
+    sendDomainEventRecordsToMqService.sendDomainEventRecords();
+
     log.debug("Exit sendDomainEventRecordsToMq");
   }
 }

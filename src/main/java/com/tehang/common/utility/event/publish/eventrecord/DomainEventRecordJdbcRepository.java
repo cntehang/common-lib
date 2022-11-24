@@ -56,6 +56,15 @@ public class DomainEventRecordJdbcRepository {
   }
 
   /**
+   * 该事件记录是否处于待发送状态？
+   */
+  public boolean isWaitSend(String eventRecordId) {
+    String sql = String.format("select count(*) > 0 from domain_event_record where id = '%s' and status = '%s'", eventRecordId, DomainEventSendStatus.WaitSend);
+
+    return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, new HashMap<>(), Boolean.class));
+  }
+
+  /**
    * 发送成功后，更新记录信息
    */
   public void updateOnSendSuccess(DomainEventRecord record) {
