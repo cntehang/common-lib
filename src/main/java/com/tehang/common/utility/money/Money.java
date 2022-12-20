@@ -3,6 +3,7 @@ package com.tehang.common.utility.money;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -286,10 +287,17 @@ public class Money implements Serializable, Comparable<Money> {
   public static class Deserializer extends JsonDeserializer<Money> {
     @Override
     public Money deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JsonProcessingException {
-      BigDecimal amount = p.getDecimalValue();
-      return amount == null
-              ? null
-              : new Money(amount);
+      if (p.currentToken() == JsonToken.VALUE_STRING) {
+        // 兼容字符串类型的Money类型
+        String text = p.getText().trim();
+        return Money.parse(text);
+      }
+      else {
+        BigDecimal amount = p.getDecimalValue();
+        return amount == null
+            ? null
+            : new Money(amount);
+      }
     }
   }
 }
