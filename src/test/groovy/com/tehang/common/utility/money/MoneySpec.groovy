@@ -90,4 +90,11 @@ class MoneySpec extends TestSpecification {
     JsonUtils.toClass('0.00', Money.class) == new Money('0')
     JsonUtils.toClass('0', Money.class) == new Money('0')
   }
+
+  def "test8: deserialize Money field support string and number"() {
+    expect:
+    JsonUtils.toClass('{ "money": 151.00}', DtoWithMoneyField.class).money == new Money('151.00')
+    JsonUtils.toClass('{ "money": "151.00"}', DtoWithMoneyField.class).money == new Money('151.00')
+    JsonUtils.toClass('{ "money": null}', DtoWithMoneyField.class).money == null
+  }
 }
