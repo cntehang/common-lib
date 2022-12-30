@@ -12,6 +12,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Slf4j
 public class CommandEventTypeHolderRegistrar implements ImportBeanDefinitionRegistrar {
 
+  @Override
   public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
     // 从EnableCommand的注解中解析出eventType
     String eventType = (String) annotationMetadata.getAnnotationAttributes(EnableCommand.class.getName()).get("eventType");
