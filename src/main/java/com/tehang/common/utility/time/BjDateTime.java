@@ -1,5 +1,6 @@
 package com.tehang.common.utility.time;
 
+import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -140,7 +141,7 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
     return new DateTime(value2, DateTimeZone.forID(ZONE_SHANGHAI));
   }
 
-  // ----------- 其他函数 --------------
+  // ----------- 时间比较方法 --------------
   /**
    * 当前时间是否在指定的时间之后？
    */
@@ -197,6 +198,35 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
   @Override
   public int compareTo(BjDateTime o) {
     return this.innerTime.compareTo(o.innerTime);
+  }
+
+  // ----------- 计算时间间隔的静态方法 --------------
+
+  /**
+   * 计算开始到结束时间之间的时间间隔，如果开始时间早于结束时间则为正数，否则为负数。
+   */
+  public static double getTotalInterval(@NotNull BjDateTime start, @NotNull BjDateTime end, @NotNull TimeIntervalType intervalType) {
+    if (start == null) {
+      throw new IllegalArgumentException("start must not be null");
+    }
+    if (end == null) {
+      throw new IllegalArgumentException("end must not be null");
+    }
+    if (intervalType == null) {
+      throw new IllegalArgumentException("intervalType must not be null");
+    }
+
+    long millis = end.getInnerTime().getMillis() - start.getInnerTime().getMillis();
+    double seconds = (double)millis / 1000;
+
+    switch (intervalType) {
+      case Second: return seconds;
+      case Minute: return seconds / 60;
+      case Hour: return seconds / 3600;
+      case Day: return seconds / 3600 / 24;
+      default:
+        throw new SystemErrorException("无效的intervalType: " + intervalType);
+    }
   }
 
   // ----------- toString --------------
