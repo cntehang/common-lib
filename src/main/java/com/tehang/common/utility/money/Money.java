@@ -221,6 +221,15 @@ public class Money implements Serializable, Comparable<Money> {
         .orElseThrow(() -> new IllegalArgumentException("nums should not be empty"));
   }
 
+  /** 获取对象列表中指定字段的最小值 */
+  public static <T> Money minBy(List<T> items, Function<T, Money> evaluator) {
+    return items.stream()
+        .map(evaluator)
+        .filter(Objects::nonNull)
+        .min(Money::compareTo)
+        .orElseThrow(() -> new IllegalArgumentException("items should not be empty"));
+  }
+
   /** 获取指定Money数组中的最大值 */
   public static Money max(Money... nums) {
     return Arrays.stream(nums)
@@ -229,6 +238,14 @@ public class Money implements Serializable, Comparable<Money> {
         .orElseThrow(() -> new IllegalArgumentException("nums should not be empty"));
   }
 
+  /** 获取对象列表中指定字段的最大值 */
+  public static <T> Money maxBy(List<T> items, Function<T, Money> evaluator) {
+    return items.stream()
+        .map(evaluator)
+        .filter(Objects::nonNull)
+        .max(Money::compareTo)
+        .orElseThrow(() -> new IllegalArgumentException("items should not be empty"));
+  }
   // ----------- toString --------------
   @Override
   public String toString() {
