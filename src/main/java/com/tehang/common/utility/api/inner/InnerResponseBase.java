@@ -23,4 +23,9 @@ public abstract class InnerResponseBase extends DtoBase {
     this.code = code;
     this.message = message;
   }
+
+  /** 调用是否成功? */
+  public boolean successful() {
+    return code == 0;
+  }
 }
