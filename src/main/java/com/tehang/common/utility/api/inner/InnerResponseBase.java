@@ -11,6 +11,12 @@ import lombok.Setter;
 @Setter
 public abstract class InnerResponseBase extends DtoBase {
 
+  // 接口调用成功的代码
+  public static final int SUCCESS_CODE = 0;
+
+  // 接口调用失败的状态
+  public static final int FAILED_CODE = 1;
+
   private int code;
   private String message;
 
@@ -26,6 +32,6 @@ public abstract class InnerResponseBase extends DtoBase {
 
   /** 调用是否成功? */
   public boolean successful() {
-    return code == 0;
+    return code == SUCCESS_CODE;
   }
 }
