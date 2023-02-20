@@ -263,6 +263,12 @@ public class Money implements Serializable, Comparable<Money> {
     }
   }
 
+  /** 将货币转换为分。即乘以100，然后取整。*/
+  public long toCents() {
+    return this.amount.multiply(new BigDecimal(100))
+        .setScale(0, RoundingMode.HALF_UP)
+        .longValue();
+  }
 
   // Jpa Converter的定义
   @javax.persistence.Converter(autoApply = true)
