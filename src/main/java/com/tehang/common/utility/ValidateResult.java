@@ -25,17 +25,20 @@ public class ValidateResult implements Serializable {
    */
   private String errorMessage;
 
-  public static ValidateResult successOf() {
-    ValidateResult result = new ValidateResult();
-    result.success = true;
-    result.errorMessage = StringUtils.EMPTY;
+  // ----------- 方法 ----------
+
+  public static ValidateResult of(boolean success, String errorMessage) {
+    var result = new ValidateResult();
+    result.success = success;
+    result.errorMessage = errorMessage;
     return result;
   }
 
+  public static ValidateResult successOf() {
+    return of(true, StringUtils.EMPTY);
+  }
+
   public static ValidateResult errorOf(String errorMessage) {
-    ValidateResult result = new ValidateResult();
-    result.success = false;
-    result.errorMessage = errorMessage;
-    return result;
+    return of(false, errorMessage);
   }
 }
