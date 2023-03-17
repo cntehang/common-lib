@@ -40,6 +40,9 @@ public class SendDomainEventRecordsToMqService {
 
       // 查找待发送的事件记录，按时间正序排列
       List<DomainEventRecord> eventRecords = eventRecordJdbcRepository.findAllByWaitSend();
+      if (eventRecords.size() > 100) {
+        log.error("待发送的事务消息数量为: {}, 请开发人员检查消息系统是否正常。", eventRecords.size());
+      }
 
       // 依次处理每个事件记录
       for (var eventRecord : eventRecords) {
@@ -54,7 +57,7 @@ public class SendDomainEventRecordsToMqService {
       log.debug("sendDomainEventRecords completed, size: {}, elapsed: {}s", eventRecords.size(), BjTime.elapsedSeconds(start));
     }
     catch (Exception ex) {
-      log.error("sendDomainEventRecords error, message: {}", ex.getMessage(), ex);
+      log.warn("sendDomainEventRecords error, message: {}", ex.getMessage(), ex);
     }
   }
 
