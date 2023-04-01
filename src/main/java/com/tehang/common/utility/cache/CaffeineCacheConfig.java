@@ -20,6 +20,7 @@ public class CaffeineCacheConfig {
   public static final String CACHE_ONE_MINUTE = "cacheManagerOneMinute";
   public static final String CACHE_FIVE_MINUTES = "cacheManagerFiveMinutes";
   public static final String CACHE_TEN_MINUTES = "cacheManagerTenMinutes";
+  public static final String CACHE_THIRTY_MINUTES = "cacheManagerThirtyMinutes";
 
   public static final String CACHE_ONE_HOUR = "cacheManagerOneHour";
   public static final String CACHE_FIVE_HOURS = "cacheManagerFiveHours";
@@ -47,6 +48,14 @@ public class CaffeineCacheConfig {
   @Bean
   public CacheManager cacheManagerTenMinutes() {
     return createCacheManager(10, TimeUnit.MINUTES);
+  }
+
+  /**
+   * CacheManager, 缓存30分钟
+   */
+  @Bean
+  public CacheManager cacheManagerThirtyMinutes() {
+    return createCacheManager(30, TimeUnit.MINUTES);
   }
 
   /**
