@@ -14,13 +14,13 @@ public class IdGeneratorConfig {
   /**
    * 数据中心编号.
    */
-  @Value("${tehang.idGen.dataCenterId}")
+  @Value("${tehang.idGen.dataCenterId:1}")
   private int dataCenterId;
 
   /**
    * 机器编号.
    */
-  @Value("${tehang.idGen.machineId}")
+  @Value("${tehang.idGen.machineId:1}")
   private int machineId;
 
 }
