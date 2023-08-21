@@ -42,7 +42,10 @@ public abstract class AbstractErrorAlarmSendAppender extends AppenderBase<ILoggi
     var throwable = event.getThrowableProxy() == null ? null : ((ThrowableProxy)event.getThrowableProxy()).getThrowable();
     alarmMessage.setStackText(createStackText(throwable));
 
-    alarmMessage.setCreateTime(SIMPLE_DATE_FORMAT.format(event.getTimeStamp()));
+    synchronized (SIMPLE_DATE_FORMAT) {
+      alarmMessage.setCreateTime(SIMPLE_DATE_FORMAT.format(event.getTimeStamp()));
+    }
+
     return alarmMessage;
   }
 
