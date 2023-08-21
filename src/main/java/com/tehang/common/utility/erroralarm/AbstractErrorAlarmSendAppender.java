@@ -6,7 +6,7 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import lombok.Getter;
 import lombok.Setter;
 
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * 线上告警发送者抽象类.
@@ -46,7 +46,7 @@ public abstract class AbstractErrorAlarmSendAppender extends UnsynchronizedAppen
     }
 
     var active = context.getProperty("active");
-    if (equalsIgnoreCase(active, ACTIVE_ENV)) {
+    if (startsWith(active, ACTIVE_ENV)) {
       var alarmMessage = layout.doLayout(event);
       sendAlarmMessage(alarmMessage, notifyUrl);
     }
