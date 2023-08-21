@@ -1,16 +1,17 @@
 package com.tehang.common.utility.erroralarm;
 
-import com.tehang.common.utility.event.publish.TransactionalEventPublisher;
-import com.tehang.common.utility.event.wechatnotify.SendWechatMessageEvent;
-import com.tehang.common.utility.event.wechatnotify.WechatMessage;
-import com.tehang.common.utility.event.wechatnotify.WechatRobot;
+import com.tehang.common.utility.baseclass.DtoBase;
+import com.tehang.common.utility.external.ExternalServiceProxy;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.left;
+import java.util.List;
 
 /**
  * 企业微信线上告警发送实现类.
@@ -20,49 +21,67 @@ import static org.apache.commons.lang3.StringUtils.left;
 @Slf4j
 public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender {
 
-  private static final int MAX_ERROR_MESSAGE_LENGTH = 200;
-  private static final int MAX_STACK_TEXT_LENGTH = 600;
-
-  private TransactionalEventPublisher eventPublisher;
+  private ExternalServiceProxy externalServiceProxy;
 
   /**
    * 发送告警.
    */
   @Override
-  protected void sendAlarmMessage(AlarmMessage alarmMessage) {
-    log.debug("Enter sendAlarmMessage, alarmMessage:{}.", alarmMessage);
+  protected void sendAlarmMessage(String alarmMessage, String notifyUrl) {
+    log.debug("Enter sendAlarmMessage, alarmMessage:{}，notifyUrl：{}。", alarmMessage, notifyUrl);
 
-    var wechatMessage = createWechatMessage(alarmMessage);
-    publishSendWechatMessageEvent(wechatMessage);
+    if (StringUtils.isNotBlank(notifyUrl)) {
+      var wechatMessageBody = createWechatMessageBody(alarmMessage);
+      externalServiceProxy.post(notifyUrl, new HttpEntity<>(wechatMessageBody), new ParameterizedTypeReference<WechatResult>() {});
+    }
 
     log.debug("Exit sendAlarmMessage.");
   }
 
-  private static WechatMessage createWechatMessage(AlarmMessage alarmMessage) {
-    var result = new WechatMessage();
+  private WechatMessageBody createWechatMessageBody(String alarmMessage) {
+    WechatMessageBody body = new WechatMessageBody();
 
-    result.setRobot(WechatRobot.Prd_Env_Error_Message_Notify);
+    body.msgtype = "text";
+    body.text = WechatText.of(alarmMessage, List.of("@all"));
 
-    String sb = "服务名称: " + defaultIfBlank(alarmMessage.getServiceName(), StringUtils.EMPTY) + StringUtils.LF
-        + "调用方法: " + defaultIfBlank(alarmMessage.getMethodName(), StringUtils.EMPTY) + StringUtils.LF
-        + "时间: " + alarmMessage.getCreateTime() + StringUtils.LF
-        + "TraceId: " + defaultIfBlank(alarmMessage.getTraceId(), StringUtils.EMPTY) + StringUtils.LF
-        + "错误消息: " + defaultIfBlank(left(alarmMessage.getErrorMessage(), MAX_ERROR_MESSAGE_LENGTH), StringUtils.EMPTY) + StringUtils.LF
-        + "异常堆栈: " + left(alarmMessage.getStackText(), MAX_STACK_TEXT_LENGTH);
-    result.setMessage(sb);
-
-    return result;
+    return body;
   }
 
-  /**
-   * 发布发送企业微信消息事件.
-   */
-  private void publishSendWechatMessageEvent(WechatMessage wechatMessage) {
-    log.debug("Enter publishSendWechatMessageEvent, wechatMessage:{}.", wechatMessage);
+  @Getter
+  @Setter
+  public static class WechatMessageBody extends DtoBase {
+    /** 消息类型 */
+    private String msgtype;
 
-    eventPublisher.publish(new SendWechatMessageEvent(wechatMessage));
+    /** 消息文本 */
+    private WechatText text;
+  }
 
-    log.debug("Exit publishSendWechatMessageEvent.");
+  @Getter
+  @Setter
+  public static class WechatText extends DtoBase {
+    /** 消息内容 */
+    private String content;
+
+    /** userid的列表，提醒群中的指定成员(@某个成员)，@all表示提醒所有人，如果开发者获取不到userid，可以使用mentioned_mobile_list */
+    private List<String> mentioned_list;
+
+    public static WechatText of(String content, List<String> mentionedList) {
+      var wechatText = new WechatText();
+      wechatText.content = content;
+      wechatText.mentioned_list = mentionedList;
+      return wechatText;
+    }
+  }
+
+  @Getter
+  @Setter
+  public static class WechatResult extends DtoBase {
+    /** 错误代码 */
+    private Integer errcode;
+
+    /** 错误消息 */
+    private String errmsg;
   }
 }
 
