@@ -1,27 +1,21 @@
 package com.tehang.common.utility.erroralarm;
 
+import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.baseclass.DtoBase;
-import com.tehang.common.utility.external.ExternalServiceProxy;
-import lombok.AllArgsConstructor;
+import com.tehang.common.utility.http.HttpClientUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * 企业微信线上告警发送实现类.
  */
-@Service
-@AllArgsConstructor
 @Slf4j
 public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender {
-
-  private ExternalServiceProxy externalServiceProxy;
 
   /**
    * 发送告警.
@@ -30,9 +24,19 @@ public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender
   protected void sendAlarmMessage(String alarmMessage, String notifyUrl) {
     log.debug("Enter sendAlarmMessage, alarmMessage:{}，notifyUrl：{}。", alarmMessage, notifyUrl);
 
-    if (StringUtils.isNotBlank(notifyUrl)) {
-      var wechatMessageBody = createWechatMessageBody(alarmMessage);
-      externalServiceProxy.post(notifyUrl, new HttpEntity<>(wechatMessageBody), new ParameterizedTypeReference<WechatResult>() {});
+    if (isNotBlank(notifyUrl)) {
+      try {
+        var wechatMessageBody = createWechatMessageBody(alarmMessage);
+        var result = HttpClientUtils.getInstance().httpPost(notifyUrl, JsonUtils.toJson(wechatMessageBody));
+
+        WechatResult resp = JsonUtils.toClass(result, WechatResult.class);
+        if (resp == null || resp.getErrcode() != 0) {
+          super.addError(String.format("发送企业微信线上告警失败, 原因:%s", resp));
+        }
+      }
+      catch (Exception ex) {
+        super.addError(String.format("发送企业微信线上告警失败, 原因:%s", ex.getMessage()), ex);
+      }
     }
 
     log.debug("Exit sendAlarmMessage.");
