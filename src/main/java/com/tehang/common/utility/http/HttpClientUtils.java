@@ -43,46 +43,39 @@ public final class HttpClientUtils {
   private static final int MAX_TOTAL = 100;
 
   // httpclient 对象，注意：这里面其实是一个可复用连接池，而非单个连接
-  private static CloseableHttpClient httpClient;
+  private final CloseableHttpClient httpClient;
+
+  private static final HttpClientUtils HTTP_CLIENT_UTILS = new HttpClientUtils();
 
   /**
    * 构造函数.
    */
   private HttpClientUtils() {
-    // do nothing
-  }
-
-  /**
-   * 获取共用的HttpClient.
-   */
-  public static CloseableHttpClient getSharedClient() {
-    synchronized (httpClient) {
-      if (httpClient == null) {
-        httpClient = HttpClients.custom().setDefaultRequestConfig(getRequestConfig()).setConnectionManager(getConnectionManager())
-          .disableAutomaticRetries().build();
-      }
-    }
-
-    return httpClient;
-  }
-
-  /**
-   * 获取新的HttpClient。 暂时不允许使用.
-   */
-  public static CloseableHttpClient getNewClient() {
-    return HttpClients.custom().setDefaultRequestConfig(getRequestConfig()).setConnectionManager(getConnectionManager()).disableAutomaticRetries()
+    this.httpClient = HttpClients.custom()
+      .setDefaultRequestConfig(getRequestConfig())
+      .setConnectionManager(getConnectionManager())
+      .disableAutomaticRetries()
       .build();
+  }
+
+  /**
+   * 对外暴露获取实例的接口
+   */
+  public static HttpClientUtils getInstance() {
+    synchronized (HttpClientUtils.class) {
+      return HTTP_CLIENT_UTILS;
+    }
   }
 
   /**
    * 发送post请求.
    */
-  public static String httpPost(String url, String postData) throws IOException {
+  public String httpPost(String url, String postData) throws IOException {
     LOG.info("Enter. Request url: {}, postData: {}.", url, postData);
 
     HttpPost postMethod = getHttpPost(url, postData);
 
-    String result = executePost(getSharedClient(), postMethod);
+    String result = executePost(this.httpClient, postMethod);
 
     LOG.info("Response: {}.", result);
 
