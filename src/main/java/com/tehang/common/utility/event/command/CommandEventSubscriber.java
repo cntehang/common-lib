@@ -76,7 +76,7 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
     }
 
     // 前续命令的返回值
-    CommandReturnValue prCommandReturnValue = null;
+    CommandReturnValue preCommandReturnValue = null;
 
     // 依次执行每个命令
     for (var commandRecord : commandRecords) {
@@ -85,14 +85,14 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
 
       if (commandRecord.isSuccess()) {
         // 如果该命令已执行成功，取得该命令的执行结果，继续下一条命令
-        prCommandReturnValue = JsonUtils.toClass(commandRecord.getCommandReturnValue(), command.getReturnsClass());
+        preCommandReturnValue = JsonUtils.toClass(commandRecord.getCommandReturnValue(), command.getReturnsClass());
       }
       else {
         // 如果该命令未执行成功，先设置上下文参数，再执行该命令
-        CommandExecuteContext.setPreCommandReturnValue(prCommandReturnValue);
+        CommandExecuteContext.setPreCommandReturnValue(preCommandReturnValue);
 
         // 运行子命令, 并获取返回值
-        prCommandReturnValue = executeSubCommand(commandRecord, command);
+        preCommandReturnValue = executeSubCommand(commandRecord, command);
       }
     }
 
