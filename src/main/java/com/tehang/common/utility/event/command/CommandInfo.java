@@ -14,7 +14,7 @@ public class CommandInfo extends ValueObject {
   /** 命令类型 */
   private String commandType;
 
-  /** 命令参数对象的json表示 */
+  /** 命令参数信息 */
   private CommandArgs args;
 
   // ----------- 方法 -----------
