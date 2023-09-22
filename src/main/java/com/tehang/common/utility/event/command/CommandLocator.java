@@ -17,7 +17,7 @@ public class CommandLocator {
   /**
    * 根据命令类型查找命令对象。
    */
-  public Command findCommand(String commandType) {
+  public Command findCommandEnsured(String commandType) {
     return applicationContext.getBeansOfType(Command.class)
         .values()
         .stream()
