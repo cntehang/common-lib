@@ -16,11 +16,9 @@ public interface Command {
   Class<? extends CommandArgs> getArgsClass();
 
   /**
-   * 获取命令的返回参数类型，默认为返回VoidCommandReturnValue。
+   * 获取命令的返回参数类型。
    */
-  default Class<? extends CommandReturnValue> getReturnsClass() {
-    return VoidCommandReturnValue.class;
-  }
+  Class<? extends CommandReturnValue> getReturnsClass();
 
   /**
    * 执行命令。
