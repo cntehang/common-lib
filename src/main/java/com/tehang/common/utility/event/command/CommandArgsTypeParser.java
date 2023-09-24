@@ -22,8 +22,8 @@ public final class CommandArgsTypeParser {
     return commandTypeInfo;
   }
 
-  private static CommandTypeInfo getCommandTypeInfo(Object obj) {
-    Class<?> clazz = obj.getClass();
+  private static CommandTypeInfo getCommandTypeInfo(Command command) {
+    Class<?> clazz = command.getClass();
     while (clazz != null) {
       // 获取clazz直接实现的接口列表
       Type[] genericInterfaces = clazz.getGenericInterfaces();
