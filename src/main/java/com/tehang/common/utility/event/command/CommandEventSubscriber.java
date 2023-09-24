@@ -60,8 +60,10 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
     // 查找命令对象
     Command command = commandLocator.findCommandEnsured(commandEvent.getCommandType());
 
+    CommandTypeInfo commandTypeInfo = CommandArgsTypeParser.parse(command);
+
     // 解析命令参数
-    var args = JsonUtils.toClass(commandEvent.getArgs(), command.getArgsClass());
+    var args = JsonUtils.toClass(commandEvent.getArgs(), commandTypeInfo.getArgsClass());
 
     // 运行命令
     command.run(args);
@@ -76,38 +78,42 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
     }
 
     // 前续命令的返回值
-    CommandReturnValue preCommandReturnValue = null;
+    Object preCommandReturnValue = null;
 
     // 依次执行每个命令
     for (var commandRecord : commandRecords) {
       // 查找命令对象
       Command command = commandLocator.findCommandEnsured(commandRecord.getCommandType());
+      CommandTypeInfo commandTypeInfo = CommandArgsTypeParser.parse(command);
 
       if (commandRecord.isSuccess()) {
         // 如果该命令已执行成功，取得该命令的执行结果，继续下一条命令
-        preCommandReturnValue = JsonUtils.toClass(commandRecord.getCommandReturnValue(), command.getReturnsClass());
+        preCommandReturnValue = JsonUtils.toClass(commandRecord.getCommandReturnValue(), commandTypeInfo.getReturnClass());
       }
       else {
         // 如果该命令未执行成功，先设置上下文参数，再执行该命令
         CommandExecuteContext.setPreCommandReturnValue(preCommandReturnValue);
 
-        // 运行子命令, 并获取返回值
-        preCommandReturnValue = executeSubCommand(commandRecord, command);
+        try {
+          // 运行子命令, 并获取返回值
+          preCommandReturnValue = executeSubCommand(commandRecord, command, commandTypeInfo);
+        }
+        finally {
+          // 执行完成后，清除上下文参数
+          CommandExecuteContext.clear();
+        }
       }
     }
-
-    // 执行完成后，清除上下文参数
-    CommandExecuteContext.clear();
   }
 
   /** 运行子命令, 并获取返回值 */
-  private CommandReturnValue executeSubCommand(CommandRecord commandRecord, Command command) {
+  private Object executeSubCommand(CommandRecord commandRecord, Command command, CommandTypeInfo commandTypeInfo) {
     log.debug("Enter executeSubCommand, commandId: {}", commandRecord.getId());
 
-    CommandReturnValue result;
+    Object result;
     try {
       // 解析命令参数
-      CommandArgs args = JsonUtils.toClass(commandRecord.getCommandArgs(), command.getArgsClass());
+      Object args = JsonUtils.toClass(commandRecord.getCommandArgs(), commandTypeInfo.getArgsClass());
 
       // 执行命令
       result = command.run(args);
@@ -117,9 +123,6 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
 
       // 记录执行失败日志
       addCommandFailedHis(commandRecord.getId(), ex.getMessage());
-
-      // 清除上下文参数
-      CommandExecuteContext.clear();
 
       // 抛出异常，不再继续执行命令，依赖mq的重试机制，下次再执行该命令
       throw ex;
@@ -131,7 +134,7 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
   }
 
   /** 命令执行成功后，调用此方法，更新状态为已完成 */
-  private void updateCommandToSuccess(String commandId, CommandReturnValue commandReturnValue) {
+  private void updateCommandToSuccess(String commandId, Object commandReturnValue) {
     commandRecordJdbcRepository.updateCommandToSuccess(commandId, JsonUtils.toJson(commandReturnValue));
   }
 

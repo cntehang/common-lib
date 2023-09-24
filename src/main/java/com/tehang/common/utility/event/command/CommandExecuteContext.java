@@ -10,19 +10,19 @@ public final class CommandExecuteContext {
   }
 
   /** 前续命令执行结果的线程本地存储 */
-  private static final ThreadLocal<CommandReturnValue> commandReturnValueThreadLocal = new ThreadLocal<>();
+  private static final ThreadLocal<Object> commandReturnValueThreadLocal = new ThreadLocal<>();
 
   /**
    * 获取前续命令的返回值。
    */
-  public static CommandReturnValue getPreCommandReturnValue() {
+  public static Object getPreCommandReturnValue() {
     return commandReturnValueThreadLocal.get();
   }
 
   /**
    * 设置前续命令的返回值。
    */
-  public static void setPreCommandReturnValue(CommandReturnValue value) {
+  public static void setPreCommandReturnValue(Object value) {
     commandReturnValueThreadLocal.set(value);
   }
 

@@ -15,11 +15,11 @@ public class CommandInfo extends ValueObject {
   private String commandType;
 
   /** 命令参数信息 */
-  private CommandArgs args;
+  private Object args;
 
   // ----------- 方法 -----------
 
-  public static CommandInfo of(String commandType, CommandArgs args) {
+  public static CommandInfo of(String commandType, Object args) {
     var result = new CommandInfo();
     result.commandType = commandType;
     result.args = args;

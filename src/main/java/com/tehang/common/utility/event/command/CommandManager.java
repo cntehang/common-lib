@@ -1,6 +1,6 @@
 package com.tehang.common.utility.event.command;
 
-import com.google.common.collect.Lists;
+import com.aliyun.openservices.shade.com.google.common.collect.Lists;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.command.commandrecord.CommandRecord;
 import com.tehang.common.utility.event.command.commandrecord.CommandRecordJdbcRepository;
@@ -31,7 +31,7 @@ public class CommandManager {
   /**
    * 添加一个命令，并发布事件，以触发异步执行。
    */
-  public void queueCommand(String commandType, CommandArgs args) {
+  public void queueCommand(String commandType, Object args) {
     log.debug("Enter queueCommand, commandType: {}, args: {}", commandType, args);
 
     eventPublisher.publish(new CommandEvent(eventTypeHolder.getEventType(), commandType, JsonUtils.toJson(args)));

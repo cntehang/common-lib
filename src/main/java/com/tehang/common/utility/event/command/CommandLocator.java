@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -26,7 +27,7 @@ public class CommandLocator {
         .values()
         .stream()
         .filter(item -> equalsIgnoreCase(item.getCommandType(), commandType))
-        .collect(Collectors.toList());
+        .collect(toList());
 
     if (isEmpty(commands)) {
       throw new SystemErrorException("未找到命令对象, commandType: " + commandType);
