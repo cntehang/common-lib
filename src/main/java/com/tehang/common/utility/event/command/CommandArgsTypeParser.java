@@ -50,29 +50,4 @@ public final class CommandArgsTypeParser {
         (Class<?>) actualTypeArguments[1]
     );
   }
-
-  public static void main(String[] args) {
-    var typeInfo = parse(new TestCommandBase());
-    System.out.println(typeInfo.getArgsClass());
-    System.out.println(typeInfo.getReturnClass());
-    System.out.println(typeInfo);
-  }
-
-  static class TestCommandBase implements Command<String, Void> {
-
-    @Override
-    public String getCommandType() {
-      return "MyTestCommand";
-    }
-
-    @Override
-    public Void run(String args) {
-      System.out.println(args);
-      return null;
-    }
-  }
-
-  static class TestCommand extends TestCommandBase {
-
-  }
 }
