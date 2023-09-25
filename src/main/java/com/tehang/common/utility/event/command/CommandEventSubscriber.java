@@ -91,24 +91,18 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
         preCommandReturnValue = JsonUtils.toClass(commandRecord.getCommandReturnValue(), commandTypeInfo.getReturnClass());
       }
       else {
-        // 如果该命令未执行成功，先设置上下文参数，再执行该命令
-        CommandExecuteContext.setPreCommandReturnValue(preCommandReturnValue);
-
-        try {
-          // 运行子命令, 并获取返回值
-          preCommandReturnValue = executeSubCommand(commandRecord, command, commandTypeInfo);
-        }
-        finally {
-          // 执行完成后，清除上下文参数
-          CommandExecuteContext.clear();
-        }
+        // 运行子命令, 并获取返回值
+        preCommandReturnValue = executeSubCommand(commandRecord, command, commandTypeInfo, preCommandReturnValue);
       }
     }
   }
 
   /** 运行子命令, 并获取返回值 */
-  private Object executeSubCommand(CommandRecord commandRecord, Command command, CommandTypeInfo commandTypeInfo) {
+  private Object executeSubCommand(CommandRecord commandRecord, Command command, CommandTypeInfo commandTypeInfo, Object preCommandReturnValue) {
     log.debug("Enter executeSubCommand, commandId: {}", commandRecord.getId());
+
+    // 设置上下文参数
+    CommandExecuteContext.setPreCommandReturnValue(preCommandReturnValue);
 
     Object result;
     try {
@@ -126,6 +120,10 @@ public class CommandEventSubscriber implements ClusteringEventSubscriber {
 
       // 抛出异常，不再继续执行命令，依赖mq的重试机制，下次再执行该命令
       throw ex;
+    }
+    finally {
+      // 执行完成后，清除上下文参数
+      CommandExecuteContext.clear();
     }
 
     // 更新命令状态为执行成功
