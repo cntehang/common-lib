@@ -38,9 +38,9 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
   /**
    * 日期格式: yyyy-MM-dd 的正则表达式
    */
-  public static final String DATE_FORMAT_TO_DAY_REGEX = "(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-"
-          + "(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}"
-          + "(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)";
+  public static final String DATE_FORMAT_TO_DAY_REGEX = "(?:[0-9]{4}-(?:(?:0[1-9]|1[0-2])-"
+      + "(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}"
+      + "(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)";
 
   /**
    * 日期格式: yyyy-MM-dd HH:mm, 精确到分钟
@@ -50,9 +50,7 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
   /**
    * 日期格式: yyyy-MM-dd HH:mm 的正则表达式
    */
-  public static final String DATE_FORMAT_TO_MINUTE_REGEX = "^((((19|20)\\d{2})-(0?[13-9]|1[012])-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-(0?[13578]|1[02])-31)"
-          + "|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-29)) "
-          + "(2[0-3]|[01][0-9]):([0-5][0-9])";
+  public static final String DATE_FORMAT_TO_MINUTE_REGEX = DATE_FORMAT_TO_DAY_REGEX + " (2[0-3]|[01][0-9]):([0-5][0-9])";
 
   /**
    * 日期格式: yyyy-MM-dd HH:mm:ss, 精确到秒
