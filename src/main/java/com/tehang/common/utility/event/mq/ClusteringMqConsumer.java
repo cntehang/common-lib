@@ -13,6 +13,8 @@ import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import com.tehang.common.utility.lock.DistributedLockFactory;
+import com.tehang.common.utility.time.BjTime;
+import com.tehang.common.utility.time.ElapsedSeconds;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +103,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     String consumerTags = getClusteringConsumerTags();
     consumer.subscribe(mqConfig.getTopic(), consumerTags, (message, context) -> {
 
+      BjTime start = BjTime.now();
       String tag = message.getTag();
       String key = message.getKey();
       String body = new String(message.getBody(), Charset.forName("UTF-8"));
@@ -110,7 +113,14 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
         // 处理收到的mq消息
         processMessage(tag, body);
 
-        log.info("ClusteringMqConsumer completed, tag: {}, key: {}", tag, key);
+        double elapsedSeconds = ElapsedSeconds.from(start).getSeconds();
+        if (elapsedSeconds > 120) {
+          // 消费时长超过限制时，提升日志级别
+          log.warn("ClusteringMqConsumer completed, tag: {}, key: {}, elapsed: {}s", tag, key, String.format("%.1f", elapsedSeconds));
+        }
+        else {
+          log.info("ClusteringMqConsumer completed, tag: {}, key: {}", tag, key);
+        }
         return Action.CommitMessage;
       }
       catch (Exception ex) {
