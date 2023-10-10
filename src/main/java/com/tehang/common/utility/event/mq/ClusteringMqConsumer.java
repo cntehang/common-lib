@@ -194,6 +194,8 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
       // 处理成功后在redis中设置消费状态为OK
       redisOps.set("OK", REDIS_KEY_TIMEOUT_HOURS, TimeUnit.HOURS);
+
+      log.debug("set consumer status OK, redisKey: {}", redisKey);
     }
     else {
       log.warn("事件已处理成功, 此次为重复调用, 系统自动忽略, key: {}, event: {}", event.getKey(), event);
