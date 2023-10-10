@@ -58,8 +58,8 @@ class MoneyRangeSpec extends TestSpecification {
 
     then:
     JsonUtils.toJson(range1) == '{"from":200,"to":300}'
-    JsonUtils.toJson(range2) == '{"from":200}'
-    JsonUtils.toJson(range3) == '{}'
+    JsonUtils.toJson(range2) == '{"from":200,"to":null}'
+    JsonUtils.toJson(range3) == '{"from":null,"to":null}'
   }
 
   def "test3.2: MoneyRange JsonDeserialize test"() {
