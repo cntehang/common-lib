@@ -13,6 +13,8 @@ import com.tehang.common.utility.event.DomainEvent;
 import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import com.tehang.common.utility.lock.DistributedLockFactory;
+import com.tehang.common.utility.time.BjTime;
+import com.tehang.common.utility.time.ElapsedSeconds;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,19 +103,28 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     String consumerTags = getClusteringConsumerTags();
     consumer.subscribe(mqConfig.getTopic(), consumerTags, (message, context) -> {
 
+      BjTime start = BjTime.now();
       String tag = message.getTag();
       String key = message.getKey();
       String body = new String(message.getBody(), Charset.forName("UTF-8"));
-      log.debug("ClusteringMqConsumer start, tag:{}, key:{}, body:{}", tag, key, body);
+      log.info("ClusteringMqConsumer start, tag: {}, key: {}, body: {}", tag, key, body);
 
       try {
         // 处理收到的mq消息
         processMessage(tag, body);
+
+        double elapsedSeconds = ElapsedSeconds.from(start).getSeconds();
+        if (elapsedSeconds > 120) {
+          // 消费时长超过限制时，提升日志级别
+          log.warn("ClusteringMqConsumer completed, tag: {}, key: {}, elapsed: {}s", tag, key, String.format("%.1f", elapsedSeconds));
+        }
+        else {
+          log.info("ClusteringMqConsumer completed, tag: {}, key: {}", tag, key);
+        }
         return Action.CommitMessage;
       }
       catch (Exception ex) {
-        String errorMsg = "ClusteringMqConsumer error:" + ex.getMessage();
-        log.error(errorMsg, ex);
+        log.error("ClusteringMqConsumer failed, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body, ex);
         return Action.ReconsumeLater;
       }
     });
@@ -157,11 +168,6 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
           log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
         }
       }
-      log.debug("ClusteringMqConsumer completed, tag:{}", tag);
-    }
-    catch (Exception ex) {
-      log.error("ClusteringMqConsumer error, msg: {}, event: {}", ex.getMessage(), event, ex);
-      throw ex;
     }
     finally {
       span.finish(); //end span
@@ -180,7 +186,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     var redisOps = redisTemplate.boundValueOps(redisKey);
 
     // 从redis中读取消费状态，如果不为null, 表示该条消息已消费成功，就不再处理
-    var consumeStatus = redisOps.get();
+    String consumeStatus = redisOps.get();
 
     if (StringUtils.isBlank(consumeStatus)) {
       // 老状态不存在，说明是第一次进来，直接进行消息处理
