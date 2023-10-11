@@ -2,8 +2,11 @@ package com.tehang.common.utility.redis;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -59,5 +62,19 @@ public class CommonRedisOperator {
    */
   public Boolean delete(String key) {
     return stringRedisTemplate.delete(key);
+  }
+
+  /**
+   * Executes the given {@link RedisScript}
+   *
+   * @param script The script to execute
+   * @param keys Any keys that need to be passed to the script
+   * @param args Any args that need to be passed to the script
+   * @return The return value of the script or null if {@link RedisScript#getResultType()} is null, likely indicating a
+   *         throw-away status reply (i.e. "OK")
+   */
+  @Nullable
+  public <T> T execute(RedisScript<T> script, List<String> keys, Object... args) {
+    return stringRedisTemplate.execute(script, keys, args);
   }
 }
