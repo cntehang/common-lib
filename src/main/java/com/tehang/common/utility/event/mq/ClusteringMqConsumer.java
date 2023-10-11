@@ -143,14 +143,19 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     List<ClusteringEventSubscriber> subscribers = this.allSubscribers.get(eventType);
 
     if (CollectionUtils.isEmpty(subscribers)) {
-      log.error("ClusteringMqConsumer error, unknown tag:{}", tag);
+      log.error("ClusteringMqConsumer error, unknown tag: {}, subscriber not found", tag);
       return;
     }
 
-    // 根据第一个订阅者的EventClass反序列化得到DomainEvent参数
-    // 约定：所有相同EventType的订阅者需要使用相同的事件参数
-    var firstSubscriber = subscribers.get(0);
-    DomainEvent event = JsonUtils.toClass(body, firstSubscriber.getEventClass());
+    if (subscribers.size() > 1) {
+      // 一个事件类型只允许注册一个消费者
+      log.error("ClusteringMqConsumer error, subscriber found multiple, tag: {}, subscribers: {}", tag, subscribers);
+      return;
+    }
+
+    // 根据订阅者的EventClass反序列化得到DomainEvent参数
+    var subscriber = subscribers.get(0);
+    DomainEvent event = JsonUtils.toClass(body, subscriber.getEventClass());
 
     // 开启新的span记录日志, traceId取自event.traceId
     ScopedSpan span = tracer.startScopedSpanWithParent("mqConsumer", createTraceContext(event));
@@ -159,14 +164,12 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
       // 添加分布式锁，同步进行消息处理
       try (var ignored = lockFactory.acquireLockUnBlocked(getLockId(event), Duration.ofMinutes(REDIS_LOCK_TIMEOUT_MINUTES))) {
-        for (var subscriber : subscribers) {
-          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
+        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
 
-          // 依次调用每个订阅者的处理逻辑
-          handleEventForSubscriber(subscriber, event);
+        // 依次调用每个订阅者的处理逻辑
+        handleEventForSubscriber(subscriber, event);
 
-          log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
-        }
+        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
       }
     }
     finally {
@@ -182,7 +185,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
    * 调用订阅者的处理逻辑，考虑并发情况下处理逻辑的幂等性，避免重复处理 参考: https://www.yuque.com/wanguoyou/mzkmxr/rsdefp
    */
   private void handleEventForSubscriber(ClusteringEventSubscriber subscriber, DomainEvent event) {
-    var redisKey = getRedisKey(subscriber, event);
+    var redisKey = getIdempotentRedisKey(event);
     var redisOps = redisTemplate.boundValueOps(redisKey);
 
     // 从redis中读取消费状态，如果不为null, 表示该条消息已消费成功，就不再处理
@@ -202,8 +205,9 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     }
   }
 
-  private static String getRedisKey(ClusteringEventSubscriber subscriber, DomainEvent event) {
-    return String.format("MQ_Consumer_%s_%s", event.getKey(), subscriber.getClass().getSimpleName());
+  /** 获取用来控制幂等性的redisKey */
+  private static String getIdempotentRedisKey(DomainEvent event) {
+    return String.format("MQ_Consumer_Idempotent_%s", event.getKey());
   }
 
   /**
