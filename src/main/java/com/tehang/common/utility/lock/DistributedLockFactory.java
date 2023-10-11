@@ -22,8 +22,6 @@ public class DistributedLockFactory {
 
   private static final String LOCK_PREFIX = "LOCK_PREFIX";      //锁前缀
 
-  private static final String LOCK_VALUE = "LOCK_VALUE";        //存储在redis中的值，无实际意义
-
   public static final long LOCK_EXPIRED_MILLI_SECONDS = 30000;  //锁的过期时间
 
   private static final long LOCK_TIME_OUT_MILLI_SECONDS = 30000; //获取锁的超时时间，对于阻塞型锁有用
