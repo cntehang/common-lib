@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -20,8 +21,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class DistributedLockFactory {
 
   private static final String LOCK_PREFIX = "LOCK_PREFIX";      //锁前缀
-
-  private static final String LOCK_VALUE = "LOCK_VALUE";        //存储在redis中的值，无实际意义
 
   public static final long LOCK_EXPIRED_MILLI_SECONDS = 30000;  //锁的过期时间
 
@@ -68,19 +67,20 @@ public class DistributedLockFactory {
 
     long acquireLockEndTime = System.currentTimeMillis() + LOCK_TIME_OUT_MILLI_SECONDS;
     String lockKey = getRedisKey(lockId);
+    String lockValue = UUID.randomUUID().toString();  // 生成一个随机uuid作为锁的值，将来根据此值来释放锁
 
-    if (getLock(lockKey, lockExpiredMilliSecond)) {
+    if (getLock(lockKey, lockValue, lockExpiredMilliSecond)) {
       log.debug("Exit acquireLock: {}", lockId);
-      return new DistributedLock(lockKey, redisOperator);
+      return new DistributedLock(lockKey, lockValue, redisOperator);
     }
 
     //获取锁失败处理
     if (blocked) {
       //阻塞模式时，尝试重新获取锁
       while (System.currentTimeMillis() < acquireLockEndTime) {
-        if (getLock(lockKey, lockExpiredMilliSecond)) {
+        if (getLock(lockKey, lockValue, lockExpiredMilliSecond)) {
           log.debug("Exit acquireLock: {}", lockId);
-          return new DistributedLock(lockKey, redisOperator);
+          return new DistributedLock(lockKey, lockValue, redisOperator);
         }
 
         //等待2秒，再尝试
@@ -104,8 +104,8 @@ public class DistributedLockFactory {
   /**
    * 获取锁，实质是在redis中设置一个key-value.
    */
-  private boolean getLock(String lockKey, long lockExpiredMilliSecond) {
-    Boolean success = redisOperator.setIfAbsent(lockKey, LOCK_VALUE, lockExpiredMilliSecond, TimeUnit.MILLISECONDS);
+  private boolean getLock(String lockKey, String lockValue, long lockExpiredMilliSecond) {
+    Boolean success = redisOperator.setIfAbsent(lockKey, lockValue, lockExpiredMilliSecond, TimeUnit.MILLISECONDS);
     return isTrue(success);
   }
 

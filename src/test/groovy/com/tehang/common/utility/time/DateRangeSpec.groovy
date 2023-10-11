@@ -99,8 +99,8 @@ class DateRangeSpec extends TestSpecification {
 
     then:
     JsonUtils.toJson(range1) == '{"from":"2022-04-13","to":"2022-04-14"}'
-    JsonUtils.toJson(range2) == '{"from":"2022-04-13"}'
-    JsonUtils.toJson(range3) == '{}'
+    JsonUtils.toJson(range2) == '{"from":"2022-04-13","to":null}'
+    JsonUtils.toJson(range3) == '{"from":null,"to":null}'
   }
 
   def "test10.2: JsonDeserialize test"() {

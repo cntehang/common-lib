@@ -1,6 +1,5 @@
 package com.tehang.common.utility;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +9,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import org.apache.commons.lang3.StringUtils;
@@ -29,10 +29,13 @@ public final class JsonUtils {
 
   /**
    * mapper.
-   * 反序列化时，忽略json中多余的字段
    */
-  private static final ObjectMapper MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)// 序列化时，只包含不为空的字段
-    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  private static final ObjectMapper MAPPER = new ObjectMapper()
+      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // 反序列化时，忽略json中多余的字段
+      .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false) // 序列化时，支持空的Bean对象
+      .configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true) // 反序列化时，支持非法的转义字符
+      .configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true) // 反序列化时，支持未编码的控制字符，比如回车，换行
+      .configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true); // 反序列化时，数字支持前置0
 
   private JsonUtils() {
   }
