@@ -2,6 +2,10 @@ package com.tehang.common.utility.lock;
 
 import com.tehang.common.utility.redis.CommonRedisOperator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+
+import java.util.List;
 
 /**
  * 分布式锁的辅助类：非阻塞，不可重入.
@@ -28,7 +32,22 @@ public class DistributedLock implements AutoCloseable {
    * 释放分布式锁.
    */
   private void releaseLock() {
-    Boolean success = redisOperator.delete(lockKey);
-    log.debug("releaseLock, lockKey: {}, lockValue: {}, result: {}", lockKey, lockValue, success);
+    // 使用lua脚本释放锁，以保证原子性
+    String script = "if redis.call('get', KEYS[1]) == ARGV[1] "
+        + "then return redis.call('del', KEYS[1]) "
+        + "else return 0 "
+        + "end";
+
+    RedisScript<Long> redisScript = new DefaultRedisScript<>(script, Long.class);
+    Long result = redisOperator.execute(redisScript, List.of(this.lockKey), this.lockValue);
+
+    boolean releaseSuccess = result != null && result != 0;
+    if (releaseSuccess) {
+      log.debug("releaseLock success, lockKey: {}, lockValue: {}, result: {}", lockKey, lockValue, result);
+    }
+    else {
+      // 因redis中的key超时等特殊原因，可能导致锁释放失败
+      log.warn("releaseLock failed, lockKey: {}, lockValue: {}, result: {}", lockKey, lockValue, result);
+    }
   }
 }
