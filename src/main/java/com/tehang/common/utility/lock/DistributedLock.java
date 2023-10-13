@@ -29,6 +29,6 @@ public class DistributedLock implements AutoCloseable {
    */
   private void releaseLock() {
     Boolean success = redisOperator.delete(lockKey);
-    log.debug("releaseLock, lockKey: {}, result: {}", lockKey, success);
+    log.debug("releaseLock, lockKey: {}, lockValue: {}, result: {}", lockKey, lockValue, success);
   }
 }
