@@ -21,6 +21,13 @@ public final class Assert {
     }
   }
 
+  /** 断言指定的表达式为false, 如果该表达式为true, 则抛出参数异常。*/
+  public static void isFalse(boolean expression, String message) {
+    if (expression) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
   /** 断言指定的对象不为nul, 如果该对象为null则抛出参数异常。*/
   public static void notNull(@Nullable Object object, String message) {
     if (object == null) {
