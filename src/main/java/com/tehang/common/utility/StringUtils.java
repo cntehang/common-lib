@@ -270,7 +270,9 @@ public final class StringUtils {
     var result = new ArrayList<String>();
     if (items != null) {
       for (var item : items) {
-        result.addAll(item);
+        if (item != null) {
+          result.addAll(item);
+        }
       }
     }
     return result;
