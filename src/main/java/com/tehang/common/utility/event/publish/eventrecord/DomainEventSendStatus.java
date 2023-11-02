@@ -1,5 +1,6 @@
 package com.tehang.common.utility.event.publish.eventrecord;
 
+import com.tehang.common.utility.Describable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum DomainEventSendStatus {
+public enum DomainEventSendStatus implements Describable {
 
   /**
    * 刚创建事件记录时，为待发送状态。
@@ -26,5 +27,5 @@ public enum DomainEventSendStatus {
    */
   SendFailed("发送失败");
 
-  private String description;
+  private final String description;
 }
