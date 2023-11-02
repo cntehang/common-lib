@@ -203,8 +203,8 @@ class StringUtilsSpec extends TestSpecification {
   // ------------ string列表相关的方法 ----------
   def "test concat"() {
     expect:
-    StringUtils.concat(null) == List.of()
-    StringUtils.concat(List.of("a", "b"), List.of("c", "d")) == List.of("a", "b", "c", "d")
-    StringUtils.concat(List.of("a", "b", ""), List.of("b", "c", "")) == List.of("a", "b", "", "b", "c", "")
+    StringUtils.concatStringLists(null) == List.of()
+    StringUtils.concatStringLists(List.of("a", "b"), List.of("c", "d")) == List.of("a", "b", "c", "d")
+    StringUtils.concatStringLists(List.of("a", "b", ""), List.of("b", "c", "")) == List.of("a", "b", "", "b", "c", "")
   }
 }

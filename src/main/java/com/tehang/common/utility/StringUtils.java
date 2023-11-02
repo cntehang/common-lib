@@ -266,7 +266,7 @@ public final class StringUtils {
   /** 合并多个字符串集合，返回一个合并后的字符串列表。*/
   @NotNull
   @SafeVarargs
-  public static List<String> concat(@Nullable final Collection<String>... items) {
+  public static List<String> concatStringLists(@Nullable final Collection<String>... items) {
     var result = new ArrayList<String>();
     if (items != null) {
       for (var item : items) {
