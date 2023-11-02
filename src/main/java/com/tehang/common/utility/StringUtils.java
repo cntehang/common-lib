@@ -3,7 +3,10 @@ package com.tehang.common.utility;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -183,6 +186,38 @@ public final class StringUtils {
     return org.apache.commons.lang3.StringUtils.left(str, len);
   }
 
+  // ------------ 子串匹配相关的方法 ----------
+
+  /** 判断字符串是否包含指定的搜索字符串。对于null值返回false。*/
+  public static boolean contains(final CharSequence str, final CharSequence searchStr) {
+    return org.apache.commons.lang3.StringUtils.contains(str, searchStr);
+  }
+
+  /** 判断字符串是否包含指定的搜索字符串(忽略大小写)。对于null值返回false。*/
+  public static boolean containsIgnoreCase(final CharSequence str, final CharSequence searchStr) {
+    return org.apache.commons.lang3.StringUtils.containsIgnoreCase(str, searchStr);
+  }
+
+  /** 判断字符串是否包含的前缀。startsWith(null, null) = true。*/
+  public static boolean startsWith(final CharSequence str, final CharSequence prefix) {
+    return org.apache.commons.lang3.StringUtils.startsWith(str, prefix);
+  }
+
+  /** 判断字符串是否包含的前缀(忽略大小写)。startsWithIgnoreCase(null, null) = true。*/
+  public static boolean startsWithIgnoreCase(final CharSequence str, final CharSequence prefix) {
+    return org.apache.commons.lang3.StringUtils.startsWithIgnoreCase(str, prefix);
+  }
+
+  /** 判断字符串是否包含的后缀。endsWith(null, null) = true。*/
+  public static boolean endsWith(final CharSequence str, final CharSequence suffix) {
+    return org.apache.commons.lang3.StringUtils.endsWith(str, suffix);
+  }
+
+  /** 判断字符串是否包含的后缀(忽略大小写)。endsWithIgnoreCase(null, null) = true。*/
+  public static boolean endsWithIgnoreCase(final CharSequence str, final CharSequence suffix) {
+    return org.apache.commons.lang3.StringUtils.endsWithIgnoreCase(str, suffix);
+  }
+
   // ------------ trim相关的方法 ----------
 
   /** 移除字符串首尾的空格（或控制字符）, 传入null值将返回null。*/
@@ -224,5 +259,20 @@ public final class StringUtils {
   /** 返回一个对象的字符串表示，传入null时将返回null(同String.valueOf不同)。*/
   public static String stringOf(Object obj) {
     return (obj == null) ? null : obj.toString();
+  }
+
+  // ------------ string列表相关的方法 ----------
+
+  /** 合并多个字符串集合，返回一个合并后的字符串列表。*/
+  @NotNull
+  @SafeVarargs
+  public static List<String> concat(@Nullable final Collection<String>... items) {
+    var result = new ArrayList<String>();
+    if (items != null) {
+      for (var item : items) {
+        result.addAll(item);
+      }
+    }
+    return result;
   }
 }
