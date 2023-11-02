@@ -2,14 +2,14 @@ package com.tehang.common.utility;
 
 import com.tehang.common.utility.baseclass.DtoBase;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 字典项数据dto
  */
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class DictItemDto extends DtoBase {
 
   @ApiModelProperty(value = "字典数据项代码", required = true, example = "1001")

@@ -125,6 +125,50 @@ class StringUtilsSpec extends TestSpecification {
     StringUtils.left(null, 0) == null
   }
 
+  // ------------ 子串匹配相关的方法 ----------
+
+  def "test contains"() {
+    expect:
+    StringUtils.contains("abc", "a")
+    StringUtils.contains("abc", "")
+    !StringUtils.contains("abc", "A")
+    !StringUtils.contains("abc", null)
+  }
+
+  def "test containsIgnoreCase"() {
+    expect:
+    StringUtils.containsIgnoreCase("abc", "a")
+    StringUtils.containsIgnoreCase("abc", "A")
+  }
+
+  def "test startsWith"() {
+    expect:
+    StringUtils.startsWith("abc", "a")
+    !StringUtils.startsWith("abc", "A")
+    StringUtils.startsWith(null, null)
+  }
+
+  def "test startsWithIgnoreCase"() {
+    expect:
+    StringUtils.startsWithIgnoreCase("abc", "a")
+    StringUtils.startsWithIgnoreCase("abc", "A")
+    StringUtils.startsWithIgnoreCase(null, null)
+  }
+
+  def "test endsWith"() {
+    expect:
+    StringUtils.endsWith("abc", "c")
+    !StringUtils.endsWith("abc", "C")
+    StringUtils.endsWith(null, null)
+  }
+
+  def "test endsWithIgnoreCase"() {
+    expect:
+    StringUtils.endsWithIgnoreCase("abc", "c")
+    StringUtils.endsWithIgnoreCase("abc", "C")
+    StringUtils.endsWithIgnoreCase(null, null)
+  }
+
   // ------------ trim相关的方法 ----------
 
   def "test trim"() {
@@ -154,5 +198,13 @@ class StringUtilsSpec extends TestSpecification {
     StringUtils.stringOf(123.45d) == "123.45"
     StringUtils.stringOf(true) == "true"
     StringUtils.stringOf(false) == "false"
+  }
+
+  // ------------ string列表相关的方法 ----------
+  def "test concat"() {
+    expect:
+    StringUtils.concatStringLists(null) == List.of()
+    StringUtils.concatStringLists(List.of("a", "b"), List.of("c", "d")) == List.of("a", "b", "c", "d")
+    StringUtils.concatStringLists(List.of("a", "b", ""), List.of("b", "c", "")) == List.of("a", "b", "", "b", "c", "")
   }
 }
