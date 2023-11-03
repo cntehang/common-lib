@@ -1,12 +1,8 @@
 package com.tehang.common.utility;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -259,22 +255,5 @@ public final class StringUtils {
   /** 返回一个对象的字符串表示，传入null时将返回null(同String.valueOf不同)。*/
   public static String stringOf(Object obj) {
     return (obj == null) ? null : obj.toString();
-  }
-
-  // ------------ string列表相关的方法 ----------
-
-  /** 合并多个字符串集合，返回一个合并后的字符串列表。*/
-  @NotNull
-  @SafeVarargs
-  public static List<String> unionStringLists(@Nullable final Collection<String>... items) {
-    var result = new ArrayList<String>();
-    if (items != null) {
-      for (var item : items) {
-        if (item != null) {
-          result.addAll(item);
-        }
-      }
-    }
-    return result;
   }
 }

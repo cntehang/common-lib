@@ -1,7 +1,8 @@
 package com.tehang.common.utility
 
-
 import com.tehang.common.TestSpecification
+
+import static java.util.stream.Collectors.toList
 
 class CollectionUtilsSpec extends TestSpecification {
 
@@ -74,5 +75,11 @@ class CollectionUtilsSpec extends TestSpecification {
     expect:
     CollectionUtils.toList(null) == []
     CollectionUtils.toList(List.of("a", "b", "c")) == ["a", "b", "c"]
+  }
+
+  def "test stream"() {
+    expect:
+    CollectionUtils.stream(null).collect(toList()) == []
+    CollectionUtils.stream(List.of("a", "b", "c")).collect(toList()) == ["a", "b", "c"]
   }
 }
