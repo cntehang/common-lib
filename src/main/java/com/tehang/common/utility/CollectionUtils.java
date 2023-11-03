@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 特航封装的字符串工具类。
+ * 特航封装的集合处理工具类。
  */
 public final class CollectionUtils {
 
