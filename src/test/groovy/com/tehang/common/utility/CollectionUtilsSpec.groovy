@@ -77,9 +77,21 @@ class CollectionUtilsSpec extends TestSpecification {
     CollectionUtils.toList(List.of("a", "b", "c")) == ["a", "b", "c"]
   }
 
-  def "test stream"() {
+  def "test stream() with collection"() {
     expect:
-    CollectionUtils.stream(null).collect(toList()) == []
-    CollectionUtils.stream(List.of("a", "b", "c")).collect(toList()) == ["a", "b", "c"]
+    StreamUtils.stream(null).collect(toList()) == []
+    StreamUtils.stream(List.of("a", "b", "c")).collect(toList()) == ["a", "b", "c"]
+  }
+
+  def "test stream() with array"() {
+    given:
+    String[] strArray = [ "a", "b" ] as String[]
+    String[] strArrayNull = null
+
+    expect:
+    StreamUtils.stream(strArray).collect(toList()) == ["a", "b"]
+    StreamUtils.stream(strArrayNull).collect(toList()) == []
+    StreamUtils.stream().collect(toList()) == []
+    StreamUtils.stream("a", "b", "c").collect(toList()) == ["a", "b", "c"]
   }
 }

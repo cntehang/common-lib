@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 特航封装的集合处理工具类。
@@ -129,14 +128,5 @@ public final class CollectionUtils {
   @NotNull
   public static <E> List<E> toList(final Iterable<E> iterable) {
     return IterableUtils.toList(iterable);
-  }
-
-  /**
-   * 返回指定集的stream。传入null时将传返回一个emptyStream。
-   * @param collection 指定的集合
-   */
-  @NotNull
-  public static <E> Stream<E> stream(Collection<E> collection) {
-    return collection == null ? Stream.empty() : collection.stream();
   }
 }
