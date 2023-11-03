@@ -1,5 +1,6 @@
 package com.tehang.common.utility
 
+
 import com.tehang.common.TestSpecification
 
 class CollectionUtilsSpec extends TestSpecification {
@@ -72,6 +73,6 @@ class CollectionUtilsSpec extends TestSpecification {
   def "test toList"() {
     expect:
     CollectionUtils.toList(null) == []
-    CollectionUtils.toList(Set.of("a", "b", "c")) == ["a", "b", "c"]
+    CollectionUtils.toList(List.of("a", "b", "c")) == ["a", "b", "c"]
   }
 }
