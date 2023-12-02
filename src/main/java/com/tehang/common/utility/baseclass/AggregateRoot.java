@@ -11,14 +11,14 @@ import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
- * 聚合根标识接口
+ * 带有创建时间和更新时间的聚合根的基类。
  */
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings( {"PMD.GenericsNaming", "PMD.AbstractClassWithoutAnyMethod"})
-public abstract class AggregateRoot<PK extends Serializable> extends EntityObject {
+public abstract class AggregateRoot<PK extends Serializable> extends AggregateRootBase<PK> {
 
   /**
    * 创建时间
