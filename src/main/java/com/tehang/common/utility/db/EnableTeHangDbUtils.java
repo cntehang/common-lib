@@ -2,6 +2,7 @@ package com.tehang.common.utility.db;
 
 import com.tehang.common.utility.db.jpa.OpenJpaSessionAspect;
 import com.tehang.common.utility.db.jpa.TransactionHelper;
+import com.tehang.common.utility.db.page.PageQueryHelper;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -18,7 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({CommonJdbcTemplate.class, OpenJpaSessionAspect.class, TransactionHelper.class})
+@Import({CommonJdbcTemplate.class, PageQueryHelper.class, OpenJpaSessionAspect.class, TransactionHelper.class})
 public @interface EnableTeHangDbUtils {
 
 }
