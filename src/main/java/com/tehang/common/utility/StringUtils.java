@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 特航封装的字符串工具类。
@@ -226,6 +227,16 @@ public final class StringUtils {
     return org.apache.commons.lang3.StringUtils.trimToEmpty(str);
   }
 
+  /**
+   * 正则表达式 移除全部不可见字符（不包含空格，空格属于可见字符）, 传入null值将返回null
+   * 适用于表格导入，粘贴等场景下携带的“\u200E”等类似的字符。\p{C} 是一个 Unicode 属性，代表控制字符（包括不可见字符）
+   */
+  public static String removeInvisible(final String str) {
+    if (str == null) {
+      return null;
+    }
+    return Pattern.compile("\\p{C}").matcher(str).replaceAll("");
+  }
   // ------------ stringOf相关的方法 ----------
 
   public static String stringOf(String value) {
