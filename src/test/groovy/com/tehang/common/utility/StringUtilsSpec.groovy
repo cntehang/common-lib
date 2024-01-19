@@ -187,7 +187,7 @@ class StringUtilsSpec extends TestSpecification {
 
   def "test removeInvisible"() {
     expect:
-    StringUtils.removeInvisible(null) == ""
+    StringUtils.removeInvisible(null) == null
     StringUtils.removeInvisible(" ") == " "
     StringUtils.removeInvisible(" abc ") == " abc "
     StringUtils.removeInvisible("abc\u200E") == "abc"

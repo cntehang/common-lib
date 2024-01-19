@@ -228,12 +228,12 @@ public final class StringUtils {
   }
 
   /**
-   * 正则表达式 移除全部不可见字符（不包含空格，空格属于可见字符）
+   * 正则表达式 移除全部不可见字符（不包含空格，空格属于可见字符）, 传入null值将返回null
    * 适用于表格导入，粘贴等场景下携带的“\u200E”等类似的字符。\p{C} 是一个 Unicode 属性，代表控制字符（包括不可见字符）
    */
   public static String removeInvisible(final String str) {
     if (str == null) {
-      return EMPTY;
+      return null;
     }
     return Pattern.compile("\\p{C}").matcher(str).replaceAll("");
   }
