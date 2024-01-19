@@ -185,6 +185,15 @@ class StringUtilsSpec extends TestSpecification {
     StringUtils.trimToEmpty(" a b c ") == "a b c"
   }
 
+  def "test removeInvisible"() {
+    expect:
+    StringUtils.removeInvisible(null) == ""
+    StringUtils.removeInvisible(" ") == " "
+    StringUtils.removeInvisible(" abc ") == " abc "
+    StringUtils.removeInvisible("abc\u200E") == "abc"
+    StringUtils.removeInvisible("a\u200Eb\u200Ec") == "abc"
+  }
+
   // ------------ stringOf相关的方法 ----------
 
   def "test stringOf"() {
