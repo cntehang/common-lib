@@ -43,8 +43,8 @@ public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender
   }
 
   private String formatAlarmMessage(String alarmMessage) {
-    if (isNotBlank(alarmMessage) && alarmMessage.length() > 1000) {
-      return String.format("%s...", StringUtils.left(alarmMessage, 1000));
+    if (isNotBlank(alarmMessage) && alarmMessage.length() > 500) {
+      return String.format("线上错误:\n%s...", StringUtils.left(alarmMessage, 500));
     }
     return alarmMessage;
   }
