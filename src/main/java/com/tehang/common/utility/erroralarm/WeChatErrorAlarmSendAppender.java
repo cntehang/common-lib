@@ -1,6 +1,7 @@
 package com.tehang.common.utility.erroralarm;
 
 import com.tehang.common.utility.JsonUtils;
+import com.tehang.common.utility.StringUtils;
 import com.tehang.common.utility.baseclass.DtoBase;
 import com.tehang.common.utility.http.HttpClientUtils;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender
 
     if (isNotBlank(notifyUrl)) {
       try {
-        var wechatMessageBody = createWechatMessageBody(alarmMessage);
+        var wechatMessageBody = createWechatMessageBody(formatAlarmMessage(alarmMessage));
         var result = HttpClientUtils.getInstance().httpPost(notifyUrl, JsonUtils.toJson(wechatMessageBody));
 
         WechatResult resp = JsonUtils.toClass(result, WechatResult.class);
@@ -38,8 +39,14 @@ public class WeChatErrorAlarmSendAppender extends AbstractErrorAlarmSendAppender
         super.addError(String.format("发送企业微信线上告警失败, 原因:%s", ex.getMessage()), ex);
       }
     }
-
     log.debug("Exit sendAlarmMessage.");
+  }
+
+  private String formatAlarmMessage(String alarmMessage) {
+    if (isNotBlank(alarmMessage) && alarmMessage.length() > 500) {
+      return String.format("线上错误:\n%s...", StringUtils.left(alarmMessage, 500));
+    }
+    return alarmMessage;
   }
 
   private WechatMessageBody createWechatMessageBody(String alarmMessage) {
