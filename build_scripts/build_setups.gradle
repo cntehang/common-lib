@@ -1,5 +1,5 @@
 ext {
-  publishVersion = '1.6.3-SNAPSHOT'
+  publishVersion = '1.6.4-SNAPSHOT'
 }
 
 apply plugin: 'java'
