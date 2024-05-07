@@ -1,6 +1,8 @@
 package com.tehang.common.utility.money;
 
 import com.tehang.common.utility.BigDecimalUtils;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +13,8 @@ import static com.tehang.common.utility.CollectionUtils.isEmpty;
 import static java.util.stream.Collectors.toList;
 
 /** 金额分摊的辅助类。*/
-public class AmountApportionment {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AmountApportionment {
 
   private static final BigDecimal HUNDRED = new BigDecimal(100);
 
