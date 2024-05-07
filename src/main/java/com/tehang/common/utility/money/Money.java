@@ -46,6 +46,7 @@ public class Money implements Serializable, Comparable<Money> {
   private static final DecimalFormat MONEY_DEFAULT_FORMAT = new DecimalFormat("#.##");
   private static final DecimalFormat TWO_DECIMAL_FORMAT = new DecimalFormat("0.00");
   private static final int SCALE = 2;
+  private static final BigDecimal HUNDRED = new BigDecimal(100);
 
   public static final Money ZERO = new Money();
 
@@ -92,6 +93,11 @@ public class Money implements Serializable, Comparable<Money> {
    */
   public static Money parse(String amountString) {
     return new Money(amountString);
+  }
+
+  /** 根据分为单位的金额，创建Money对象 */
+  public static Money parseByCents(long cents) {
+    return new Money(new BigDecimal(cents).divide(HUNDRED, 2, RoundingMode.HALF_UP));
   }
 
   /**
@@ -174,6 +180,16 @@ public class Money implements Serializable, Comparable<Money> {
             .map(evaluator)
             .filter(Objects::nonNull)
             .reduce(Money.ZERO, Money::add);
+  }
+
+  /**
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * @param totalAmount 待分摊的总金额，不能为null, 也不能为负数
+   * @param ratios 分摊的系数列表，不能为空，也不能为负数
+   * @return 分摊后的金额列表
+   */
+  public static List<Money> apportion(Money totalAmount, List<Money> ratios) {
+    return AmountApportionment.apportion(totalAmount, ratios);
   }
 
   // ---------- 比较的相关方法 -------------
