@@ -80,7 +80,6 @@ public final class AmountApportionment {
         .collect(toList());
   }
 
-
   /**
    * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
    * @param totalAmount 待分摊的总金额，不能为负数
