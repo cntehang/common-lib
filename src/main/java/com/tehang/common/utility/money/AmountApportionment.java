@@ -4,6 +4,8 @@ import com.tehang.common.utility.BigDecimalUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public final class AmountApportionment {
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
    */
-  public static List<Money> apportion(Money totalAmount, List<Money> ratios) {
+  public static List<Money> apportion(final @NotNull Money totalAmount, final @NotEmpty List<Money> ratios) {
     if (totalAmount == null || totalAmount.lessThan(Money.ZERO)) {
       throw new IllegalArgumentException("无效的totalAmount: " + totalAmount);
     }
@@ -40,7 +42,7 @@ public final class AmountApportionment {
     }
 
     // 金额拆分：转换为long类型进行拆分
-    var longResults = apportion(toCents(totalAmount.getAmount()), getLongRatiosForMoney(ratios));
+    var longResults = doApportion(toCents(totalAmount.getAmount()), getLongRatiosForMoney(ratios));
 
     // 将拆分后的long类型金额转换为Money类型
     return longResults.stream()
@@ -54,7 +56,7 @@ public final class AmountApportionment {
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
    */
-  public static List<BigDecimal> apportion(BigDecimal totalAmount, List<BigDecimal> ratios) {
+  public static List<BigDecimal> apportion(final @NotNull BigDecimal totalAmount, final @NotEmpty List<BigDecimal> ratios) {
     if (totalAmount == null || BigDecimalUtils.lessThanZero(totalAmount)) {
       throw new IllegalArgumentException("无效的totalAmount: " + totalAmount);
     }
@@ -70,13 +72,14 @@ public final class AmountApportionment {
     }
 
     // 金额拆分：转换为long类型进行拆分
-    var longResults = apportion(toCents(totalAmount), getLongRatiosForDecimal(ratios));
+    var longResults = doApportion(toCents(totalAmount), getLongRatiosForDecimal(ratios));
 
     // 将拆分后的long类型金额转换为BigDecimal类型
     return longResults.stream()
         .map(item -> new BigDecimal(item).divide(HUNDRED, 2, RoundingMode.HALF_UP))
         .collect(toList());
   }
+
 
   /**
    * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
@@ -98,9 +101,13 @@ public final class AmountApportionment {
       }
     }
 
+    return doApportion(totalAmount, ratios);
+  }
+
+  private static List<Long> doApportion(long totalAmount, List<Long> ratios) {
     // 计算总的分摊比例
     long sumRatio = 0;
-    for (Long ratio : ratios) {
+    for (long ratio : ratios) {
       sumRatio += ratio;
     }
 
@@ -124,11 +131,16 @@ public final class AmountApportionment {
       totalApportionedAmount += apportionedAmount;
     }
 
-    // 分摊可能会造成精度损失，将差值添加到最后一个分摊金额中
+    // 分摊可能会造成精度损失，将差值添加到最后一个分摊系数不为0的分摊金额中
     long adjustment = totalAmount - totalApportionedAmount;
     if (adjustment != 0) {
-      // 对最后一个分摊金额进行调整
-      apportionedAmounts.set(apportionedAmounts.size() - 1 , apportionedAmounts.get(apportionedAmounts.size() - 1) + adjustment);
+      for (int i = ratios.size() - 1; i >= 0; i--) {
+        if (ratios.get(i) != 0) {
+          // 对最后一个不为0的分摊金额进行调整
+          apportionedAmounts.set(i, apportionedAmounts.get(i) + adjustment);
+          break;
+        }
+      }
     }
 
     return apportionedAmounts;
