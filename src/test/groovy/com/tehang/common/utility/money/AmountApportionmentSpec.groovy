@@ -39,20 +39,22 @@ class AmountApportionmentSpec extends TestSpecification {
 
   def "test1.1: AmountApportionment.apportion with different ratios"() {
     when:
-    Money totalAmount = new Money(900)
+    Money totalAmount = new Money(900.01)
     Money ratio1 = new Money(0)
     Money ratio2 = new Money(2)
     Money ratio3 = new Money(3)
     Money ratio4 = new Money(4)
+    Money ratio5 = new Money(0)
 
-    List<Money> result = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2, ratio3, ratio4))
+    List<Money> result = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2, ratio3, ratio4, ratio5))
 
     then:
-    result.size() == 4
+    result.size() == 5
     result[0] == new Money(0)
     result[1] == new Money(200)
     result[2] == new Money(300)
-    result[3] == new Money(400)
+    result[3] == new Money(400.01)  // 多出的一分钱，分摊到最后一项不为0金额上
+    result[4] == new Money(0)
   }
 
   def "test2: AmountApportionment.apportion for BigDecimal"() {
