@@ -96,6 +96,14 @@ public class BjDate extends BjDateTime implements Serializable {
     return new BjDate(this.innerTime.minusMonths(months));
   }
 
+  public BjDate plusYears(int years) {
+    return new BjDate(this.innerTime.plusYears(years));
+  }
+
+  public BjDate minusYears(int years) {
+    return new BjDate(this.innerTime.minusYears(years));
+  }
+
   /**
    * 是否晚于今天?
    */

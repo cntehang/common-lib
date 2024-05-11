@@ -60,7 +60,25 @@ class BjDateSpec extends TestSpecification {
     dayString == day.toString()
   }
 
-  def "test6: BjDate.isAfter, isBefore, isEqual test"() {
+  def "test6: BjDate.plusYears() is OK"() {
+    when:
+    BjDate date = new BjDate("2024-02-29")
+
+    then:
+    date.plusYears(1) == new BjDate("2025-02-28")
+    date.plusYears(4) == new BjDate("2028-02-29")
+  }
+
+  def "test7: BjDate.minusYears() is OK"() {
+    when:
+    BjDate date = new BjDate("2024-02-29")
+
+    then:
+    date.minusYears(1) == new BjDate("2023-02-28")
+    date.minusYears(4) == new BjDate("2020-02-29")
+  }
+
+  def "test8: BjDate.isAfter, isBefore, isEqual test"() {
     when:
     BjDate date1 = new BjDate("2022-04-08")
     BjDate date2 = new BjDate("2022-04-09")
@@ -73,7 +91,7 @@ class BjDateSpec extends TestSpecification {
     !date1.isEqual(date2)
   }
 
-  def "test7: BjDate.isAfterToday, isBeforeToday test"() {
+  def "test9: BjDate.isAfterToday, isBeforeToday test"() {
     when:
     BjDate date1 = new BjDate("2022-04-08")
     BjDate date2 = new BjDate("2080-01-01")
