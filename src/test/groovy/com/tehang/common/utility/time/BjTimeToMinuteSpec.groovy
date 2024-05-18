@@ -23,6 +23,11 @@ class BjTimeToMinuteSpec extends TestSpecification {
     nowString == now.toString()
   }
 
+  def "test2.1: new BjTimeToMinute(year, month, day, hour, minute) is OK"() {
+    expect:
+    new BjTimeToMinute(2024, 5, 18, 18, 30) == new BjTimeToMinute("2024-05-18 18:30")
+  }
+
   def "test3: new BjTimeToMinute(String dateString) with invalid time format get IllegalArgumentException"() {
     when:
     String invalidDate = "2022-03-15 10:30:00"

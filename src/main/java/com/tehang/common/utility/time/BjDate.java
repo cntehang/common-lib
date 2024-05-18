@@ -44,6 +44,10 @@ public class BjDate extends BjDateTime implements Serializable {
     super(dateString, DATE_FORMAT_TO_DAY);
   }
 
+  public BjDate(int year, int month, int day) {
+    this(new DateTime(year, month, day, 0, 0, 0, 0, DateTimeZone.forID(ZONE_SHANGHAI)));
+  }
+
   // ----------- 其他函数 --------------
 
   /**
