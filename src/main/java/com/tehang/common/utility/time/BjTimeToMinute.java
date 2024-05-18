@@ -88,6 +88,14 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
     return new BjTimeToMinute(this.innerTime.minusDays(days));
   }
 
+  public BjTimeToMinute plusHours(int hours) {
+    return new BjTimeToMinute(this.innerTime.plusHours(hours));
+  }
+
+  public BjTimeToMinute minusHours(int hours) {
+    return new BjTimeToMinute(this.innerTime.minusHours(hours));
+  }
+
   public BjTimeToMinute plusMinutes(int minutes) {
     return new BjTimeToMinute(this.innerTime.plusMinutes(minutes));
   }

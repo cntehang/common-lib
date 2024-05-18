@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.AttributeConverter;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.Serializable;
@@ -183,13 +184,13 @@ public class Money implements Serializable, Comparable<Money> {
   }
 
   /**
-   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。（当不能精确分摊时，余数将分摊到最后一项中）
    * @param totalAmount 待分摊的总金额，不能为null, 也不能为负数
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
    */
-  public static List<Money> apportion(Money totalAmount, List<Money> ratios) {
-    return AmountApportionment.apportion(totalAmount, ratios);
+  public static List<Money> apportion(@NotNull Money totalAmount, @NotEmpty List<Money> ratios, @NotNull ApportionPrecision precision) {
+    return AmountApportionment.apportion(totalAmount, ratios, precision);
   }
 
   // ---------- 比较的相关方法 -------------

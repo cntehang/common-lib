@@ -50,6 +50,16 @@ class BjTimeToMinuteSpec extends TestSpecification {
     time.minusDays(1).toString() == "2022-03-14 10:30"
   }
 
+  def "test5.1: BjTimeToMinute.plusHours() is OK"() {
+    expect:
+    new BjTimeToMinute("2022-03-15 10:30").plusHours(1).toString() == "2022-03-15 11:30"
+  }
+
+  def "test5.2: BjTimeToMinute.minusHours() is OK"() {
+    expect:
+    new BjTimeToMinute("2022-03-15 10:30").minusHours(1).toString() == "2022-03-15 09:30"
+  }
+
   def "test6: BjTimeToMinute.plusMinutes() is OK"() {
     when:
     String timeString = "2022-03-15 10:30"

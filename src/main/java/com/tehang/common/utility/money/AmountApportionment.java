@@ -21,12 +21,12 @@ public final class AmountApportionment {
   private static final BigDecimal HUNDRED = new BigDecimal(100);
 
   /**
-   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。（当不能精确分摊时，余数将分摊到最后一项中）
    * @param totalAmount 待分摊的总金额，不能为null, 也不能为负数
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
    */
-  public static List<Money> apportion(final @NotNull Money totalAmount, final @NotEmpty List<Money> ratios) {
+  public static List<Money> apportion(final @NotNull Money totalAmount, final @NotEmpty List<Money> ratios, @NotNull ApportionPrecision precision) {
     if (totalAmount == null || totalAmount.lessThan(Money.ZERO)) {
       throw new IllegalArgumentException("无效的totalAmount: " + totalAmount);
     }
@@ -41,22 +41,29 @@ public final class AmountApportionment {
       }
     }
 
-    // 金额拆分：转换为long类型进行拆分
-    var longResults = doApportion(toCents(totalAmount.getAmount()), getLongRatiosForMoney(ratios));
+    if (precision == null) {
+      throw new IllegalArgumentException("金额分摊精度不能为空");
+    }
 
-    // 将拆分后的long类型金额转换为Money类型
-    return longResults.stream()
-        .map(Money::parseByCents)
+    List<BigDecimal> ratiosOfDecimal = ratios.stream()
+        .map(Money::getAmount)
+        .collect(toList());
+
+    // 分摊金额
+    List<BigDecimal> result = doApportionForBigDecimal(totalAmount.getAmount(), ratiosOfDecimal, precision);
+
+    return result.stream()
+        .map(Money::new)
         .collect(toList());
   }
 
   /**
-   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。（当不能精确分摊时，余数将分摊到最后一项中）
    * @param totalAmount 待分摊的总金额，不能为null, 也不能为负数
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
    */
-  public static List<BigDecimal> apportion(final @NotNull BigDecimal totalAmount, final @NotEmpty List<BigDecimal> ratios) {
+  public static List<BigDecimal> apportion(final @NotNull BigDecimal totalAmount, final @NotEmpty List<BigDecimal> ratios, @NotNull ApportionPrecision precision) {
     if (totalAmount == null || BigDecimalUtils.lessThanZero(totalAmount)) {
       throw new IllegalArgumentException("无效的totalAmount: " + totalAmount);
     }
@@ -71,17 +78,58 @@ public final class AmountApportionment {
       }
     }
 
-    // 金额拆分：转换为long类型进行拆分
-    var longResults = doApportion(toCents(totalAmount), getLongRatiosForDecimal(ratios));
+    if (precision == null) {
+      throw new IllegalArgumentException("金额分摊精度不能为空");
+    }
 
-    // 将拆分后的long类型金额转换为BigDecimal类型
-    return longResults.stream()
-        .map(item -> new BigDecimal(item).divide(HUNDRED, 2, RoundingMode.HALF_UP))
-        .collect(toList());
+    return doApportionForBigDecimal(totalAmount, ratios, precision);
+  }
+
+  private static List<BigDecimal> doApportionForBigDecimal(BigDecimal totalAmount, List<BigDecimal> ratios, ApportionPrecision precision) {
+    if (precision == ApportionPrecision.Cent) {
+      // 金额拆分：转换为long类型进行拆分
+      var longResults = doApportionForLong(toCents(totalAmount), getLongRatiosForDecimal(ratios));
+
+      // 将拆分后的long类型金额转换为BigDecimal类型
+      return longResults.stream()
+          .map(item -> new BigDecimal(item).divide(HUNDRED, 2, RoundingMode.HALF_UP))
+          .collect(toList());
+    }
+    else {
+      // 获取金额的整数部分，以元为单位
+      long integerPart = totalAmount.longValue();
+
+      // 先将金额的整数部分进行拆分
+      var integerResults = doApportionForLong(integerPart, getLongRatiosForDecimal(ratios));
+
+      // 将拆分后的long类型金额转换为BigDecimal类型
+      List<BigDecimal> result = integerResults.stream()
+          .map(BigDecimal::new)
+          .collect(toList());
+
+      // 获取金额的余数部分, 添加到最后一项中
+      var fractionalPart = totalAmount.subtract(new BigDecimal(integerPart));
+      if (!BigDecimalUtils.wasZero(fractionalPart)) {
+        if (integerPart != 0) {
+          for (int i = result.size() - 1; i >= 0; i--) {
+            if (!BigDecimalUtils.wasZero(result.get(i))) {
+              // 将小数部分添加到最后一项不为0的项中
+              result.set(i, result.get(i).add(fractionalPart));
+              break;
+            }
+          }
+        }
+        else {
+          // 如果整数部分为0，则将小数部分添加到最后一项中
+          result.set(result.size() - 1, result.get(result.size() - 1).add(fractionalPart));
+        }
+      }
+      return result;
+    }
   }
 
   /**
-   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表（当不能精确分摊时，余数将分摊到最后一项中）。
    * @param totalAmount 待分摊的总金额，不能为负数
    * @param ratios 分摊的系数列表，不能为空，也不能为负数
    * @return 分摊后的金额列表
@@ -100,10 +148,10 @@ public final class AmountApportionment {
       }
     }
 
-    return doApportion(totalAmount, ratios);
+    return doApportionForLong(totalAmount, ratios);
   }
 
-  private static List<Long> doApportion(long totalAmount, List<Long> ratios) {
+  private static List<Long> doApportionForLong(long totalAmount, List<Long> ratios) {
     // 计算总的分摊比例
     long sumRatio = 0;
     for (long ratio : ratios) {
@@ -148,12 +196,6 @@ public final class AmountApportionment {
   private static List<Long> getLongRatiosForDecimal(List<BigDecimal> ratios) {
     return ratios.stream()
         .map(AmountApportionment::toCents)
-        .collect(toList());
-  }
-
-  private static List<Long> getLongRatiosForMoney(List<Money> ratios) {
-    return ratios.stream()
-        .map(item -> toCents(item.getAmount()))
         .collect(toList());
   }
 

@@ -17,6 +17,7 @@ import org.joda.time.Years;
 
 import java.time.Year;
 
+import static com.tehang.common.utility.DateUtils.ISO_PATTERN;
 import static com.tehang.common.utility.time.BjDateTime.ZONE_SHANGHAI;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -100,5 +101,15 @@ public final class BjDateUtils {
     DateTime bjTime = utcTime.toDateTime(DateTimeZone.forID(ZONE_SHANGHAI));
 
     return BjTime.parse(bjTime.toString(BjDateTime.DATE_FORMAT_TO_MS));
+  }
+
+  /**
+   * 将北京时间对象转换为utc格式(yyyy-MM-dd'T'HH:mm:ss.SSS'Z')的字符串。
+   */
+  public static String toUtcTimeString(BjDateTime bjDateTime) {
+    if (bjDateTime == null) {
+      return null;
+    }
+    return bjDateTime.getInnerTime().toDateTime(DateTimeZone.UTC).toString(ISO_PATTERN);
   }
 }
