@@ -44,6 +44,10 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
     super(dateString, DATE_FORMAT_TO_MINUTE);
   }
 
+  public BjTimeToMinute(int year, int month, int day, int hour, int minute) {
+    this(new DateTime(year, month, day, hour, minute, 0, 0, DateTimeZone.forID(ZONE_SHANGHAI)));
+  }
+
   // ----------- 其他函数 --------------
 
   /**
@@ -86,6 +90,14 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
 
   public BjTimeToMinute minusDays(int days) {
     return new BjTimeToMinute(this.innerTime.minusDays(days));
+  }
+
+  public BjTimeToMinute plusHours(int hours) {
+    return new BjTimeToMinute(this.innerTime.plusHours(hours));
+  }
+
+  public BjTimeToMinute minusHours(int hours) {
+    return new BjTimeToMinute(this.innerTime.minusHours(hours));
   }
 
   public BjTimeToMinute plusMinutes(int minutes) {
