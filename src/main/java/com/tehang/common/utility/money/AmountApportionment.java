@@ -208,12 +208,18 @@ public final class AmountApportionment {
     // 分摊可能会造成精度损失，将差值添加到最后一个分摊系数不为0的分摊金额中
     long adjustment = totalAmount - totalApportionedAmount;
     if (adjustment != 0) {
+      boolean adjusted = false;
       for (int i = ratios.size() - 1; i >= 0; i--) {
         if (ratios.get(i) != 0) {
           // 对最后一个不为0的分摊金额进行调整
           apportionedAmounts.set(i, apportionedAmounts.get(i) + adjustment);
+          adjusted = true;
           break;
         }
+      }
+      if (!adjusted) {
+        // 如果分摊系统都为0，则分摊到最后一项中
+        apportionedAmounts.set(apportionedAmounts.size() - 1, apportionedAmounts.get(apportionedAmounts.size() - 1) + adjustment);
       }
     }
 

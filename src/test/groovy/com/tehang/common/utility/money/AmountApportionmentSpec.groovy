@@ -49,6 +49,25 @@ class AmountApportionmentSpec extends TestSpecification {
     resultsByYuan[2] == new Money(300)
   }
 
+  def "test1.1.2: AmountApportionment.apportion with zero ratios"() {
+    when:
+    Money totalAmount = new Money(1)
+    Money ratio1 = new Money(0)
+    Money ratio2 = new Money(0)
+
+    List<Money> resultsByCent = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2), ApportionPrecision.Cent)
+    List<Money> resultsByYuan = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2), ApportionPrecision.Yuan)
+
+    then:
+    resultsByCent.size() == 2
+    resultsByCent[0] == new Money(0.50)
+    resultsByCent[1] == new Money(0.50)
+
+    resultsByYuan.size() == 2
+    resultsByYuan[0] == new Money(0)
+    resultsByYuan[1] == new Money(1)
+  }
+
   def "test1.2: AmountApportionment.apportion with different ratios"() {
     when:
     Money totalAmount = new Money(900.01)
@@ -125,6 +144,25 @@ class AmountApportionmentSpec extends TestSpecification {
     resultsByYuan[0] == new BigDecimal("3")
     resultsByYuan[1] == new BigDecimal("3")
     resultsByYuan[2] == new BigDecimal("4")
+  }
+
+  def "test2.0.2: AmountApportionment.apportion with zero ratios for BigDecimal"() {
+    when:
+    BigDecimal totalAmount = new BigDecimal(1)
+    BigDecimal ratio1 = new BigDecimal(0)
+    BigDecimal ratio2 = new BigDecimal(0)
+
+    List<BigDecimal> resultsByCent = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2), ApportionPrecision.Cent)
+    List<BigDecimal> resultsByYuan = AmountApportionment.apportion(totalAmount, List.of(ratio1, ratio2), ApportionPrecision.Yuan)
+
+    then:
+    resultsByCent.size() == 2
+    resultsByCent[0] == new BigDecimal("0.50")
+    resultsByCent[1] == new BigDecimal("0.50")
+
+    resultsByYuan.size() == 2
+    resultsByYuan[0] == new BigDecimal("0")
+    resultsByYuan[1] == new BigDecimal("1")
   }
 
   def "test2.1: AmountApportionment.apportion for BigDecimal with negative"() {
