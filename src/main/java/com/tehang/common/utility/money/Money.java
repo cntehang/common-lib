@@ -193,6 +193,17 @@ public class Money implements Serializable, Comparable<Money> {
     return AmountApportionment.apportion(totalAmount, ratios, precision);
   }
 
+  /**
+   * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。
+   * @param totalAmount 待分摊的总金额，不能为null, 也不能为负数
+   * @param ratios 分摊的系数列表，不能为空，也不能为负数
+   * @param adjustType 余数的调整方式
+   * @return 分摊后的金额列表
+   */
+  public static List<Money> apportion(@NotNull Money totalAmount, @NotEmpty List<Money> ratios, @NotNull ApportionPrecision precision, @NotNull ApportionAdjustType adjustType) {
+    return AmountApportionment.apportion(totalAmount, ratios, precision, adjustType);
+  }
+
   // ---------- 比较的相关方法 -------------
 
   @Override
