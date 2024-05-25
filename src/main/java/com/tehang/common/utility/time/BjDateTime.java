@@ -198,6 +198,28 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
     return this.innerTime.compareTo(o.innerTime);
   }
 
+  // ------------- 时间类型转换的方法 ---------------
+
+  /** 转换为日期 */
+  public BjDate toDate() {
+    return BjDate.parse(this);
+  }
+
+  /** 转换为时间，精确到毫秒 */
+  public BjTime toTime() {
+    return BjTime.parse(this);
+  }
+
+  /** 转换为时间，精确到分钟 */
+  public BjTimeToMinute toTimeInMinute() {
+    return BjTimeToMinute.parse(this);
+  }
+
+  /** 转换为时间，精确到秒 */
+  public BjTimeToSecond toTimeInSecond() {
+    return BjTimeToSecond.parse(this);
+  }
+
   // ----------- 计算时间间隔的静态方法 --------------
 
   /**

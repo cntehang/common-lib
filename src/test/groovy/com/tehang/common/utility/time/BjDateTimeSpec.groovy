@@ -18,4 +18,17 @@ class BjDateTimeSpec extends TestSpecification {
     (int)Math.floor(intervalOfHour) == 1
     (int)Math.floor(intervalOfMinute) == 100
   }
+
+  def "test2: BjDateTime convert test"() {
+    expect:
+    new BjTime("2024-05-25 17:59:30.500").toDate() == new BjDate("2024-05-25")
+    new BjTime("2024-05-25 17:59:30.500").toTimeInMinute() == new BjTimeToMinute("2024-05-25 17:59")
+    new BjTime("2024-05-25 17:59:30.500").toTimeInSecond() == new BjTimeToSecond("2024-05-25 17:59:30")
+    new BjTime("2024-05-25 17:59:30.500").toTime() == new BjTime("2024-05-25 17:59:30.500")
+
+    new BjDate("2024-05-25").toDate() == new BjDate("2024-05-25")
+    new BjDate("2024-05-25").toTimeInMinute() == new BjTimeToMinute("2024-05-25 00:00")
+    new BjDate("2024-05-25").toTimeInSecond() == new BjTimeToSecond("2024-05-25 00:00:00")
+    new BjDate("2024-05-25").toTime() == new BjTime("2024-05-25 00:00:00.000")
+  }
 }
