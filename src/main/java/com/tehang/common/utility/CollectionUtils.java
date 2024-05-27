@@ -129,11 +129,9 @@ public final class CollectionUtils {
 
     var groups = list.stream()
         .filter(Objects::nonNull)
-        .collect(Collectors.groupingBy(classifier));
+        .collect(Collectors.toMap(classifier, Function.identity(), (a, b) -> a));
 
-    return groups.values().stream()
-        .map(item -> item.get(0))
-        .collect(Collectors.toList());
+    return new ArrayList<>(groups.values());
   }
 
   // ------------ 集合转换相关方法 ----------
