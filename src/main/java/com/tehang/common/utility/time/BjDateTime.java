@@ -1,6 +1,7 @@
 package com.tehang.common.utility.time;
 
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
+import com.tehang.common.utility.BjDateUtils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -260,5 +261,10 @@ public abstract class BjDateTime implements Serializable, Comparable<BjDateTime>
    */
   public String toString(String format) {
     return innerTime.toString(format);
+  }
+
+  /** 将北京时间对象转换为utc格式(yyyy-MM-dd'T'HH:mm:ss.SSS'Z')的字符串。*/
+  public String toUtcTimeString() {
+    return BjDateUtils.toUtcTimeString(this);
   }
 }

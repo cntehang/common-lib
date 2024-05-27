@@ -31,4 +31,17 @@ class BjDateTimeSpec extends TestSpecification {
     new BjDate("2024-05-25").toTimeInSecond() == new BjTimeToSecond("2024-05-25 00:00:00")
     new BjDate("2024-05-25").toTime() == new BjTime("2024-05-25 00:00:00.000")
   }
+
+  def "test3: BjDateTime.toUtcTimeString() test"() {
+    expect:
+    new BjDate("2024-05-25").toUtcTimeString() == "2024-05-24T16:00:00.000Z"
+    new BjTimeToMinute("2024-05-25 18:59").toUtcTimeString() == "2024-05-25T10:59:00.000Z"
+    new BjTime("2024-05-25 18:59:30.500").toUtcTimeString() == "2024-05-25T10:59:30.500Z"
+  }
+
+  def "test4: BjTime.parseInUtc() test"() {
+    expect:
+    BjTime.parseInUtc("2024-05-25T10:59:30.500Z") == new BjTime("2024-05-25 18:59:30.500")
+    BjTime.parseInUtc("2024-05-24T16:00:00.000Z") == new BjTime("2024-05-25 00:00:00.000")
+  }
 }

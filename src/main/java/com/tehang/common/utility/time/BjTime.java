@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tehang.common.utility.BjDateUtils;
 import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -61,6 +62,11 @@ public class BjTime extends BjDateTime implements Serializable {
     return bjDateTime == null
         ? null
         : new BjTime(bjDateTime.toString(DATE_FORMAT_TO_MS));
+  }
+
+  /** 解utc格式(yyyy-MM-dd'T'HH:mm:ss.SSS'Z')的字符串转为北京时间对象。*/
+  public static BjTime parseInUtc(String utcTimeString) {
+    return BjDateUtils.parseBjTimeInUtc(utcTimeString);
   }
 
   /**
