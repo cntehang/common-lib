@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -117,6 +119,19 @@ public final class CollectionUtils {
       }
     }
     return result;
+  }
+
+  /** 根据字段值对列表中的数据去重，该字段的值不能为null。*/
+  public static <E, K> List<E> distinctBy(final Collection<E> list, final Function<? super E, ? extends K> classifier) {
+    if (list == null) {
+      return new ArrayList<>();
+    }
+
+    var groups = list.stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toMap(classifier, Function.identity(), (a, b) -> a));
+
+    return new ArrayList<>(groups.values());
   }
 
   // ------------ 集合转换相关方法 ----------

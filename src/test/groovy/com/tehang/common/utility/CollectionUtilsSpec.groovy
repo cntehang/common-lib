@@ -94,4 +94,38 @@ class CollectionUtilsSpec extends TestSpecification {
     StreamUtils.stream().collect(toList()) == []
     StreamUtils.stream("a", "b", "c").collect(toList()) == ["a", "b", "c"]
   }
+
+  def "test distinctBy()"() {
+    given:
+    List<TestItemDto> src = [
+        TestItemDto.of("a", "测试项a"),
+        TestItemDto.of("b", "测试项b"),
+        TestItemDto.of("a", "测试项c"),
+        null]
+
+    when:
+    List<TestItemDto> dst = CollectionUtils.distinctBy(src, { item -> item.code })
+
+    then:
+    dst.size() == 2
+    dst[0].code == "a" && dst[0].desc == "测试项a"
+    dst[1].code == "b" && dst[1].desc == "测试项b"
+  }
+
+  def "test distinctBy Long field"() {
+    given:
+    List<TestItem2Dto> src = [
+        TestItem2Dto.of(1, "测试项a"),
+        TestItem2Dto.of(2, "测试项b"),
+        TestItem2Dto.of(1, "测试项c"),
+        null]
+
+    when:
+    List<TestItem2Dto> dst = CollectionUtils.distinctBy(src, { item -> item.code })
+
+    then:
+    dst.size() == 2
+    dst[0].code == 1 && dst[0].desc == "测试项a"
+    dst[1].code == 2 && dst[1].desc == "测试项b"
+  }
 }
