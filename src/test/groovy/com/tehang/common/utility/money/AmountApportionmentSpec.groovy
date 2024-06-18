@@ -146,6 +146,36 @@ class AmountApportionmentSpec extends TestSpecification {
     resultsByYuan[4] == new Money(0)
   }
 
+  def "test1.3: AmountApportionment.apportionAverage for Money test"() {
+    when:
+    Money totalAmount = new Money(10)
+
+    List<Money> results1 = AmountApportionment.apportionAverage(totalAmount, 2, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<Money> results2 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<Money> results3 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToFirst)
+    List<Money> results4 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToFirst)
+
+    then:
+    results1.size() == 2
+    results1[0] == new Money(5)
+    results1[1] == new Money(5)
+
+    results2.size() == 3
+    results2[0] == new Money(3)
+    results2[1] == new Money(3)
+    results2[2] == new Money(4)
+
+    results3.size() == 3
+    results3[0] == new Money(4)
+    results3[1] == new Money(3)
+    results3[2] == new Money(3)
+
+    results4.size() == 3
+    results4[0] == new Money(3.34)
+    results4[1] == new Money(3.33)
+    results4[2] == new Money(3.33)
+  }
+
   def "test2.0: AmountApportionment.apportion for BigDecimal"() {
     when:
     BigDecimal totalAmount = new BigDecimal(10)
@@ -219,6 +249,36 @@ class AmountApportionmentSpec extends TestSpecification {
     resultsByYuan[0] == new BigDecimal("-3")
     resultsByYuan[1] == new BigDecimal("-3")
     resultsByYuan[2] == new BigDecimal("-4")
+  }
+
+  def "test2.2: AmountApportionment.apportionAverage for BigDecimal test"() {
+    when:
+    BigDecimal totalAmount = new BigDecimal(10)
+
+    List<BigDecimal> results1 = AmountApportionment.apportionAverage(totalAmount, 2, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<BigDecimal> results2 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<BigDecimal> results3 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToFirst)
+    List<BigDecimal> results4 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToFirst)
+
+    then:
+    results1.size() == 2
+    results1[0] == new BigDecimal(5)
+    results1[1] == new BigDecimal(5)
+
+    results2.size() == 3
+    results2[0] == new BigDecimal(3)
+    results2[1] == new BigDecimal(3)
+    results2[2] == new BigDecimal(4)
+
+    results3.size() == 3
+    results3[0] == new BigDecimal(4)
+    results3[1] == new BigDecimal(3)
+    results3[2] == new BigDecimal(3)
+
+    results4.size() == 3
+    results4[0] == new BigDecimal("3.34")
+    results4[1] == new BigDecimal("3.33")
+    results4[2] == new BigDecimal("3.33")
   }
 
   def "test3.0: AmountApportionment.apportion for Long"() {

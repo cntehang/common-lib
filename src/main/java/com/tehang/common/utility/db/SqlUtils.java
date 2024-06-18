@@ -3,8 +3,6 @@ package com.tehang.common.utility.db;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -29,16 +27,6 @@ public final class SqlUtils {
   }
 
   /**
-   * 构建count sql.
-   *
-   * @param sql 原始sql
-   * @return count sql
-   */
-  public static String buildCountSql(String sql) {
-    return "SELECT COUNT(*) " + removeOrderBy(removeSelect(sql));
-  }
-
-  /**
    * 构建count sql，不做order by 的优化.
    */
   public static String buildCountSqlWithoutRefactor(String sql) {
@@ -51,20 +39,6 @@ public final class SqlUtils {
   private static String removeSelect(String sql) {
     int beginPosition = sql.toLowerCase(Locale.US).indexOf("from ");
     return sql.substring(beginPosition);
-  }
-
-  /**
-   * 去除order by 提高select count(*)的速度.
-   */
-  private static String removeOrderBy(String sql) {
-    Pattern pattern = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);
-    Matcher matcher = pattern.matcher(sql);
-    StringBuffer sb = new StringBuffer();
-    while (matcher.find()) {
-      matcher.appendReplacement(sb, "");
-    }
-    matcher.appendTail(sb);
-    return sb.toString();
   }
 
   /**

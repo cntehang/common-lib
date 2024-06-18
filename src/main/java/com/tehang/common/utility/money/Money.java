@@ -50,6 +50,8 @@ public class Money implements Serializable, Comparable<Money> {
   private static final BigDecimal HUNDRED = new BigDecimal(100);
 
   public static final Money ZERO = new Money();
+  public static final Money ONE = new Money(1);
+  public static final Money TEN = new Money(10);
 
   // ----------- 内部字段 --------------
   /**
