@@ -171,7 +171,7 @@ public class CommonJdbcTemplate {
    * @return 分页查询结果
    */
   public <T> PageDto<T> pagedQuery(String sql, PageSearchBaseDto baseParams, Class<T> mappedClass) {
-    return pagedQuery(sql, SqlUtils.buildCountSql(sql), baseParams, mappedClass);
+    return pagedQuery(sql, CountSqlBuilder.buildCountSql(sql), baseParams, mappedClass);
   }
 
   /**
@@ -209,7 +209,7 @@ public class CommonJdbcTemplate {
    * @return 分页查询结果
    */
   public <T> PageDto<T> pagedQuery(String sql, Map<String, ?> paramMap, Class<T> mappedClass, PageSearchBaseDto searchBaseDto) {
-    Long count = jdbcTemplate.queryForObject(SqlUtils.buildCountSql(sql), paramMap, Long.class);
+    Long count = jdbcTemplate.queryForObject(CountSqlBuilder.buildCountSql(sql), paramMap, Long.class);
 
     PageRequest pageRequest = PageUtil.buildPageRequest(searchBaseDto.getPageNumber(), searchBaseDto.getPageSize());
     List<T> content = jdbcTemplate.query(SqlUtils.buildPagedSql(sql, pageRequest), paramMap, new BeanPropertyRowMapper<>(mappedClass));

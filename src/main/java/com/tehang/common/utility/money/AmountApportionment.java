@@ -77,6 +77,23 @@ public final class AmountApportionment {
   }
 
   /**
+   * 将指定的金额进行平均分摊，并指定分摊精度及余数的调整方式。
+   */
+  public static List<Money> apportionAverage(final @NotNull Money totalAmount, int count, @NotNull ApportionPrecision precision, @NotNull ApportionAdjustType adjustType) {
+    if (count == 0) {
+      throw new IllegalArgumentException("count必须大于0");
+    }
+
+    // 构造平均分摊的系数列表
+    List<Money> ratios = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      ratios.add(Money.ONE);
+    }
+
+    return apportion(totalAmount, ratios, precision, adjustType);
+  }
+
+  /**
    * 金额分摊算法。按指定的比例进行分摊，返回分摊后的金额列表。（当不能精确分摊时，余数将分摊到最后一项中）
    * @param totalAmount 待分摊的总金额，不能为null
    * @param ratios 分摊的系数列表，不能为空
@@ -124,6 +141,23 @@ public final class AmountApportionment {
     else {
       return result;
     }
+  }
+
+  /**
+   * 将指定的金额进行平均分摊，并指定分摊精度及余数的调整方式。
+   */
+  public static List<BigDecimal> apportionAverage(final @NotNull BigDecimal totalAmount, int count, @NotNull ApportionPrecision precision, @NotNull ApportionAdjustType adjustType) {
+    if (count == 0) {
+      throw new IllegalArgumentException("count必须大于0");
+    }
+
+    // 构造平均分摊的系数列表
+    List<BigDecimal> ratios = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      ratios.add(BigDecimal.ONE);
+    }
+
+    return apportion(totalAmount, ratios, precision, adjustType);
   }
 
   private static List<BigDecimal> doApportionForBigDecimal(BigDecimal totalAmount, List<BigDecimal> ratios, ApportionPrecision precision, ApportionAdjustType adjustType) {
