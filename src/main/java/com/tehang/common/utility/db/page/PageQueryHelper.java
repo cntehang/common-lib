@@ -4,10 +4,10 @@ import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.StringUtils;
 import com.tehang.common.utility.db.CommonJdbcTemplate;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,37 +28,66 @@ import java.util.Map;
 @Slf4j
 public class PageQueryHelper {
 
+  private static final int DEFAULT_PAGE_SIZE = 10;
+
   private CommonJdbcTemplate jdbcTemplate;
 
   /**
    * 查询分页数据，只支持上一页，下一页，不支持显示总记录数和总页数。
    */
-  @SneakyThrows
   public <Record extends IdProvider, Response extends PageResponse<Record>>
-    Response queryPageResponse(String sql, Map<String, ?> params,
-                               PageRequestInfo pageRequestInfo,
-                               String orderByField,
-                               OrderByDirection orderByDirection,
-                               Class<Response> responseClass,
-                               Class<Record> recordClass) {
-    // 获取分页大小
-    int pageSize = getPageSize(pageRequestInfo.getPageSize());
+  Response queryPageResponse(String sql, Map<String, ?> params,
+                             PageRequestInfo pageRequestInfo,
+                             String orderByField,
+                             OrderByDirection orderByDirection,
+                             Class<Response> responseClass,
+                             Class<Record> recordClass) {
+
+    // 规范化分页参数，设置默认值
+    pageRequestInfo = normalizedPageRequestInfo(pageRequestInfo);
 
     // 添加分页的过滤条件
     sql += getPageCondition(pageRequestInfo, orderByField, orderByDirection);
 
     // 按id排序, 返回记录数加1是为了更准确地计算是否有上一页和下一页。
-    sql += String.format(" order by %s %s limit %d ", orderByField, getOrderBySequence(pageRequestInfo.getPageQueryMode(), orderByDirection), pageSize + 1);
+    sql += String.format(" order by %s %s limit %d ", orderByField, getOrderBySequence(pageRequestInfo.getPageQueryMode(), orderByDirection), pageRequestInfo.getPageSize() + 1);
 
     // 查询当前页数据
-    log.debug("querySalesRecords sql: {}, request: {}", sql, params);
+    log.debug("queryPageResponse sql: {}, params: {}", sql, params);
     List<Record> records = jdbcTemplate.query(sql, params, recordClass);
 
     // 构造返回结果
-    var response = responseClass.getDeclaredConstructor().newInstance();
-    response.setPageResultInfo(getPageResultInfo(pageRequestInfo, records, pageSize, orderByDirection));
+    var response = createResponseInstance(responseClass);
+    response.setPageResultInfo(getPageResultInfo(pageRequestInfo, records, pageRequestInfo.getPageSize(), orderByDirection));
     response.setRecords(getOrderedRecords(records, pageRequestInfo.getPageQueryMode()));
     return response;
+  }
+
+  private static <Record extends IdProvider, Response extends PageResponse<Record>> Response createResponseInstance(Class<Response> responseClass) {
+    try {
+      return responseClass.getDeclaredConstructor().newInstance();
+    }
+    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  /** 规范化分页参数，如果未赋值，默认为查询第一页。*/
+  private static PageRequestInfo normalizedPageRequestInfo(PageRequestInfo pageRequestInfo) {
+    if (pageRequestInfo == null) {
+      pageRequestInfo = new PageRequestInfo();
+      pageRequestInfo.setPageSize(DEFAULT_PAGE_SIZE);
+      pageRequestInfo.setPageQueryMode(PageQueryMode.Initial);
+    }
+
+    if (pageRequestInfo.getPageSize() == null || pageRequestInfo.getPageSize() == 0) {
+      pageRequestInfo.setPageSize(DEFAULT_PAGE_SIZE);
+    }
+
+    if (pageRequestInfo.getPageQueryMode() == null) {
+      pageRequestInfo.setPageQueryMode(PageQueryMode.Initial);
+    }
+    return pageRequestInfo;
   }
 
   /** 由于向前翻页时，是反着排序的，这里需要把顺序调整过来 */
@@ -206,9 +235,5 @@ public class PageQueryHelper {
     else {
       return pageQueryMode == PageQueryMode.Previous ? "desc" : "asc";
     }
-  }
-
-  private static int getPageSize(Integer pageSize) {
-    return pageSize == null ? 10 : pageSize;
   }
 }
