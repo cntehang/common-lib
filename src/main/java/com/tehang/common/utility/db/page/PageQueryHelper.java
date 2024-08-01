@@ -4,10 +4,10 @@ import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.StringUtils;
 import com.tehang.common.utility.db.CommonJdbcTemplate;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,6 @@ public class PageQueryHelper {
   /**
    * 查询分页数据，只支持上一页，下一页，不支持显示总记录数和总页数。
    */
-  @SneakyThrows
   public <Record extends IdProvider, Response extends PageResponse<Record>>
   Response queryPageResponse(String sql, Map<String, ?> params,
                              PageRequestInfo pageRequestInfo,
@@ -58,10 +57,19 @@ public class PageQueryHelper {
     List<Record> records = jdbcTemplate.query(sql, params, recordClass);
 
     // 构造返回结果
-    var response = responseClass.getDeclaredConstructor().newInstance();
+    var response = createResponseInstance(responseClass);
     response.setPageResultInfo(getPageResultInfo(pageRequestInfo, records, pageRequestInfo.getPageSize(), orderByDirection));
     response.setRecords(getOrderedRecords(records, pageRequestInfo.getPageQueryMode()));
     return response;
+  }
+
+  private static <Record extends IdProvider, Response extends PageResponse<Record>> Response createResponseInstance(Class<Response> responseClass) {
+    try {
+      return responseClass.getDeclaredConstructor().newInstance();
+    }
+    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   /** 规范化分页参数，如果未赋值，默认为查询第一页。*/
