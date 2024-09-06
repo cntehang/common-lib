@@ -78,11 +78,16 @@ public class Money implements Serializable, Comparable<Money> {
   }
 
   public Money(String amountString) {
-    if (isBlank(amountString)) {
-      throw new IllegalArgumentException("amountString should not be blank");
+    if (amountString == null) {
+      throw new IllegalArgumentException("amount should not be null");
     }
-    // 默认2位小数，四舍五入
-    this.amount = new BigDecimal(amountString).setScale(SCALE, RoundingMode.HALF_UP);
+    if (isBlank(amountString)) {
+      this.amount = BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
+    }
+    else {
+      // 默认2位小数，四舍五入
+      this.amount = new BigDecimal(amountString).setScale(SCALE, RoundingMode.HALF_UP);
+    }
   }
 
   public Money(long value) {
