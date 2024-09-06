@@ -24,6 +24,18 @@ class MoneySpec extends TestSpecification {
     money2.toTwoDecimalString() == "1.02"
   }
 
+  def "test2-1: new Money(null) throws exception"() {
+    when:
+    new Money(null)
+    then:
+    thrown(IllegalArgumentException)
+  }
+
+  def "test2-2: new Money('') equals zero"() {
+    expect:
+    new Money("").wasZero()
+  }
+
   def "test3: new Money(BigDecimal amount) is OK"() {
     when:
     Money money1 = new Money(new BigDecimal("1.5"))

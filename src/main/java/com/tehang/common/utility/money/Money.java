@@ -78,11 +78,16 @@ public class Money implements Serializable, Comparable<Money> {
   }
 
   public Money(String amountString) {
-    if (isBlank(amountString)) {
-      throw new IllegalArgumentException("amountString should not be blank");
+    if (amountString == null) {
+      throw new IllegalArgumentException("amount should not be null");
     }
-    // 默认2位小数，四舍五入
-    this.amount = new BigDecimal(amountString).setScale(SCALE, RoundingMode.HALF_UP);
+    if (isBlank(amountString)) {
+      this.amount = BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
+    }
+    else {
+      // 默认2位小数，四舍五入
+      this.amount = new BigDecimal(amountString).setScale(SCALE, RoundingMode.HALF_UP);
+    }
   }
 
   public Money(long value) {
@@ -228,6 +233,11 @@ public class Money implements Serializable, Comparable<Money> {
     return this.compareTo(o) > 0;
   }
 
+  /** 当前对象是否大于0 */
+  public boolean greaterThanZero() {
+    return this.greaterThan(Money.ZERO);
+  }
+
   /** 当前对象是否大于或等于指定的值 */
   public boolean greaterThanOrEqual(@NotNull Money o) {
     return this.compareTo(o) >= 0;
@@ -236,6 +246,11 @@ public class Money implements Serializable, Comparable<Money> {
   /** 当前对象是否小于指定的值 */
   public boolean lessThan(@NotNull Money o) {
     return this.compareTo(o) < 0;
+  }
+
+  /** 当前对象是否小于0 */
+  public boolean lessThanZero() {
+    return this.lessThan(Money.ZERO);
   }
 
   /** 当前对象是否小于或等于指定的值 */
