@@ -107,6 +107,12 @@ class StringUtilsSpec extends TestSpecification {
     StringUtils.joinWithComma(null) == ""
   }
 
+  def "test joinWithComma2"() {
+    expect:
+    StringUtils.joinWithComma(List.of(TestItemDto.of("a", ""), TestItemDto.of("b", ""), TestItemDto.of("c", "")),
+        { item -> item.code }) == "a,b,c"
+  }
+
   def "test joinWith"() {
     expect:
     StringUtils.joinWith(",", "a", "b", "c") == "a,b,c"

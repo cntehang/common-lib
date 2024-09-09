@@ -6,7 +6,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 特航封装的字符串工具类。
@@ -160,6 +163,11 @@ public final class StringUtils {
     return joinWith(COMMA, items);
   }
 
+  /** 将指定集合对应的字符串属性使用半角逗号进行拼接。*/
+  public static <T> String joinWithComma(Collection<T> items, Function<T, CharSequence> evaluator) {
+    return joinWith(COMMA, items, evaluator);
+  }
+
   /** 将指定的字符串数组使用分隔符进行拼接。分隔符不允许为null。*/
   public static String joinWith(CharSequence separator, CharSequence... items) {
     if (items == null) {
@@ -174,6 +182,18 @@ public final class StringUtils {
       return EMPTY;
     }
     return String.join(separator, items);
+  }
+
+  /** 将指定集合对应的字符串属性使用分隔符进行拼接。分隔符不允许为null。*/
+  public static <T> String joinWith(CharSequence separator, Collection<T> items, Function<T, CharSequence> evaluator) {
+    if (items == null) {
+      return EMPTY;
+    }
+    return items.stream()
+        .filter(Objects::nonNull)
+        .map(evaluator)
+        .filter(Objects::nonNull)
+        .collect(Collectors.joining(separator));
   }
 
   // ------------ 获取子串相关的方法 ----------
