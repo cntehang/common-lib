@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
@@ -23,6 +24,7 @@ import javax.persistence.PersistenceException;
  */
 @Aspect
 @Component
+@Order(30000)  // 定义一个比较低的优先级
 public class OpenJpaSessionAspect implements ApplicationContextAware {
 
   private static final Logger LOG = LoggerFactory.getLogger(OpenJpaSessionAspect.class);

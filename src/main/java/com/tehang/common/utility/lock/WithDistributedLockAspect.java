@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -21,6 +22,7 @@ import java.util.StringTokenizer;
 @Component
 @Slf4j
 @AllArgsConstructor
+@Order(100)  // 定义一个比较高的优先级
 public class WithDistributedLockAspect {
 
   private final DistributedLockFactory lockFactory;

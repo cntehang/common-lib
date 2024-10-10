@@ -1,7 +1,5 @@
 package com.tehang.common.utility.lock;
 
-import org.springframework.core.annotation.Order;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,7 +17,6 @@ import java.lang.annotation.Target;
 @Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Order(300)  // 定义一个比较高的优先级
 public @interface Locked {
 
   /**
