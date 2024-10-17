@@ -185,18 +185,23 @@ public final class AmountApportionment {
       // 获取金额的余数部分, 添加到最后一项中
       var fractionalPart = totalAmount.subtract(new BigDecimal(integerPart));
       if (!BigDecimalUtils.wasZero(fractionalPart)) {
-        if (integerPart != 0) {
-          for (int i = result.size() - 1; i >= 0; i--) {
-            if (!BigDecimalUtils.wasZero(result.get(i))) {
-              // 将小数部分添加到最后一项不为0的项中
-              result.set(i, result.get(i).add(fractionalPart));
-              break;
-            }
-          }
+        if (adjustType == ApportionAdjustType.ToFirst) {
+          result.set(0, result.get(0).add(fractionalPart));
         }
         else {
-          // 如果整数部分为0，则将小数部分添加到最后一项中
-          result.set(result.size() - 1, result.get(result.size() - 1).add(fractionalPart));
+          if (integerPart != 0) {
+            for (int i = result.size() - 1; i >= 0; i--) {
+              if (!BigDecimalUtils.wasZero(result.get(i))) {
+                // 将小数部分添加到最后一项不为0的项中
+                result.set(i, result.get(i).add(fractionalPart));
+                break;
+              }
+            }
+          }
+          else {
+            // 如果整数部分为0，则将小数部分添加到最后一项中
+            result.set(result.size() - 1, result.get(result.size() - 1).add(fractionalPart));
+          }
         }
       }
       return result;

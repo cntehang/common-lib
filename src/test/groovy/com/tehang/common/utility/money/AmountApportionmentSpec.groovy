@@ -176,6 +176,36 @@ class AmountApportionmentSpec extends TestSpecification {
     results4[2] == new Money(3.33)
   }
 
+  def "test1.4: AmountApportionment.apportionAverage for Money test, with extra decimal value"() {
+    when:
+    Money totalAmount = new Money(10.01)
+
+    List<Money> results1 = AmountApportionment.apportionAverage(totalAmount, 2, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<Money> results2 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
+    List<Money> results3 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToFirst)
+    List<Money> results4 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToFirst)
+
+    then:
+    results1.size() == 2
+    results1[0] == new Money(5)
+    results1[1] == new Money(5.01)
+
+    results2.size() == 3
+    results2[0] == new Money(3)
+    results2[1] == new Money(3)
+    results2[2] == new Money(4.01)
+
+    results3.size() == 3
+    results3[0] == new Money(4.01)
+    results3[1] == new Money(3)
+    results3[2] == new Money(3)
+
+    results4.size() == 3
+    results4[0] == new Money(3.35)
+    results4[1] == new Money(3.33)
+    results4[2] == new Money(3.33)
+  }
+
   def "test2.0: AmountApportionment.apportion for BigDecimal"() {
     when:
     BigDecimal totalAmount = new BigDecimal(10)
