@@ -154,6 +154,7 @@ class AmountApportionmentSpec extends TestSpecification {
     List<Money> results2 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
     List<Money> results3 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToFirst)
     List<Money> results4 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToFirst)
+    List<Money> results5 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToLast)
 
     then:
     results1.size() == 2
@@ -174,6 +175,11 @@ class AmountApportionmentSpec extends TestSpecification {
     results4[0] == new Money(3.34)
     results4[1] == new Money(3.33)
     results4[2] == new Money(3.33)
+
+    results5.size() == 3
+    results5[0] == new Money(3.33)
+    results5[1] == new Money(3.33)
+    results5[2] == new Money(3.34)
   }
 
   def "test1.4: AmountApportionment.apportionAverage for Money test, with extra decimal value"() {
@@ -184,6 +190,7 @@ class AmountApportionmentSpec extends TestSpecification {
     List<Money> results2 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToLast)
     List<Money> results3 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Yuan, ApportionAdjustType.ToFirst)
     List<Money> results4 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToFirst)
+    List<Money> results5 = AmountApportionment.apportionAverage(totalAmount, 3, ApportionPrecision.Cent, ApportionAdjustType.ToLast)
 
     then:
     results1.size() == 2
@@ -204,6 +211,11 @@ class AmountApportionmentSpec extends TestSpecification {
     results4[0] == new Money(3.35)
     results4[1] == new Money(3.33)
     results4[2] == new Money(3.33)
+
+    results5.size() == 3
+    results5[0] == new Money(3.33)
+    results5[1] == new Money(3.33)
+    results5[2] == new Money(3.35)
   }
 
   def "test2.0: AmountApportionment.apportion for BigDecimal"() {
