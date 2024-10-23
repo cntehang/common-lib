@@ -31,4 +31,15 @@ class BjDateUtilsTest extends TestSpecification {
     '2019-10-13' | '2021-10-13' | 2
     '2019-10-14' | '2021-10-13' | 1
   }
+
+  def "daysBetween test"() {
+    expect:
+    BjDateUtils.daysBetween(new BjDate(startDate), new BjDate(endDate)) == days
+
+    where:
+    startDate    | endDate      | days
+    '2019-01-01' | '2019-01-02' | 1
+    '2019-01-01' | '2019-01-01' | 0
+    '2019-01-02' | '2019-01-01' | -1
+  }
 }

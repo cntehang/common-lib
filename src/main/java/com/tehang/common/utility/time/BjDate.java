@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tehang.common.utility.BjDateUtils;
 import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -82,6 +83,11 @@ public class BjDate extends BjDateTime implements Serializable {
     DateTime cstNow = new DateTime(DateTimeZone.forID(ZONE_SHANGHAI));
     String dateString = cstNow.toString(DATE_FORMAT_TO_DAY);
     return new BjDate(dateString);
+  }
+
+  /** 计算两个日期之间的天数，startDate大于endDate时返回负数。*/
+  public static int daysBetween(BjDate startDate, BjDate endDate) {
+    return BjDateUtils.daysBetween(startDate, endDate);
   }
 
   public BjDate plusDays(int days) {

@@ -105,4 +105,15 @@ class BjDateSpec extends TestSpecification {
     date1.isBeforeToday()
     date2.isAfterToday()
   }
+
+  def "test10: BjDate.daysBetween test"() {
+    expect:
+    BjDate.daysBetween(new BjDate(startDate), new BjDate(endDate)) == days
+
+    where:
+    startDate    | endDate      | days
+    '2019-01-01' | '2019-01-02' | 1
+    '2019-01-01' | '2019-01-01' | 0
+    '2019-01-02' | '2019-01-01' | -1
+  }
 }
