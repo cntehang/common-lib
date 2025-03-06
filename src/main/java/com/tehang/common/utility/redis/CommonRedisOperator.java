@@ -1,5 +1,6 @@
 package com.tehang.common.utility.redis;
 
+import com.tehang.common.utility.time.BjTime;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -55,6 +56,16 @@ public class CommonRedisOperator {
    */
   public Boolean setIfAbsent(String key, String value, long timeout, TimeUnit unit) {
     return stringRedisTemplate.opsForValue().setIfAbsent(key, value, timeout, unit);
+  }
+
+  /** 重设指定Key的过期时间。*/
+  public void expires(String key, long timeout, TimeUnit unit) {
+    stringRedisTemplate.expire(key, timeout, unit);
+  }
+
+  /** 重设指定Key的过期时间。*/
+  public void expireAt(String key, BjTime bjTime) {
+    stringRedisTemplate.expireAt(key, bjTime.getInnerTime().toDate());
   }
 
   /**
