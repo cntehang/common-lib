@@ -77,6 +77,9 @@ public class Money implements Serializable, Comparable<Money> {
     this.amount = amount.setScale(SCALE, RoundingMode.HALF_UP);
   }
 
+  /**
+   * 根据指定的字符串初始化一个金额对象, 如果为null，则抛出参数异常，如果为空白字符串，则返回0, 如果是无效的金额，则抛出 NumberFormatException 异常。
+   */
   public Money(String amountString) {
     if (amountString == null) {
       throw new IllegalArgumentException("amount should not be null");
@@ -97,9 +100,12 @@ public class Money implements Serializable, Comparable<Money> {
   // ----------- 其他函数 --------------
 
   /**
-   * 解析金额字符串
+   * 解析金额字符串，如果为null或空白字符串，则返回null。 如果是无效的金额，则抛出 NumberFormatException 异常。
    */
   public static Money parse(String amountString) {
+    if (isBlank(amountString)) {
+      return null;
+    }
     return new Money(amountString);
   }
 
