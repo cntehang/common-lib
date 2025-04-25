@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * 将db中的待发送的领域事件记录，发送到mq。此服务由定时任务调用，定时任务建议每秒调用一次。
  */
@@ -62,15 +64,16 @@ public class SendDomainEventRecordsToMqService {
   }
 
   private void sendEventToMq(DomainEventRecord eventRecord) {
-    // 计算tag, key, body
+    // 计算tag, topic, key, body
     String tag = getTag(eventRecord.getEventType());
+    String topic = getEventTopic(eventRecord);
     String key = eventRecord.getEventKey();
     String body = eventRecord.getBody();
     Long deliverTime = getDeliverTime(eventRecord);
 
     try {
       // 发送消息
-      mqProducer.sendToQueue(tag, key, body, deliverTime);
+      mqProducer.sendToQueue(topic, tag, key, body, deliverTime);
 
       // 发送成功后更新记录信息
       eventRecordJdbcRepository.updateOnSendSuccess(eventRecord);
@@ -83,6 +86,14 @@ public class SendDomainEventRecordsToMqService {
 
       log.warn("publish event failed, tag: {}, key: {}, body: {}, msg: {}", tag, key, body, ex.getMessage(), ex);
     }
+  }
+
+  private String getEventTopic(DomainEventRecord eventRecord) {
+    if (isBlank(eventRecord.getTopic())) {
+      // 事件topic为空时，取系统配置的默认topic。
+      return mqConfig.getTopic();
+    }
+    return eventRecord.getTopic();
   }
 
   private static Long getDeliverTime(DomainEventRecord eventRecord) {

@@ -39,6 +39,10 @@ public class DomainEventRecord extends AggregateRoot<String> {
   @Column(nullable = false, length = 100)
   private String eventType;
 
+  /** 事件对应的mq的topic，为空时取mq配置的默认topic。*/
+  @Column(length = 30)
+  private String topic;
+
   /** 事件发布者(对应于mq中的groupId). */
   @Column(length = 200)
   private String publisher;

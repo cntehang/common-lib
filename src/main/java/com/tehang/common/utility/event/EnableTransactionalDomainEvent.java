@@ -37,6 +37,7 @@ import java.lang.annotation.Target;
  *   `id`                 varchar(50)  not null    comment 'PK, uuid',
  *   `event_key`          varchar(100) not null    comment '事件key',
  *   `event_type`         varchar(100) not null    comment '事件类型，和mq中的tag保持一致(tag可能包含前缀，但eventType字段并不包含前缀)',
+ *   `topic`              varchar(30)  null        comment '事件对应的mq的topic，为空时取mq配置的默认topic',
  *   `publisher`          varchar(200) null        comment '事件发布者(对应于mq中的groupId)',
  *   `start_deliver_time` varchar(23)  null        comment '设置消息的延时投递时间（绝对时间),最大延迟时间为7天',
  *   `trace_id`           varchar(200) null        comment '发布事件所在的TraceId',

@@ -74,13 +74,15 @@ public class EventPublisher {
     while (true) {
       try {
         // 发送消息，发送成功后直接返回
-        mqProducer.sendToQueue(tag, event.getKey(), body, startDeliverTime);
+        mqProducer.sendToQueue(getEventTopic(event), tag, event.getKey(), body, startDeliverTime);
+
         log.debug("publish event successful, tag: {}, body: {}", tag, body);
         return;
       }
       catch (MessageProducerException ex) {
         // 发布事件失败，需要进行3次重试
         log.debug("publish event failed, tag: {}, body: {}, msg: {}", tag, body, ex.getMessage(), ex);
+
         if (retryTimes < RE_TRY_SEND_MESSAGE_DELAYS_SECONDS.size()) {
           long sleepMillis = RE_TRY_SEND_MESSAGE_DELAYS_SECONDS.get(retryTimes) * 1000;
           sleepForMillis(sleepMillis);
@@ -93,6 +95,14 @@ public class EventPublisher {
         }
       }
     }
+  }
+
+  private String getEventTopic(DomainEvent event) {
+    if (isBlank(event.getTopic())) {
+      // 事件topic为空时，取系统配置的默认topic。
+      return mqConfig.getTopic();
+    }
+    return event.getTopic();
   }
 
   private void sleepForMillis(long sleepMillis) {

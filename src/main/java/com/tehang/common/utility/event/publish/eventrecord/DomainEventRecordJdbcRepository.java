@@ -25,13 +25,14 @@ public class DomainEventRecordJdbcRepository {
    * 添加一条事件记录
    */
   public void add(DomainEventRecord record) {
-    String sql = "insert into domain_event_record (id, event_key, event_type, publisher, start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time) "
-        + "values (:id, :event_key, :event_type, :publisher, :start_deliver_time, :trace_id, :body, :status, :publish_time, :count, :create_time, :update_time) ";
+    String sql = "insert into domain_event_record (id, event_key, event_type, topic, publisher, start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time) "
+        + "values (:id, :event_key, :event_type, :topic, :publisher, :start_deliver_time, :trace_id, :body, :status, :publish_time, :count, :create_time, :update_time) ";
 
     Map<String, Object> params = new HashMap<>();
     params.put("id", record.getId());
     params.put("event_key", record.getEventKey());
     params.put("event_type", record.getEventType());
+    params.put("topic", record.getTopic());
     params.put("publisher", record.getPublisher());
     params.put("start_deliver_time", record.getStartDeliverTime() != null ? record.getStartDeliverTime().toString() : null);
     params.put("trace_id", record.getTraceId());
@@ -49,7 +50,7 @@ public class DomainEventRecordJdbcRepository {
    * 查询所有待发送的事件记录，按创建时间正序排列，时间早的排在前面。
    */
   public List<DomainEventRecord> findAllByWaitSend() {
-    String sql = String.format("select id, event_key, event_type, publisher, start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time "
+    String sql = String.format("select id, event_key, event_type, topic, publisher, start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time "
         + "from domain_event_record where status = '%s' order by create_time ", DomainEventSendStatus.WaitSend);
 
     return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(DomainEventRecord.class));
