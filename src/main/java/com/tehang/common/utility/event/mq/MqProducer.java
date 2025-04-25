@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import static com.tehang.common.utility.StringUtils.isBlank;
+
 /**
  * 消息生产者.
  */
@@ -47,12 +49,15 @@ public class MqProducer implements InitializingBean, DisposableBean {
   }
 
   /**
-   * 发送消息到队列.
+   * 发送消息到队列, 并指定topic。
    */
   @SuppressWarnings("all")
-  public SendResult sendToQueue(String tag, String key, String body, Long startDeliverTime) {
-    String topic = mqConfig.getTopic();
+  public SendResult sendToQueue(String topic, String tag, String key, String body, Long startDeliverTime) {
     log.debug("Enter sendToQueue, topic: {}, tag:{}, key:{}", topic, tag, key);
+
+    if (isBlank(topic)) {
+      throw new MessageProducerException("sendToQueue failed, topic is blank, tag: " + tag);
+    }
 
     SendResult result;
     try {

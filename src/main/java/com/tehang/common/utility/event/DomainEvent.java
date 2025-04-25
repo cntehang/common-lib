@@ -26,6 +26,11 @@ public abstract class DomainEvent {
   private String eventType;
 
   /**
+   * 事件对应的mq的topic，为空时取mq配置的默认topic。
+   */
+  private String topic;
+
+  /**
    * 事件发布时间(北京时间，格式为yyyy-MM-dd HH:mm:ss.SSS).
    */
   private String publishTime;
@@ -50,11 +55,20 @@ public abstract class DomainEvent {
   }
 
   /**
-   * 通过EventType构造实例，key取uuid.
+   * 通过EventType构造实例，key取uuid，topic为空。
    */
   public DomainEvent(String eventType) {
     this.key = UUID.randomUUID().toString();
     this.eventType = eventType;
+  }
+
+  /**
+   * 通过EventType构造实例，key取uuid, 并指定topic，topic有空时取mq配置的默认topic。
+   */
+  public DomainEvent(String eventType, String topic) {
+    this.key = UUID.randomUUID().toString();
+    this.eventType = eventType;
+    this.topic = topic;
   }
 
   //-------------- 其他 --------------
