@@ -80,6 +80,7 @@ public class DomainEventRecord extends AggregateRoot<String> {
     record.eventKey = event.getKey();
     record.eventType = event.getEventType();
     record.publisher = mqGroupId;
+    record.topic = event.getTopic();
     record.startDeliverTime = startDeliverTime;
     record.traceId = TraceInfoHelper.getCurrentTraceId();
     record.body = JsonUtils.toJson(event);
