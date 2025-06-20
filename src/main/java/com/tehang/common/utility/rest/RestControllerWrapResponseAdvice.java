@@ -24,11 +24,8 @@ public class RestControllerWrapResponseAdvice implements ResponseBodyAdvice<Obje
 
   @Override
   public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-    if (returnType.hasMethodAnnotation(DisableWrapResponse.class)) {
-      // 方法上如果有禁止包装的注解，则不进行包装
-      return false;
-    }
-    return true;
+    // 方法上如果有禁止包装的注解，则不进行包装
+    return !returnType.hasMethodAnnotation(DisableWrapResponse.class);
   }
 
   @Override
