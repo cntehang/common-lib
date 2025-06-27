@@ -2,7 +2,6 @@ package com.tehang.common.utility.rest.annotations;
 
 import com.tehang.common.utility.rest.RestControllerWrapExceptionAdvice;
 import com.tehang.common.utility.rest.RestControllerWrapResponseAdvice;
-import com.tehang.common.utility.rest.WebConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -22,7 +21,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({RestControllerWrapResponseAdvice.class, RestControllerWrapExceptionAdvice.class, WebConfig.class})
+@Import({ RestControllerWrapResponseAdvice.class, RestControllerWrapExceptionAdvice.class })
 public @interface EnableWrapResponseAndException {
 
 }
