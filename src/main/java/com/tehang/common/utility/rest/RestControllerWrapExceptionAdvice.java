@@ -165,12 +165,14 @@ public class RestControllerWrapExceptionAdvice {
   private Map<String, String> createTrace(Exception ex) {
     Map<String, String> traceMap = new ConcurrentHashMap<>();
 
-    var firstTrace = ex.getStackTrace()[0];
-    String exTrace = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).filter(msg -> msg.contains("com.tehang")).findFirst()
-      .orElse(firstTrace.toString());
+    if (ex != null && ex.getStackTrace() != null && ex.getStackTrace().length > 0) {
+      var firstTrace = ex.getStackTrace()[0];
+      String exTrace = Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).filter(msg -> msg.contains("com.tehang")).findFirst()
+          .orElse(firstTrace.toString());
 
-    if (StringUtils.isNotBlank(exTrace)) {
-      traceMap.put("traceMessage", exTrace);
+      if (StringUtils.isNotBlank(exTrace)) {
+        traceMap.put("traceMessage", exTrace);
+      }
     }
     return traceMap;
   }
