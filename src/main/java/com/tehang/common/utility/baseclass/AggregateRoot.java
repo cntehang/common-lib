@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 带有创建时间和更新时间的聚合根的基类。
  */
 @Getter
-@Setter(AccessLevel.PROTECTED)
+@Setter
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings( {"PMD.GenericsNaming", "PMD.AbstractClassWithoutAnyMethod"})
