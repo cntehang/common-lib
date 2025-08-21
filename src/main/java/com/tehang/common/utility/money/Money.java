@@ -97,6 +97,10 @@ public class Money implements Serializable, Comparable<Money> {
     this.amount = new BigDecimal(value).setScale(SCALE, RoundingMode.HALF_UP);
   }
 
+  public Money(int value) {
+    this((long)value);
+  }
+
   // ----------- 其他函数 --------------
 
   /**
