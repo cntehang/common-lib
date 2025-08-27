@@ -51,5 +51,4 @@ public class StringListPattern implements ConstraintValidator<StringListValidato
 
     return objects.stream().allMatch(nef -> pattern.matcher(nef).matches());
   }
-
 }
