@@ -33,5 +33,3 @@ public @interface StringListValidator {
   Class<? extends Payload>[] payload() default {};
 
 }
-
-
