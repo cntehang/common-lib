@@ -46,6 +46,7 @@ public final class CommandArgsTypeParser {
   }
 
   private static CommandTypeInfo getCommandTypeInfo(ParameterizedType commandParameterizedType) {
+    log.debug("===================进来================");
     Type[] actualTypeArguments = commandParameterizedType.getActualTypeArguments();
 
     // 处理第一个类型参数 (T)
