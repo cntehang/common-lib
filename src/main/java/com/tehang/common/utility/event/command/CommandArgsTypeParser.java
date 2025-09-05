@@ -1,6 +1,7 @@
 package com.tehang.common.utility.event.command;
 
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -8,6 +9,7 @@ import java.lang.reflect.Type;
 /**
  * 命令参数的类型信息的解析类。
  */
+@Slf4j
 public final class CommandArgsTypeParser {
 
   private CommandArgsTypeParser() {
@@ -49,11 +51,13 @@ public final class CommandArgsTypeParser {
     // 处理第一个类型参数 (T)
     Class<?> argType;
     if (actualTypeArguments[0] instanceof ParameterizedType) {
+      log.debug("==============第一===============");
       // 如果是参数化类型（如 List<Long>），提取原始类型
       ParameterizedType paramType = (ParameterizedType) actualTypeArguments[0];
       argType = (Class<?>) paramType.getRawType();
     }
     else {
+      log.debug("==============第二===============");
       // 如果是普通类，直接转换
       argType = (Class<?>) actualTypeArguments[0];
     }
