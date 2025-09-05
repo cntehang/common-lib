@@ -45,9 +45,29 @@ public final class CommandArgsTypeParser {
 
   private static CommandTypeInfo getCommandTypeInfo(ParameterizedType commandParameterizedType) {
     Type[] actualTypeArguments = commandParameterizedType.getActualTypeArguments();
-    return CommandTypeInfo.of(
-        (Class<?>) actualTypeArguments[0],
-        (Class<?>) actualTypeArguments[1]
-    );
+
+    // 处理第一个类型参数 (T)
+    Class<?> argType;
+    if (actualTypeArguments[0] instanceof ParameterizedType) {
+      // 如果是参数化类型（如 List<Long>），提取原始类型
+      ParameterizedType paramType = (ParameterizedType) actualTypeArguments[0];
+      argType = (Class<?>) paramType.getRawType();
+    }
+    else {
+      // 如果是普通类，直接转换
+      argType = (Class<?>) actualTypeArguments[0];
+    }
+
+    // 处理第二个类型参数 (R)
+    Class<?> returnType;
+    if (actualTypeArguments[1] instanceof ParameterizedType) {
+      ParameterizedType paramType = (ParameterizedType) actualTypeArguments[1];
+      returnType = (Class<?>) paramType.getRawType();
+    }
+    else {
+      returnType = (Class<?>) actualTypeArguments[1];
+    }
+
+    return CommandTypeInfo.of(argType, returnType);
   }
 }
