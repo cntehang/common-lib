@@ -18,6 +18,11 @@ public final class RegexConstant {
   public static final String OR_SIGNAL = "|";
 
   /**
+   * TMC 中所有自动生成数据表的 ID 正则，允许为空
+   */
+  public static final String TMC_ID_OR_EMPTY_PATTERN = "[0-9]\\d{4,30}|";
+
+  /**
    * 英文字符串.
    */
   public static final String ENGLISH_REGEXP = "^[a-zA-Z]*";
