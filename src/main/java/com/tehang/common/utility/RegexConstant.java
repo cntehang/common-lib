@@ -136,6 +136,13 @@ public final class RegexConstant {
   public static final String ENGLISH_WITH_BLANK_PATTERN = "[A-Za-z ]{1,50}";
 
   /**
+   * 航班号正则
+   * 常规航班号：^[0-9a-zA-Z]{2}[0-9]{3,4}$
+   * 华夏航空：^[0-9a-zA-Z]{7}$
+   */
+  public static final String FLIGHT_NO_RE = "^[0-9a-zA-Z]{5,8}$";
+
+  /**
    * 带分隔符/的英文姓名，主要用于机票火车票等业务场景
    */
   public static final String SPLIT_ENGLISH_NAME_PATTERN = "^[A-Za-z ]{1,50}/[A-Za-z ]{1,50}$";
