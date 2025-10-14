@@ -147,6 +147,11 @@ public final class RegexConstant {
    */
   public static final String SPLIT_ENGLISH_NAME_PATTERN = "^[A-Za-z ]{1,50}/[A-Za-z ]{1,50}$";
 
+  /**
+   * TMC 中所有数据表的 ID 正则.
+   */
+  public static final String TMC_ID_PATTERN = "[0-9]\\d{4,30}";
+
   private RegexConstant() {
     //do nothing
   }
