@@ -44,8 +44,22 @@ public class BjTimeToMinute extends BjDateTime implements Serializable {
     super(dateString, DATE_FORMAT_TO_MINUTE);
   }
 
+  /** 通过传入的年月日小时分，构造一个BjTimeToMinute对象。支持传入24点。*/
   public BjTimeToMinute(int year, int month, int day, int hour, int minute) {
-    this(new DateTime(year, month, day, hour, minute, 0, 0, DateTimeZone.forID(ZONE_SHANGHAI)));
+    this(buildInnerTime(year, month, day, hour, minute));
+  }
+
+  private static DateTime buildInnerTime(int year, int month, int day, int hour, int minute) {
+    if (hour == 24) {
+      // 如果传入的hour为24点，则转换为0点，并在日期上加1天
+      BjDate date = new BjDate(year, month, day).plusDays(1);
+
+      year = date.getInnerTime().getYear();
+      month = date.getInnerTime().getMonthOfYear();
+      day = date.getInnerTime().getDayOfMonth();
+      hour = 0;
+    }
+    return new DateTime(year, month, day, hour, minute, 0, 0, DateTimeZone.forID(ZONE_SHANGHAI));
   }
 
   // ----------- 其他函数 --------------
