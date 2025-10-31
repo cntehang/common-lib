@@ -28,6 +28,12 @@ class BjDateSpec extends TestSpecification {
     new BjDate(2024, 5, 18) == new BjDate("2024-05-18")
   }
 
+  def "test2.2: 夏令时 is OK"() {
+    expect:
+    new BjDate(1987, 4, 12).toString() == "1987-04-12"
+    new BjDate("1987-04-12").toString() == "1987-04-12"
+  }
+
   def "test3: new BjDate(String dateString) with invalid date format get IllegalArgumentException"() {
     when:
     String invalidDate = "20220315"
