@@ -144,4 +144,31 @@ public final class CollectionUtils {
   public static <E> List<E> toList(final Iterable<E> iterable) {
     return IterableUtils.toList(iterable);
   }
+
+  /**
+   * 将一个String类型的id列表，转换为Long类型列表。
+   *
+   * @param stringIds 字符串ID列表，可以为空，元素会被过滤掉空字符串
+   * @return Long类型ID列表，已去重，当输入为null时返回空列表
+   */
+  public static List<Long> convertToLongIds(List<String> stringIds) {
+    return emptyIfNull(stringIds).stream()
+        .filter(StringUtils::isNotBlank)
+        .map(Long::parseLong)
+        .distinct()
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 将一个Long类型的id列表，转换为String类型列表。
+   *
+   * @param longIds Long类型的ID列表，可以为空，null值会被过滤掉
+   * @return String类型ID列表，已去重，当输入为null时返回空列表   */
+  public static List<String> convertToStringIds(List<Long> longIds) {
+    return emptyIfNull(longIds).stream()
+        .filter(Objects::nonNull)
+        .map(String::valueOf)
+        .distinct()
+        .collect(Collectors.toList());
+  }
 }
