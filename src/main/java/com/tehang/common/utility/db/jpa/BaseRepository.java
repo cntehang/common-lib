@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -25,6 +26,28 @@ public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificat
    * 获取上下文中的EntityManager.
    */
   EntityManager getEntityManager();
+
+  /**
+   * 持久化新增对象。
+   *
+   * <p>若调用方已有事务，则加入当前事务；若无事务，则本方法会单独开启事务并在返回时提交。
+   * 无外层事务时，方法返回后本次事务已提交；即使当前会话仍开启，后续修改也不会自动提交，
+   * 需要调用方再次保存或放入新的事务中处理。</p>
+   */
+  @Transactional
+  default <S extends T> void persist(S entity) {
+    getEntityManager().persist(entity);
+  }
+
+  /**
+   * 批量持久化新增对象。
+   */
+  @Transactional
+  default <S extends T> void persistAll(Iterable<S> entities) {
+    for (S entity : entities) {
+      getEntityManager().persist(entity);
+    }
+  }
 
   /**
    * 根据id获取对象，如果对象不存在，将抛出NotExistException异常.
