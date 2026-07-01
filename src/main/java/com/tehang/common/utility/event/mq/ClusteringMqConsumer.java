@@ -8,9 +8,12 @@ import com.aliyun.openservices.ons.api.Consumer;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
 import com.aliyun.openservices.ons.api.PropertyValueConst;
+import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
+import com.tehang.common.utility.event.consume.DomainEventConsumeService;
 import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
+import com.tehang.common.utility.event.subscriber.DatabaseIdempotentClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import com.tehang.common.utility.lock.DistributedLockFactory;
 import com.tehang.common.utility.time.BjTime;
@@ -63,6 +66,9 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
 
   @Autowired
   private DistributedLockFactory lockFactory;
+
+  @Autowired(required = false)
+  private DomainEventConsumeService domainEventConsumeService;
 
   /**
    * 阿里云底层的消息消费者, 在程序启动时创建并初始化.
@@ -162,30 +168,51 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     try {
       log.debug("DomainEvent created: {}", event);
 
-      // 添加分布式锁，同步进行消息处理
-      try (var ignored = lockFactory.acquireLockUnBlocked(getLockId(event), Duration.ofMinutes(REDIS_LOCK_TIMEOUT_MINUTES))) {
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
-
-        // 依次调用每个订阅者的处理逻辑
-        handleEventForSubscriber(subscriber, event);
-
-        log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
-      }
+      consumeEvent(subscriber, event, eventType);
     }
     finally {
       span.finish(); //end span
     }
   }
 
-  private static String getLockId(DomainEvent event) {
-    return String.format("MQ_Consumer_Lock_%s", event.getKey());
+  void consumeEvent(ClusteringEventSubscriber subscriber, DomainEvent event, String eventType) {
+    if (subscriber instanceof DatabaseIdempotentClusteringEventSubscriber) {
+      consumeEventWithDatabaseIdempotent((DatabaseIdempotentClusteringEventSubscriber) subscriber, event, eventType);
+      return;
+    }
+
+    // 添加分布式锁，同步进行消息处理
+    try (var ignored = lockFactory.acquireLockUnBlocked(getLockId(eventType, event), Duration.ofMinutes(REDIS_LOCK_TIMEOUT_MINUTES))) {
+      log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] starting", subscriber.getInstanceId(), eventType);
+
+      handleEventForSubscriber(subscriber, event, eventType);
+
+      log.debug("ClusteringEventSubscriber: [{}] handleEvent: [{}] complete", subscriber.getInstanceId(), eventType);
+    }
+  }
+
+  private void consumeEventWithDatabaseIdempotent(DatabaseIdempotentClusteringEventSubscriber subscriber, DomainEvent event,
+                                                 String eventType) {
+    if (domainEventConsumeService == null) {
+      throw new SystemErrorException("Database idempotent event subscriber requires EnableTransactionalDomainEvent");
+    }
+
+    log.debug("DatabaseIdempotentClusteringEventSubscriber: [{}] handleEvent: [{}] starting",
+        subscriber.subscriberId(), eventType);
+    domainEventConsumeService.consume(subscriber, event);
+    log.debug("DatabaseIdempotentClusteringEventSubscriber: [{}] handleEvent: [{}] complete",
+        subscriber.subscriberId(), eventType);
+  }
+
+  private static String getLockId(String eventType, DomainEvent event) {
+    return String.format("MQ_Consumer_Lock_%s_%s", eventType, event.getKey());
   }
 
   /**
    * 调用订阅者的处理逻辑，考虑并发情况下处理逻辑的幂等性，避免重复处理 参考: https://www.yuque.com/wanguoyou/mzkmxr/rsdefp
    */
-  private void handleEventForSubscriber(ClusteringEventSubscriber subscriber, DomainEvent event) {
-    var redisKey = getIdempotentRedisKey(event);
+  private void handleEventForSubscriber(ClusteringEventSubscriber subscriber, DomainEvent event, String eventType) {
+    var redisKey = getIdempotentRedisKey(eventType, event);
     var redisOps = redisTemplate.boundValueOps(redisKey);
 
     // 从redis中读取消费状态，如果不为null, 表示该条消息已消费成功，就不再处理
@@ -205,9 +232,9 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
     }
   }
 
-  /** 获取用来控制幂等性的redisKey */
-  private static String getIdempotentRedisKey(DomainEvent event) {
-    return String.format("MQ_Consumer_Idempotent_%s", event.getKey());
+  /** 获取用来控制幂等性的redisKey. */
+  private static String getIdempotentRedisKey(String eventType, DomainEvent event) {
+    return String.format("MQ_Consumer_Idempotent_%s_%s", eventType, event.getKey());
   }
 
   /**

@@ -23,6 +23,13 @@ public interface EventSubscriber {
   void handleEvent(DomainEvent event);
 
   /**
+   * 获取订阅者的稳定id, 用于消费幂等记录.
+   */
+  default String subscriberId() {
+    return getClass().getName();
+  }
+
+  /**
    * 获取订阅者的实例id, 同一订阅者在集群环境中可能有多个实例.
    */
   default String getInstanceId() {
