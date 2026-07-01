@@ -3,6 +3,7 @@ package com.tehang.common.utility.event.publish.eventrecord;
 import com.tehang.common.utility.time.BjTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,15 +20,35 @@ public class DomainEventRecordJdbcRepository {
   // 最大发送次数：5次
   private static final int MAX_SEND_TIMES = 5;
 
+  private static final String INSERT_SQL = "insert into domain_event_record (id, event_key, event_type, topic, publisher, "
+      + "start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time) "
+      + "values (:id, :event_key, :event_type, :topic, :publisher, :start_deliver_time, :trace_id, "
+      + ":body, :status, :publish_time, :count, :create_time, :update_time) ";
+
   private NamedParameterJdbcTemplate jdbcTemplate;
 
   /**
    * 添加一条事件记录
    */
   public void add(DomainEventRecord record) {
-    String sql = "insert into domain_event_record (id, event_key, event_type, topic, publisher, start_deliver_time, trace_id, body, status, publish_time, count, create_time, update_time) "
-        + "values (:id, :event_key, :event_type, :topic, :publisher, :start_deliver_time, :trace_id, :body, :status, :publish_time, :count, :create_time, :update_time) ";
+    jdbcTemplate.update(INSERT_SQL, getInsertParams(record));
+  }
 
+  /**
+   * 添加一条事件记录，如果已存在相同事件类型和事件key则忽略.
+   */
+  public boolean addOnce(DomainEventRecord record) {
+    try {
+      add(record);
+      return true;
+    }
+    catch (DuplicateKeyException ex) {
+      log.warn("事件记录已存在, key: {}, eventType: {}", record.getEventKey(), record.getEventType());
+      return false;
+    }
+  }
+
+  private Map<String, Object> getInsertParams(DomainEventRecord record) {
     Map<String, Object> params = new HashMap<>();
     params.put("id", record.getId());
     params.put("event_key", record.getEventKey());
@@ -42,8 +63,7 @@ public class DomainEventRecordJdbcRepository {
     params.put("count", record.getCount());
     params.put("create_time", record.getCreateTime().toString());
     params.put("update_time", record.getUpdateTime().toString());
-
-    jdbcTemplate.update(sql, params);
+    return params;
   }
 
   /**

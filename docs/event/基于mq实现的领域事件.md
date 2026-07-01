@@ -129,6 +129,21 @@ public class EventPublisher {
 }
 ```
 
+事务性发布去重：
+
+使用 `@EnableTransactionalDomainEvent` 时，可以通过 `TransactionalEventPublisher.publishOnce(event, idempotentKey)` 做显式发布去重。`publishOnce` 会将 `event.key` 设置为调用方传入的稳定业务 key，并依赖 `domain_event_record(event_type, event_key)` 唯一约束保证同一事件类型、同一业务 key 只写入一条 outbox 记录。
+
+示例：
+
+```java
+transactionalEventPublisher.publishOnce(
+    new FlightBookingCompletedEvent(orderId),
+    "TMC-FlightBookingCompleted:" + orderId
+);
+```
+
+重复发布时不会新增 `domain_event_record`，也不会再次投递 MQ；方法返回 `false` 并记录 `warn`。普通事件继续使用 `publish`，默认不做业务级发布去重。
+
 ## 4. 订阅事件
 
 事件订阅相关的接口：
@@ -248,5 +263,4 @@ public @interface EnableDomainEvent {
   
 }
 ```
-
 

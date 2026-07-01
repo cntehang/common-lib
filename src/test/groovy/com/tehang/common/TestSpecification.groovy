@@ -2,6 +2,7 @@ package com.tehang.common
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.xml.XmlSlurper
 import spock.lang.Specification
 
 class TestSpecification extends Specification {

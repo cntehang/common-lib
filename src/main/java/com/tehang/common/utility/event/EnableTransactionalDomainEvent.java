@@ -49,6 +49,7 @@ import java.lang.annotation.Target;
  *   `create_time`        varchar(23)  not null    comment '创建时间',
  *   `update_time`        varchar(23)  not null    comment '更新时间',
  *   primary key (`id`),
+ *   unique key uk_domain_event_record_type_key(event_type, event_key),
  *   index idx_domain_event_record_status(status),
  *   index idx_domain_event_record_status_create_time(status, create_time)
  * ) engine = innodb default charset = utf8mb4 comment = '领域事件记录表';

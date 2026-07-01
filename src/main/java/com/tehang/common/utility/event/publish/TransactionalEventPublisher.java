@@ -21,6 +21,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Slf4j
 public class TransactionalEventPublisher {
 
+  private static final int MAX_EVENT_KEY_LENGTH = 100;
+
   private final MqConfig mqConfig;
   private final DomainEventRecordJdbcRepository eventRecordJdbcRepository;
   private final EventPublisher eventPublisher;
@@ -43,6 +45,29 @@ public class TransactionalEventPublisher {
   }
 
   /**
+   * 发布领域事件，并使用稳定业务key保证同一事件类型下只写入一次事件记录.
+   * @param event 待发布的事件
+   * @param idempotentKey 稳定业务key
+   * @return true表示首次发布成功，false表示重复发布已被忽略
+   */
+  public boolean publishOnce(DomainEvent event, String idempotentKey) {
+    return publishOnce(event, idempotentKey, null);
+  }
+
+  /**
+   * 发布领域事件，并使用稳定业务key保证同一事件类型下只写入一次事件记录.
+   * @param event 待发布的事件
+   * @param idempotentKey 稳定业务key
+   * @param startDeliverTime 设置消息的定时投递时间（绝对时间),最大延迟时间为7天.
+   * @return true表示首次发布成功，false表示重复发布已被忽略
+   */
+  public boolean publishOnce(DomainEvent event, String idempotentKey, BjTime startDeliverTime) {
+    assertIdempotentKeyValid(idempotentKey);
+    event.setKey(idempotentKey);
+    return doPublishOnce(event, startDeliverTime);
+  }
+
+  /**
    * 不参与当前事物而直接发布事件消息，不需要保存到事件记录中异步发送。
    * 此方法同eventPublisher.publish(), 提供此方法是为了效率考虑。
    */
@@ -60,6 +85,26 @@ public class TransactionalEventPublisher {
     }
     else {
       eventPublisher.publish(event, startDeliverTime.getInnerTime().getMillis());
+    }
+  }
+
+  private boolean doPublishOnce(DomainEvent event, BjTime startDeliverTime) {
+    // 检查事件参数的有效性
+    assertEventValid(event);
+
+    // 创建事件记录，并保存到db
+    try {
+      var eventRecord = DomainEventRecord.create(event, startDeliverTime, mqConfig.getGroupId());
+      boolean published = eventRecordJdbcRepository.addOnce(eventRecord);
+      if (!published) {
+        log.warn("publish event ignored because duplicated, key: {}, eventType: {}", event.getKey(), event.getEventType());
+      }
+      return published;
+    }
+    catch (Exception ex) {
+      var msg = "publish event failed, errorMsg: " + ex.getMessage();
+      log.error(msg, ex);
+      throw new SystemErrorException(msg, ex);
     }
   }
 
@@ -88,6 +133,19 @@ public class TransactionalEventPublisher {
     }
     if (isBlank(event.getEventType())) {
       String msg = "event.eventType不能为空";
+      log.error(msg);
+      throw new SystemErrorException(msg);
+    }
+  }
+
+  private void assertIdempotentKeyValid(String idempotentKey) {
+    if (isBlank(idempotentKey)) {
+      String msg = "idempotentKey不能为空";
+      log.error(msg);
+      throw new SystemErrorException(msg);
+    }
+    if (idempotentKey.length() > MAX_EVENT_KEY_LENGTH) {
+      String msg = String.format("idempotentKey长度不能超过%s", MAX_EVENT_KEY_LENGTH);
       log.error(msg);
       throw new SystemErrorException(msg);
     }
