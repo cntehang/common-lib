@@ -130,7 +130,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
         return Action.CommitMessage;
       }
       catch (Exception ex) {
-        log.error("ClusteringMqConsumer failed, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body, ex);
+        log.warn("ClusteringMqConsumer failed, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body, ex);
         return Action.ReconsumeLater;
       }
     });
