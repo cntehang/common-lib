@@ -18,7 +18,7 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * 将db中的待发送的领域事件记录，发送到mq。此服务由定时任务调用，定时任务建议每秒调用一次。
+ * 将db中的待发送的领域事件记录，发送到mq。此服务由定时任务调用，定时任务建议每秒调用一次.
  */
 @Service
 @AllArgsConstructor
@@ -26,13 +26,15 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class SendDomainEventRecordsToMqService {
 
   private final MqConfig mqConfig;
+
   private final MqProducer mqProducer;
+
   private final DomainEventRecordJdbcRepository eventRecordJdbcRepository;
+
   private final DistributedLockHelper lockHelper;
 
   /**
-   * 查找db中的待发送的领域事件记录，发送到mq
-   * 需加锁，以防止并发调用
+   * 查找db中的待发送的领域事件记录，发送到mq，需加锁，以防止并发调用.
    */
   @Async
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
@@ -67,7 +69,7 @@ public class SendDomainEventRecordsToMqService {
     // 计算tag, topic, key, body
     String tag = getTag(eventRecord.getEventType());
     String topic = getEventTopic(eventRecord);
-    String key = eventRecord.getEventKey();
+    String key = DomainEventMessageKey.from(eventRecord.getEventType(), eventRecord.getEventKey());
     String body = eventRecord.getBody();
     Long deliverTime = getDeliverTime(eventRecord);
 

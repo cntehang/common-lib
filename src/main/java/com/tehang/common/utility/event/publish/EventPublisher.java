@@ -44,7 +44,7 @@ public class EventPublisher {
   }
 
   /**
-   * 发布领域事件, 并指定延时投递的时间（单位毫秒）。
+   * 发布领域事件, 并指定延时投递的时间（单位毫秒）.
    * @param event 待发布的事件
    * @param startDeliverTime 设置消息的定时投递时间（绝对时间),最大延迟时间为7天.
    *  1. 延迟投递: 延迟3s投递, 设置为: System.currentTimeMillis() + 3000;
@@ -74,7 +74,7 @@ public class EventPublisher {
     while (true) {
       try {
         // 发送消息，发送成功后直接返回
-        mqProducer.sendToQueue(getEventTopic(event), tag, event.getKey(), body, startDeliverTime);
+        mqProducer.sendToQueue(getEventTopic(event), tag, DomainEventMessageKey.from(event), body, startDeliverTime);
 
         log.debug("publish event successful, tag: {}, body: {}", tag, body);
         return;

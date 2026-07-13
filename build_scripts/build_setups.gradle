@@ -1,5 +1,5 @@
 ext {
-  publishVersion = '1.7.3-SNAPSHOT'
+  publishVersion = '1.8.0-SNAPSHOT'
 }
 
 apply plugin: 'java'
@@ -26,4 +26,8 @@ repositories {
 compileJava {
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
+}
+
+test {
+  useJUnitPlatform()
 }
