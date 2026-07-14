@@ -1,6 +1,7 @@
 package com.tehang.common.utility.event;
 
 import com.tehang.common.utility.ApplicationContextProvider;
+import com.tehang.common.utility.event.cleanup.MessageRecordCleanupConfiguration;
 import com.tehang.common.utility.event.consume.DomainEventConsumeRecordJdbcRepository;
 import com.tehang.common.utility.event.consume.DomainEventConsumeService;
 import com.tehang.common.utility.event.mq.BroadcastingMqConsumer;
@@ -68,7 +69,8 @@ import java.lang.annotation.Target;
  *   primary key (`id`),
  *   unique key `uk_event_consume` (`event_key`, `event_type`, `subscriber_id`),
  *   key `idx_domain_event_consume_record_event` (`event_type`, `event_key`),
- *   key `idx_domain_event_consume_record_subscriber` (`subscriber_id`)
+ *   key `idx_domain_event_consume_record_subscriber` (`subscriber_id`),
+ *   key `idx_consume_status_create_time` (`status`, `create_time`)
  * ) engine = innodb default charset = utf8mb4 comment = '领域事件消费记录表';
  */
 @Target(ElementType.TYPE)
@@ -88,7 +90,8 @@ import java.lang.annotation.Target;
   SendEventMessageTask.class,
   DomainEventRecordJdbcRepository.class,
   DomainEventConsumeRecordJdbcRepository.class,
-  DomainEventConsumeService.class
+  DomainEventConsumeService.class,
+  MessageRecordCleanupConfiguration.class
 })
 public @interface EnableTransactionalDomainEvent {
 

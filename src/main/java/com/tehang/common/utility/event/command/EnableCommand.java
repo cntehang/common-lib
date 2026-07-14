@@ -30,7 +30,8 @@ import java.lang.annotation.Target;
  *   `create_time`             varchar(23)  not null    comment '创建时间',
  *   `update_time`             varchar(23)  not null    comment '更新时间',
  *   primary key (`id`),
- *   index idx_command_record_event_key(event_key)
+ *   index idx_command_record_event_key(event_key),
+ *   index idx_command_create_event(create_time, event_key)
  * ) engine = innodb default charset = utf8mb4 comment = '命令记录表';
  *
  * create table if not exists `command_record_his`
@@ -41,7 +42,8 @@ import java.lang.annotation.Target;
  *   `error_message`   varchar(300)    null        comment '执行失败时的错误消息',
  *   `create_time`     varchar(23)     not null    comment '创建时间',
  *   primary key (`id`),
- *   index idx_command_record_his_command_id(command_id)
+ *   index idx_command_record_his_command_id(command_id),
+ *   index idx_command_his_create_time(create_time)
  * ) engine = innodb default charset = utf8mb4 comment = '命令执行历史表';
  */
 @Target(ElementType.TYPE)

@@ -27,6 +27,11 @@ public interface BaseRepository<T, K> extends JpaRepository<T, K>, JpaSpecificat
    */
   EntityManager getEntityManager();
 
+  /** 清空当前 JPA 持久化上下文。 */
+  default void clearPersistenceContext() {
+    getEntityManager().clear();
+  }
+
   /**
    * 持久化新增对象。
    *
