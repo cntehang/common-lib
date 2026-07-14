@@ -8,6 +8,7 @@ import com.aliyun.openservices.ons.api.Consumer;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
 import com.aliyun.openservices.ons.api.PropertyValueConst;
+import com.tehang.common.infrastructure.exceptions.RepeatableException;
 import com.tehang.common.infrastructure.exceptions.SystemErrorException;
 import com.tehang.common.utility.JsonUtils;
 import com.tehang.common.utility.event.DomainEvent;
@@ -16,6 +17,7 @@ import com.tehang.common.utility.event.subscriber.ClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.DatabaseIdempotentClusteringEventSubscriber;
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import com.tehang.common.utility.lock.DistributedLockFactory;
+import com.tehang.common.utility.lock.LockNotAcquiredException;
 import com.tehang.common.utility.time.BjTime;
 import com.tehang.common.utility.time.ElapsedSeconds;
 import lombok.extern.slf4j.Slf4j;
@@ -129,8 +131,12 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
         }
         return Action.CommitMessage;
       }
+      catch (LockNotAcquiredException | RepeatableException ex) {
+        log.warn("ClusteringMqConsumer will reconsume later, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body);
+        return Action.ReconsumeLater;
+      }
       catch (Exception ex) {
-        log.warn("ClusteringMqConsumer failed, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body, ex);
+        log.error("ClusteringMqConsumer failed, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body, ex);
         return Action.ReconsumeLater;
       }
     });
