@@ -47,3 +47,6 @@ create table if not exists `command_record_his`
     primary key (`id`),
     index idx_command_record_his_command_id(command_id)
 ) engine = innodb default charset = utf8mb4 comment = '命令执行历史表';
+
+-- 事件表添加topic字段
+alter table `domain_event_record` add column `topic` varchar(30) null after event_type;
