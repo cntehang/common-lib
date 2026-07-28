@@ -100,21 +100,20 @@ public class DistributedLockFactory {
     //获取锁失败处理
     if (blocked) {
       //阻塞模式时，尝试重新获取锁
-      long elapsedMilliSecond = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - acquireLockStartTime);
-      long remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMilliSecond;
-      while (remainingWaitMilliSecond > 0) {
+      while (true) {
+        long remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMillis(acquireLockStartTime);
+        if (remainingWaitMilliSecond <= 0) {
+          break;
+        }
         if (getLock(lockKey, lockValue, lockExpiredMilliSecond)) {
           log.debug("Exit acquireLock: {}", lockId);
           return new DistributedLock(lockKey, lockValue, redisOperator);
         }
-
-        elapsedMilliSecond = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - acquireLockStartTime);
-        remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMilliSecond;
-        if (remainingWaitMilliSecond > 0) {
-          sleep(Math.min(LOCK_RETRY_INTERVAL_MILLI_SECONDS, remainingWaitMilliSecond));
-          elapsedMilliSecond = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - acquireLockStartTime);
-          remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMilliSecond;
+        remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMillis(acquireLockStartTime);
+        if (remainingWaitMilliSecond <= 0) {
+          break;
         }
+        sleep(Math.min(LOCK_RETRY_INTERVAL_MILLI_SECONDS, remainingWaitMilliSecond));
       }
 
       //获取锁超时抛出异常
@@ -160,6 +159,10 @@ public class DistributedLockFactory {
     if (acquireWaitMilliSecond < 0) {
       throw new IllegalArgumentException("acquireWaitMilliSecond can not be negative");
     }
+  }
+
+  private static long elapsedMillis(long startNano) {
+    return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNano);
   }
 
   private static String getRedisKey(String lockId) {

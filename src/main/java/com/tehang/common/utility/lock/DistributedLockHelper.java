@@ -42,7 +42,7 @@ public class DistributedLockHelper {
    * 在分布式锁中执行方法，并指定blocked, expiredSeconds参数
    */
   public void withLock(String lockId, boolean blocked, long expiredSeconds, Runnable runnable) {
-    try (var ignored = lockFactory.acquireLock(lockId, blocked, expiredSeconds * 1000)) {
+    try (var ignored = lockFactory.acquireLock(lockId, blocked, TimeUnit.SECONDS.toMillis(expiredSeconds))) {
       runnable.run();
     }
   }
@@ -89,7 +89,7 @@ public class DistributedLockHelper {
    * 在分布式锁中执行方法，并指定blocked, expiredSeconds参数
    */
   public <T> T withLock(String lockId, boolean blocked, long expiredSeconds, Supplier<T> supplier) {
-    try (var ignored = lockFactory.acquireLock(lockId, blocked, expiredSeconds * 1000)) {
+    try (var ignored = lockFactory.acquireLock(lockId, blocked, TimeUnit.SECONDS.toMillis(expiredSeconds))) {
       return supplier.get();
     }
   }
