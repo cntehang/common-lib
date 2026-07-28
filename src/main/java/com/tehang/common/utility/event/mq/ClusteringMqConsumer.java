@@ -18,6 +18,7 @@ import com.tehang.common.utility.event.subscriber.DatabaseIdempotentClusteringEv
 import com.tehang.common.utility.event.subscriber.EventSubscriber;
 import com.tehang.common.utility.lock.DistributedLockFactory;
 import com.tehang.common.utility.lock.LockNotAcquiredException;
+import com.tehang.common.utility.lock.LockTimeoutException;
 import com.tehang.common.utility.time.BjTime;
 import com.tehang.common.utility.time.ElapsedSeconds;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +132,7 @@ public class ClusteringMqConsumer implements CommandLineRunner, DisposableBean {
         }
         return Action.CommitMessage;
       }
-      catch (LockNotAcquiredException | RepeatableException ex) {
+      catch (LockNotAcquiredException | LockTimeoutException | RepeatableException ex) {
         log.warn("ClusteringMqConsumer will reconsume later, error: {}, tag: {}, key: {}, body: {}", ex.getMessage(), tag, key, body);
         return Action.ReconsumeLater;
       }
