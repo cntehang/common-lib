@@ -26,6 +26,8 @@ public class DistributedLockFactory {
 
   private static final long LOCK_TIME_OUT_MILLI_SECONDS = 30000; //获取锁的超时时间，对于阻塞型锁有用
 
+  private static final long LOCK_RETRY_INTERVAL_MILLI_SECONDS = 2000; //获取锁的重试间隔
+
   private final CommonRedisOperator redisOperator;
 
   /**
@@ -59,13 +61,34 @@ public class DistributedLockFactory {
 
   /**
    * 获取分布式锁.
+   *
+   * @param lockId 锁id, 不能为空
+   * @param blocked 获取不到锁时是否阻塞等待
+   * @param lockExpiredMilliSecond 锁的过期时间，单位为毫秒
    */
   public DistributedLock acquireLock(String lockId, boolean blocked, long lockExpiredMilliSecond) {
+    return acquireLock(lockId, blocked, lockExpiredMilliSecond, LOCK_TIME_OUT_MILLI_SECONDS);
+  }
+
+  /**
+   * 获取分布式锁，并指定获取锁的等待时间.
+   *
+   * @param lockId 锁id, 不能为空
+   * @param blocked 获取不到锁时是否阻塞等待
+   * @param lockExpiredMilliSecond 锁的过期时间，单位为毫秒
+   * @param acquireWaitMilliSecond 获取锁的等待时间，单位为毫秒，不能为负数
+   */
+  public DistributedLock acquireLock(
+      String lockId,
+      boolean blocked,
+      long lockExpiredMilliSecond,
+      long acquireWaitMilliSecond) {
     log.debug("Enter acquireLock: {}", lockId);
 
     assertLockIdValid(lockId);
+    assertAcquireWaitTimeValid(acquireWaitMilliSecond);
 
-    long acquireLockEndTime = System.currentTimeMillis() + LOCK_TIME_OUT_MILLI_SECONDS;
+    long acquireLockStartTime = System.nanoTime();
     String lockKey = getRedisKey(lockId);
     String lockValue = UUID.randomUUID().toString();  // 生成一个随机uuid作为锁的值，将来根据此值来释放锁
 
@@ -77,14 +100,20 @@ public class DistributedLockFactory {
     //获取锁失败处理
     if (blocked) {
       //阻塞模式时，尝试重新获取锁
-      while (System.currentTimeMillis() < acquireLockEndTime) {
+      while (true) {
+        long remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMillis(acquireLockStartTime);
+        if (remainingWaitMilliSecond <= 0) {
+          break;
+        }
         if (getLock(lockKey, lockValue, lockExpiredMilliSecond)) {
           log.debug("Exit acquireLock: {}", lockId);
           return new DistributedLock(lockKey, lockValue, redisOperator);
         }
-
-        //等待2秒，再尝试
-        sleep();
+        remainingWaitMilliSecond = acquireWaitMilliSecond - elapsedMillis(acquireLockStartTime);
+        if (remainingWaitMilliSecond <= 0) {
+          break;
+        }
+        sleep(Math.min(LOCK_RETRY_INTERVAL_MILLI_SECONDS, remainingWaitMilliSecond));
       }
 
       //获取锁超时抛出异常
@@ -109,9 +138,9 @@ public class DistributedLockFactory {
     return isTrue(success);
   }
 
-  private void sleep() {
+  private void sleep(long sleepMilliSecond) {
     try {
-      Thread.sleep(2000);
+      Thread.sleep(sleepMilliSecond);
     }
     catch (InterruptedException ex) {
       log.warn("sleep调用时发生异常", ex);
@@ -124,6 +153,16 @@ public class DistributedLockFactory {
     if (isBlank(lockId)) {
       throw new IllegalArgumentException("lockId can not be blank");
     }
+  }
+
+  private static void assertAcquireWaitTimeValid(long acquireWaitMilliSecond) {
+    if (acquireWaitMilliSecond < 0) {
+      throw new IllegalArgumentException("acquireWaitMilliSecond can not be negative");
+    }
+  }
+
+  private static long elapsedMillis(long startNano) {
+    return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNano);
   }
 
   private static String getRedisKey(String lockId) {
