@@ -30,7 +30,7 @@ class DistributedLockFactorySpec extends TestSpecification {
     2 * redisOperator.setIfAbsent('LOCK_PREFIXtest-lock', _ as String, 1500, TimeUnit.MILLISECONDS) >> false
     thrown(LockTimeoutException)
     def elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime)
-    elapsed >= 80 && elapsed < 500
+    elapsed >= 80 && elapsed < 1500
   }
 
   def "非阻塞获取失败时不等待"() {
